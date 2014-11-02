@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Charted</title>
+
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="/charted.css">
+    <script src="//use.edgefonts.net/source-sans-pro:n2,n4,n9.js"></script>
+    <script src="/scripts/lib/jquery.js"></script>
+    <script src="/scripts/lib/d3.js"></script>
+    <script src="/scripts/lib/lodash.compat.js"></script>
+    <script src="/scripts/Utils.js"></script>
+    <script src="/scripts/PageData.js"></script>
+    <script src="/scripts/ChartLegend.js"></script>
+    <script src="/scripts/ChartData.js"></script>
+    <script src="/scripts/Chart.js"></script>
+    <script src="/scripts/PageController.js"></script>
+    <script src="/scripts/charted.js"></script>
+  </head>
+
+  <body class="pre-load">
+    <h1 class="page-title">Charted</h1>
+    <h2 class="page-subtitle">Beautiful, automatic charts</h2>
+
+    <form class="load-data-form">
+      <input type="text" class="data-file-input" name="dataUrl" placeholder="Paste the link to a .csv file or Google Spreadsheet">
+      <button type="submit" class="submit">Go</button>
+      <div class="loading-spinner"><img class="loading-spinner-img" src="/images/spinner.svg"></div>
+      <div class="error-message"></div>
+    </form>
+
+    <div class="charts"></div>
+
+    <footer>
+      <a href="https://github.com/medium/charted">GitHub</a>
+      <a href="https://medium.com/p/2149df6bb0bd">How it Works</a>
+      <a href="https://medium.com/">Built at Medium</a>
+    </footer>
+  </body>
+</html>

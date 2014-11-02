@@ -1,0 +1,153 @@
+.legend{
+  font-size: @fontSize-smaller;
+  padding: 8px 0 20px;
+  width: 100%;
+}
+.legend.hidden{
+  display: none;
+}
+.legend-item{
+  padding: 0 42px 0 0;
+  position: relative;
+}
+.legend-label{
+  position: relative;
+}
+.legend-input{
+  .border-radius(4px);
+  .transition(all 0.3s ease);
+  display: block;
+  overflow: hidden;
+  padding: 5px 0 5px 26px;
+  width: 100%;
+}
+.legend-box{
+  .border-radius(20px);
+  display: inline-block;
+  height: 11px;
+  left: 8px;
+  position: absolute;
+  top: 6px;
+  width: 11px;
+}
+.move-chart{
+  .transition(all 0.3s ease);
+  background-color: transparent;
+  opacity: 0;
+  position: absolute;
+  right: 9px;
+  top: -2px;
+}
+.move-chart .icon{
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+}
+.legend-item:hover .legend-input,
+.legend-item .legend-input:focus,
+.legend-item.active .legend-input{
+  background-color: @gray-lightest;
+}
+.dark .legend-item:hover .legend-input,
+.dark .legend-item .legend-input:focus,
+.dark .legend-item.active .legend-input{
+  background-color: @gray-darkest;
+}
+.legend-item:hover .move-chart{
+  opacity: 0.15;
+}
+.legend-item.active .move-chart,
+.legend-item:hover .move-chart:hover{
+  opacity: 0.8;
+}
+.dark .legend-item:hover .move-chart{
+  opacity: 0.4;
+}
+.dark .legend-item.active .move-chart,
+.darl .legend-item:hover .move-chart:hover{
+  opacity: 1;
+}
+.move-chart-options.popover{
+  bottom: 40px;
+  right: 2px;
+}
+.move-chart-option{
+  .border-radius(2px);
+  .transition(all 0.3s ease);
+  background-color: none;
+  color: @gray-darker;
+  display: block;
+  font-size: @fontSize-small;
+  padding: 8px;
+  position: relative;
+  text-decoration: none;
+}
+.move-chart-option:hover{
+  background-color: @gray-lightest;
+}
+.dark .move-chart-option{
+  color: @gray-light;
+}
+.dark .move-chart-option:hover{
+  background-color: @gray-darker;
+}
+.move-chart-option.move-to-new-chart{
+  padding-left: 30px;
+}
+.move-chart-option .icon{
+  display: block;
+  height: 26px;
+  left: 3px;
+  opacity: 0.8;
+  position: absolute;
+  top: 2px;
+  width: 26px;
+}
+
+
+@media screen and (min-width: @width-tablet) {
+  .legend,
+  .dark .legend{
+    bottom: 40px;
+    left: 0;
+    padding: 6px 10px 24px;
+    position: absolute;
+  }
+}
+
+
+@media screen and (min-width: @width-netbook) {
+  .legend{
+    font-size: @fontSize-base;
+  }
+  .legend-input{
+    min-height: 30px;
+    padding: 6px 0 6px 30px;  
+  }
+  .legend-box{
+    height: 13px;
+    top: 9px;
+    width: 13px;
+  }
+  .move-chart{
+    top: -1px;
+  }
+}
+
+@media screen and (min-width: @width-netbook) and (max-width: @width-desktop){
+  .chart-grid .legend{
+    font-size: @fontSize-smaller;
+  }
+  .chart-grid .legend-input{
+    min-height: 0px;
+    padding: 5px 0 5px 26px;
+  }
+  .chart-grid .legend-box{
+    height: 11px;
+    top: 6px;
+    width: 11px;
+  }
+  .chart-grid .move-chart{
+    top: -2px;
+  }
+}

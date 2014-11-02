@@ -1,0 +1,30 @@
+{
+  "name": "charted",
+  "version": "0.1.0",
+  "description": "A charting library from Medium",
+  "main": "index.js",
+  "scripts": {
+    "prestart": "lessc less/charted.less pub/charted.css",
+    "start": "node index.js",
+    "test": "jshint index.js && jshint pub/scripts/*.js && echo 'Lint OK'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Medium/charted.git"
+  },
+  "keywords": [
+    "charts"
+  ],
+  "author": "Mike Sall <mike@medium.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Medium/charted/issues"
+  },
+  "dependencies": {
+    "less": "1.7.x",
+    "express": "4.10.x",
+    "jshint": "2.5.x",
+    "request": "2.47.x"
+  },
+  "homepage": "https://github.com/Medium/charted"
+}

@@ -1,0 +1,113 @@
+.chart-info{
+  padding: 12px;
+  position: relative;
+  width: 100%;
+}
+.chart-description{
+  font-size: @fontSize-smaller;
+  line-height: @lineHeight-tight;
+  padding: 20px;
+  text-align: center;
+}
+.info-input{
+  .border-radius(4px);
+  .transitionMultiple(background-color 0.3s ease, opacity 0.2s ease);
+  overflow: hidden;
+  padding: 8px;
+}
+.info-input:hover,
+.info-input:focus{
+  background-color: @gray-lightest;
+}
+.dark .info-input:hover,
+.dark .info-input:focus{
+  background-color: @gray-darker;
+}
+.dark .info-input::before{
+  color: @gray-dark;
+  opacity: 1;
+}
+.title{
+  color: @gray-darker;
+  font-size: @fontSize-large;
+}
+.dark .title{
+  color: white;
+}
+.note{
+  color: @gray;
+}
+.dark .note{
+  color: @gray-dark;
+}
+.empty.note{
+  display: none;
+  opacity: 0;
+}
+.active .empty.note{
+  opacity: 1;
+}
+.note::before{
+  color: @gray;
+  content: "add a note";
+  display: none;
+  opacity: 0.5;
+  width: 100%;
+}
+.empty.note::before{
+  display: block;
+}
+.note:focus::before{
+  display: none;
+}
+
+
+@media screen and (min-width: @width-tablet) {
+  .chart-info{
+    height: 100%;
+    right: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    width: @sidebar-width-small;
+  }
+  .chart-description{
+    padding: 16px 10px 8px;
+    position: absolute;
+    right: 0;
+    text-align: left;
+    top: 0;
+    width: @sidebar-width-small;
+    z-index: 2;
+  }
+  .empty.note{
+    display: block;
+  }
+}
+
+
+@media screen and (min-width: @width-netbook) {
+  .chart-info{
+    width: @sidebar-width-large;
+  }
+  .chart-description{
+    font-size: @fontSize-base;
+    width: @sidebar-width-large;
+  }
+  .title{
+    font-size: @fontSize-larger;
+  }
+}
+
+@media screen and (min-width: @width-netbook) and (max-width: @width-desktop){
+  .chart-grid .chart-info{
+    width: @sidebar-width-small;    
+  }
+  .chart-grid .chart-description{
+    font-size: @fontSize-smaller;
+    width: @sidebar-width-small;
+  }
+  .chart-grid .title{
+    font-size: @fontSize-large;
+  }
+}

@@ -1,0 +1,22 @@
+.chart-options{
+  font-size: 0;
+  margin: 0 auto 10px;
+  text-align: center;
+  width: 100%;
+}
+
+@media screen and (min-width: @width-tablet) {
+  .chart-options{
+    .transition(all 1s ease);
+    bottom: 0;
+    opacity: 0;
+    margin: 0;
+    position: absolute;
+    text-align: right;
+    right: 4px;
+  }
+  .active .chart-options{
+    .transition(all 0.2s ease);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "quotmark": "single",
+  "asi": true,
+  "boss": true,
+  "browser": true,
+  "strict": false,
+  "newcap": false,
+  "undef": true,
+  "unused": true,
+  "onecase": true,
+  "lastsemic": true,
+  "indent": 2
+}

@@ -1,0 +1,103 @@
+.page-settings{
+  left: 4px;
+	position: fixed;
+  top: 6px;
+  z-index: 3;
+}
+.settings-popover.popover{
+  display: none;
+  left: 4px;
+  top: 4px;
+}
+.open .settings{
+  display: none;
+}
+.page-options{
+  border-bottom: 1px solid @gray-lighter;
+  padding: 0 0 6px;
+}
+.dark .page-options{
+  border-bottom: 1px solid @gray-darker;
+}
+.open .settings-popover{
+  display: block;
+}
+.data-source{
+  margin: 8px 0 4px;
+  position: relative;
+}
+.data-url{
+  font-size: @fontSize-small;
+  padding: 8px;
+}
+.update-data-url{
+  .transition(all 0.2s ease);
+  background: transparent;
+  color: @gray-dark;
+  font-size: @fontSize-smaller;
+  padding: 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.update-data-url:hover{
+  color: @gray-darkest;
+  text-decoration: underline;
+}
+.dark .update-data-url{
+  color: @gray;
+}
+.dark .update-data-url:hover{
+  color: @gray-light;
+}
+.page-options{
+  padding: 2px 0 12px;
+}
+.page-option-item{
+  .m-fontSans400();
+  .transition(all 0.2s ease);
+  color: @gray;
+  display: block;
+  font-size: @fontSize-small;
+  padding: 5px 0;
+  text-decoration: none;
+}
+.page-option-item:hover{
+  color: @gray-dark;
+}
+.page-option-item .icon{
+  .transition(all 0.2s ease);
+  display: inline-block;
+  height: 32px;
+  margin: 0 1px -5px 0;
+  opacity: 0.4;
+  padding: 3px 0;
+  vertical-align: bottom;
+  width: 32px;
+}
+.page-option-item:hover .icon{
+  opacity: 0.8;
+}
+.dark .page-option-item{
+}
+.dark .page-option-item:hover{
+  color: @gray-lightest;
+}
+.dark .page-option-item .icon{
+  opacity: 0.6;
+}
+.dark .page-option-item:hover .icon{
+  opacity: 1;
+}
+
+
+@media screen and (min-width: @width-tablet) {
+  .page-settings{
+    .transition(all 1s ease);
+    opacity: 0;
+  }
+  .active .page-settings{
+    .transition(all 0.2s ease);
+    opacity: 1;
+  }
+}

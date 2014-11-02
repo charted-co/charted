@@ -1,0 +1,97 @@
+.selection{
+  background-color: @gray-light;
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 1px;
+}
+.dark .selection{
+  background-color: @gray-darker;
+}
+.selection-info{
+  .transition(all 0.4s ease);
+  height: 100%;
+  margin: 0 0 0 -200px;
+  position: absolute;
+  text-align: right;
+  top: 0;
+  width: 200px;
+}
+.on-right .selection-info{
+  text-align: left;
+  margin: 0 0 0 100%;
+}
+.selection-xlabel,
+.selection-ylabel{
+  color: @gray-dark;
+  font-size: @fontSize-smaller;
+  padding: 0 14px;
+  width: 100%;
+}
+.dark .selection-xlabel,
+.dark .selection-ylabel{
+  color: @gray;
+}
+.selection-value{
+  .m-fontSans400();
+  font-size: @fontSize-number-base;
+  line-height: @lineHeight-tighter;
+  margin: 16px 0 0 0;
+  padding: 0 14px;
+}
+.selection-xlabel{
+  bottom: 0;
+  height: @x-axis-h;
+  padding: 16px 14px 0;
+  position: absolute;
+  left: 0;
+}
+
+
+@media screen and (min-width: @width-tablet) {
+  .selection-info{
+    margin: 0 0 0 -300px;
+    width: 300px;
+  }
+  .selection-value{
+    font-size: @fontSize-number-larger;
+    line-height: @lineHeight-tightest;
+  }
+  .half-height .selection-value{
+    font-size: @fontSize-number-large;
+  }
+  .selection-xlabel{
+    padding-top: 15px;
+  }
+  .selection-ylabel{
+    font-size: @fontSize-small;
+  }
+}
+
+
+@media screen and (min-width: @width-tablet) and (min-height: @height-desktop) {
+  .half-height .selection-value,{
+    font-size: @fontSize-number-larger;
+  }
+}
+
+
+@media screen and (min-width: @width-netbook) {
+  .chart-grid .selection-value{
+    font-size: @fontSize-number-large;
+  }
+  .selection-ylabel{
+    font-size: @fontSize-base;
+  }
+}
+
+
+@media screen and (min-width: @width-netbook) and (min-height: @height-desktop) {
+  .selection-value{
+    font-size: @fontSize-number-largest;
+  }
+  .chart-grid .selection-value{
+    font-size: @fontSize-number-larger;
+  }
+}

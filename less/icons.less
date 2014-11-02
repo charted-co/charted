@@ -1,0 +1,79 @@
+.option-item{
+  .border-radius(100%);
+  .transition(all 0.2s ease);
+  border: 1px solid @gray-light;
+  display: inline-block;
+  font-size: 0;
+  height: 30px;
+  margin: 7px 3px;
+  position: relative;
+  width: 30px;
+}
+.option-item.settings{
+  height: 36px;
+  margin: 0px;
+  width: 36px;
+}
+.option-item .icon{
+  .transition(all 0.2s ease);
+  display: inline-block;
+  height: 100%;
+  opacity: 0.4;
+  width: 100%;
+}
+.option-item:hover{
+  border: 1px solid @gray-dark;
+}
+.option-item:hover .icon{
+  opacity: 0.8;
+}
+.dark .option-item{
+  border: 1px solid @gray-dark;
+}
+.dark .option-item .icon{
+  opacity: 0.6;
+}
+.dark .option-item:hover{
+  border: 1px solid @gray;
+}
+.dark .option-item:hover .icon{
+  opacity: 1;
+}
+.option-item.none{
+  display: none;
+}
+.option-item .icon-line,
+.option-item .icon-round-on,
+.show-columns .icon-column,
+.rounding-off .icon-round-off{
+  display: none;
+}
+.show-columns .option-item .icon-line,
+.rounding-off .option-item .icon-round-on{
+  display: inline-block;
+}
+
+
+// Icon background images
+      .icon-column{     background-image: url(/images/icon-column.svg)          }
+.dark .icon-column{     background-image: url(/images/icon-column-white.svg)    }
+      .icon-color{       background-image: url(/images/icon-color.svg)            }
+.dark .icon-color{       background-image: url(/images/icon-color-white.svg)      }
+      .icon-download{   background-image: url(/images/icon-download.svg)        }
+.dark .icon-download{   background-image: url(/images/icon-download-white.svg)  }
+      .icon-line{       background-image: url(/images/icon-line.svg)            }
+.dark .icon-line{       background-image: url(/images/icon-line-white.svg)      }
+      .icon-round-on{   background-image: url(/images/icon-round-on.svg)        }
+.dark .icon-round-on{   background-image: url(/images/icon-round-on-white.svg)  }
+      .icon-round-off{  background-image: url(/images/icon-round-off.svg)       }
+.dark .icon-round-off{  background-image: url(/images/icon-round-off-white.svg) }
+      .icon-settings{   background-image: url(/images/icon-settings.svg)        }
+.dark .icon-settings{   background-image: url(/images/icon-settings-white.svg)  }
+      .icon-move{       background-image: url(/images/icon-move.svg)            }
+.dark .icon-move{       background-image: url(/images/icon-move-white.svg)      }
+      .icon-plus{       background-image: url(/images/icon-plus.svg)            }
+.dark .icon-plus{       background-image: url(/images/icon-plus-white.svg)      }
+
+.dark .icon-path{
+  fill: #FFF;
+}

@@ -1,0 +1,57 @@
+// Type
+// --------------------------------------------------
+@fontSize-smallest:         12px;
+@fontSize-smaller:          14px;
+@fontSize-small:            16px;
+@fontSize-base:             18px;
+@fontSize-large:            24px;
+@fontSize-larger:           32px;
+@fontSize-largest:          44px;
+@fontSize-number-base:      54px;
+@fontSize-number-large:     60px;
+@fontSize-number-larger:    72px;
+@fontSize-number-largest:  100px;
+
+// Line heights
+// --------------------------------------------------
+@lineHeight-tightest:        0.9;
+@lineHeight-tighter:         1.1;
+@lineHeight-tight:           1.2;
+@lineHeight-base:            1.4;
+
+// Letter spacing
+// --------------------------------------------------
+@letterSpacing-normal:         0;
+@letterSpacing-wide:     0.05rem;
+@letterSpacing-wider:     0.3rem;
+
+// Font Family
+// -------------------------------------------------------------------------
+@fontFamily-sans: "source-sans-pro", "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+
+// Mixins for fonts
+// -------------------------------------------------------------------------
+.m-fontSans200() {
+  font-family: @fontFamily-sans;
+  letter-spacing: @letterSpacing-normal;
+  font-weight: 200;
+  font-style: normal;
+}
+.m-fontSans400() {
+  font-family: @fontFamily-sans;
+  letter-spacing: @letterSpacing-normal;
+  font-weight: 400;
+  font-style: normal;
+}
+.m-fontSans900() {
+  font-family: @fontFamily-sans;
+  letter-spacing: @letterSpacing-normal;
+  font-weight: 900;
+  font-style: normal;
+}
+
+// Hide WebFont loading -- Adobe Edge Web Fonts API
+// -------------------------------------------------------------------------
+.wf-loading {
+  visibility: hidden;
+}

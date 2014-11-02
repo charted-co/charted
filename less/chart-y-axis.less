@@ -1,0 +1,58 @@
+.y-axis-container{
+  bottom: 0;
+  border-right: 1px solid @gray-lighter;
+  left: -@y-axis-w;
+  position: absolute;
+  top: 0;
+  width: @y-axis-w;
+}
+.y-axis{
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  top: @selected-value-h-small;
+  z-index: 2;
+  width: 100%;
+}
+.y-axis-label{
+  background-color: white;
+  color: @gray;
+  font-size: @fontSize-smaller;
+  right: 0px;
+  margin-top: -6px;
+  padding: 0 8px;
+  position: absolute;
+  text-align: right;
+}
+.y-axis-label:after{
+  background-color: @gray-lighter;
+  content: "";
+  display: block;
+  height: 1px;
+  position: absolute;
+  right: 0;
+  width: 3px;
+  top: 5px;
+}
+.dark .y-axis-container{
+  border-right: 1px solid @gray-darker;
+}
+.dark .y-axis-label{
+  color: @gray-dark;
+  background-color: black;
+}
+.dark .y-axis-label:after{
+  background-color: @gray-darker;
+}
+
+@media screen and (min-width: @width-netbook) {
+	.y-axis{
+	  top: @selected-value-h-large;
+	}
+}
+
+@media screen and (min-width: @width-netbook) and (max-width: @width-desktop){
+  .chart-grid .y-axis{
+    top: @selected-value-h-small;
+  }
+}
