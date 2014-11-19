@@ -3,8 +3,8 @@ Charted is a tool for automatically visualizing data, created by the
 Product Science team at [Medium](https://medium.com/). Provide the
 URL to a data file and Charted returns a beautiful, interactive,
 and shareable chart of the data. Charted is deliberately sparse in
-formatting and data transformation options, but it does offer a few
-basic features:
+formatting and data transformation options, and instead gives you
+a few powerful core features:
 * Rendering well on all screen sizes, including monitors
 * Re-fetching the data and updating the chart every 30 minutes
 * Moving data series into separate charts
