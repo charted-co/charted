@@ -1,36 +1,41 @@
 .page-settings{
-  left: 4px;
+  left: 5px;
 	position: fixed;
-  top: 6px;
+  top: 7px;
   z-index: 3;
 }
 .settings-popover.popover{
   display: none;
   left: 4px;
+  padding-bottom: 8px;
   top: 4px;
 }
 .open .settings{
   display: none;
 }
 .page-options{
-  border-bottom: 1px solid @gray-lighter;
   padding: 0 0 6px;
-}
-.dark .page-options{
-  border-bottom: 1px solid @gray-darker;
 }
 .open .settings-popover{
   display: block;
 }
 .data-source{
+  border-top: 1px solid @gray-lighter;
+  border-bottom: 1px solid @gray-lighter;
   margin: 8px 0 4px;
+  padding: 4px 0 8px;
   position: relative;
+}
+.dark .data-source {
+  border-top: 1px solid @gray-darker;
+  border-bottom: 1px solid @gray-darker;
 }
 .data-url{
   font-size: @fontSize-small;
   padding: 8px;
 }
 .update-data-url{
+  .m-fontSans400();
   .transition(all 0.2s ease);
   background: transparent;
   color: @gray-dark;
@@ -38,7 +43,7 @@
   padding: 8px;
   position: absolute;
   right: 0;
-  top: 0;
+  top: 2px;
 }
 .update-data-url:hover{
   color: @gray-darkest;
@@ -51,7 +56,7 @@
   color: @gray-light;
 }
 .page-options{
-  padding: 2px 0 12px;
+  padding: 0 0 12px;
 }
 .page-option-item{
   .m-fontSans400();
@@ -68,12 +73,12 @@
 .page-option-item .icon{
   .transition(all 0.2s ease);
   display: inline-block;
-  height: 32px;
-  margin: 0 1px -5px 0;
+  height: 30px;
+  margin: 0 2px -5px 0;
   opacity: 0.4;
   padding: 3px 0;
   vertical-align: bottom;
-  width: 32px;
+  width: 30px;
 }
 .page-option-item:hover .icon{
   opacity: 0.8;
