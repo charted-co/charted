@@ -16,6 +16,7 @@ function Chart(pageController, chartIndex, $wrapper, params, data) {
   this.$selectionXLabel = this.$container.find('.selection-xlabel')
   this.$selectionYLabel = this.$container.find('.selection-ylabel')
   this.$yAxis = this.$container.find('.y-axis')
+  this.$zeroLine = this.$container.find('.zero-line')
   this.$selectionValue = this.$container.find('.selection-value')
   this.$optionsElem = this.$container.find('.chart-options')
   this.$pageSettings = $('.page-settings')
@@ -160,7 +161,7 @@ Chart.prototype.render = function () {
   this.selectedX = this.data.getIndexCount() - 1
   this.applyChartColors()
   this.applyChartType()
-  this.addYAxisLabels()
+  this.updateYAxis()
   this.plotAll()
   this.updateSelectedX()
   this.legend.update()
@@ -174,9 +175,9 @@ Chart.prototype.applyChartColors = function () {
   var _this = this
   this.layers.each(function (yLabel) {
     var layer = d3.select(this)
-    layer.selectAll('.line, .end-dot')
+    layer.selectAll('.line')
       .attr('stroke', _this.colorFn(yLabel))
-    layer.selectAll('.column, .selected-column, .selected-dot')
+    layer.selectAll('.column, .selected-column, .selected-dot, .end-dot')
       .attr('fill', _this.colorFn(yLabel))
   })
 }
@@ -227,17 +228,22 @@ Chart.prototype.plotAll = function () {
   })
 }
 
-Chart.prototype.addYAxisLabels = function () {
+Chart.prototype.updateYAxis = function () {
+  // apply Y axis labels
   var HTML = ''
   var intervals = Utils.getNiceIntervals(this.yRange, this.height)
   var maxTop = this.$yAxis.height() - this.$container.height() + 60 // must be 60px below the top
   intervals.forEach(function (interval) {
     interval.top = this.yScale(interval.value)
     if (interval.top >= maxTop) {
+      interval.display = this.params.rounding === 'on' ? interval.displayString : interval.rawString
       HTML += this.yAxisLabelHTML(interval)
     }
   }.bind(this))
   this.$yAxis.html(HTML)
+
+  // update zero line position
+  this.$zeroLine.removeClass('hidden').css('top', this.yScale(0))
 }
 
 Chart.prototype.updateSelectedX = function (index) {
@@ -366,7 +372,7 @@ Chart.prototype.bindInteractions = function () {
 Chart.prototype.handleMouseover = function(pixel) {
   // show the options
   this.$container.addClass('active')
-  $('body').addClass('active')
+  $('body').addClass('page-active')
   clearTimeout(this.mouseTimer)
   this.mouseTimer = setTimeout(function () {
     if (! this.$optionsElem.is(':hover') && ! this.$chartDescription.is(':hover') && ! this.$pageSettings.is(':hover')) {
@@ -462,7 +468,8 @@ Chart.prototype.chartHTML = function (parameters) {
   template +='  </div>'
   template +='  <div class="chart-plot-outer-container">'
   template +='    <div class="chart-plot-inner-container">'
-  template +='      <div class="y-axis-container"><div class="y-axis"></div></div>'
+  template +='      <div class="y-axis-container"><div class="y-axis chart-height"></div></div>'
+  template +='      <div class="zero-line-container chart-height"><div class="zero-line"></div></div>'
   template +='      <div class="x-axis"><span class="x-beginning"></span><span class="x-end"></span></div>'
   template +='      <div class="selection">'
   template +='        <div class="selection-info">'
@@ -471,7 +478,7 @@ Chart.prototype.chartHTML = function (parameters) {
   template +='          <div class="selection-ylabel"></div>'
   template +='        </div>'
   template +='      </div>'
-  template +='      <figure class="chart-plot"></figure>'
+  template +='      <figure class="chart-plot chart-height"></figure>'
   template +='    </div>'
   template +='  </div>'
   template +='  <aside class="chart-info">'
@@ -492,5 +499,5 @@ Chart.prototype.chartHTML = function (parameters) {
 }
 
 Chart.prototype.yAxisLabelHTML = function (interval) {
-  return _.template('<div class="y-axis-label" style="top:<%- top %>px"><%- displayString %></div>', interval)
+  return _.template('<div class="y-axis-label" style="top:<%- top %>px"><%- display %></div>', interval)
 }

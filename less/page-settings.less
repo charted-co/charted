@@ -1,8 +1,12 @@
 .page-settings{
+  background-color: white;
   left: 5px;
 	position: fixed;
   top: 7px;
   z-index: 3;
+}
+.dark .page-settings{
+  background-color: black;
 }
 .settings-popover.popover{
   display: none;
@@ -101,7 +105,7 @@
     .transition(all 1s ease);
     opacity: 0;
   }
-  .active .page-settings{
+  .page-active .page-settings{
     .transition(all 0.2s ease);
     opacity: 1;
   }

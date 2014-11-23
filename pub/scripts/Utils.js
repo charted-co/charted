@@ -103,7 +103,8 @@ Utils.getNiceIntervals = function (range, height) {
   while (currentInterval < (range[1] + interval)) {
     var intervalObject = {
       value: currentInterval,
-      displayString: currentInterval === 0 ? '0' : Utils.roundToDecimalOrder(currentInterval, maxOrders, digitsToUse)
+      displayString: currentInterval === 0 ? '0' : Utils.roundToDecimalOrder(currentInterval, maxOrders, digitsToUse),
+      rawString: currentInterval === 0 ? '0' : Utils.roundToDecimalOrder(currentInterval, Math.min(0, maxOrders), 0)
     }
     currentInterval += interval
     niceIntervals.push(intervalObject)

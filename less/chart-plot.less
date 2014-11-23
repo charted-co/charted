@@ -47,14 +47,31 @@
   right: 0;
   top: 0;
 }
-
-.chart-plot{
+.chart-height{
   bottom: @x-axis-h;
-  left: 0;
   position: absolute;
-  right: 0;
-  top: 100px;
+  top: @selected-value-h-small;
+}
+.chart-plot{
+  width: 100%;
   z-index: 2;
+}
+.zero-line-container{
+  left: 0;
+  width: 100%;
+}
+.zero-line{
+  border-top: 1px solid @gray-lighter;
+  left: 0;
+  margin-top: -1px;
+  position: absolute;
+  width: 100%;
+}
+.zero-line.hidden{
+  display: none;
+}
+.dark .zero-line{
+  border-top: 1px solid @gray-darker;
 }
 .x-axis{
   border-top: 1px solid @gray-lighter;
@@ -100,10 +117,6 @@
 .line.focused{
   opacity: 1;
   stroke-width: 2.5px;
-}
-.end-dot{
-  fill: white;
-  stroke-width: 2px;
 }
 .column,
 .selected-column,
@@ -164,9 +177,6 @@
     border: none;
     height: 100%;
   }
-  .chart-plot{
-    top: @selected-value-h-small;
-  }
   .x-axis,
   .dark .x-axis{
     border-top: none;
@@ -178,7 +188,7 @@
   .chart{
     padding-right: @sidebar-width-large;
   }
-  .chart-plot{
+  .chart-height{
     top: @selected-value-h-large;
   }
   .line{
@@ -193,7 +203,7 @@
   .chart-grid .chart{
     padding-right: @sidebar-width-small;
   }
-  .chart-grid .chart-plot{
+  .chart-grid .chart-height{
     top: @selected-value-h-small;
   }
 }
