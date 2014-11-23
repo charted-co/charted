@@ -7,10 +7,7 @@
   width: @y-axis-w;
 }
 .y-axis{
-  bottom: 0;
   left: 0;
-  position: absolute;
-  top: @selected-value-h-small;
   z-index: 2;
   width: 100%;
 }
@@ -43,16 +40,4 @@
 }
 .dark .y-axis-label:after{
   background-color: @gray-darker;
-}
-
-@media screen and (min-width: @width-netbook) {
-	.y-axis{
-	  top: @selected-value-h-large;
-	}
-}
-
-@media screen and (min-width: @width-netbook) and (max-width: @width-desktop){
-  .chart-grid .y-axis{
-    top: @selected-value-h-small;
-  }
 }

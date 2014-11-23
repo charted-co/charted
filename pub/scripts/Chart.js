@@ -16,6 +16,7 @@ function Chart(pageController, chartIndex, $wrapper, params, data) {
   this.$selectionXLabel = this.$container.find('.selection-xlabel')
   this.$selectionYLabel = this.$container.find('.selection-ylabel')
   this.$yAxis = this.$container.find('.y-axis')
+  this.$zeroLine = this.$container.find('.zero-line')
   this.$selectionValue = this.$container.find('.selection-value')
   this.$optionsElem = this.$container.find('.chart-options')
   this.$pageSettings = $('.page-settings')
@@ -160,7 +161,7 @@ Chart.prototype.render = function () {
   this.selectedX = this.data.getIndexCount() - 1
   this.applyChartColors()
   this.applyChartType()
-  this.addYAxisLabels()
+  this.updateYAxis()
   this.plotAll()
   this.updateSelectedX()
   this.legend.update()
@@ -227,7 +228,8 @@ Chart.prototype.plotAll = function () {
   })
 }
 
-Chart.prototype.addYAxisLabels = function () {
+Chart.prototype.updateYAxis = function () {
+  // apply Y axis labels
   var HTML = ''
   var intervals = Utils.getNiceIntervals(this.yRange, this.height)
   var maxTop = this.$yAxis.height() - this.$container.height() + 60 // must be 60px below the top
@@ -238,6 +240,9 @@ Chart.prototype.addYAxisLabels = function () {
     }
   }.bind(this))
   this.$yAxis.html(HTML)
+
+  // update zero line position
+  this.$zeroLine.removeClass('hidden').css('top', this.yScale(0))
 }
 
 Chart.prototype.updateSelectedX = function (index) {
@@ -462,7 +467,8 @@ Chart.prototype.chartHTML = function (parameters) {
   template +='  </div>'
   template +='  <div class="chart-plot-outer-container">'
   template +='    <div class="chart-plot-inner-container">'
-  template +='      <div class="y-axis-container"><div class="y-axis"></div></div>'
+  template +='      <div class="y-axis-container"><div class="y-axis chart-height"></div></div>'
+  template +='      <div class="zero-line-container chart-height"><div class="zero-line"></div></div>'
   template +='      <div class="x-axis"><span class="x-beginning"></span><span class="x-end"></span></div>'
   template +='      <div class="selection">'
   template +='        <div class="selection-info">'
@@ -471,7 +477,7 @@ Chart.prototype.chartHTML = function (parameters) {
   template +='          <div class="selection-ylabel"></div>'
   template +='        </div>'
   template +='      </div>'
-  template +='      <figure class="chart-plot"></figure>'
+  template +='      <figure class="chart-plot chart-height"></figure>'
   template +='    </div>'
   template +='  </div>'
   template +='  <aside class="chart-info">'
