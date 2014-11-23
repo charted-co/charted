@@ -236,6 +236,7 @@ Chart.prototype.updateYAxis = function () {
   intervals.forEach(function (interval) {
     interval.top = this.yScale(interval.value)
     if (interval.top >= maxTop) {
+      interval.display = this.params.rounding === 'on' ? interval.displayString : interval.rawString
       HTML += this.yAxisLabelHTML(interval)
     }
   }.bind(this))
@@ -498,5 +499,5 @@ Chart.prototype.chartHTML = function (parameters) {
 }
 
 Chart.prototype.yAxisLabelHTML = function (interval) {
-  return _.template('<div class="y-axis-label" style="top:<%- top %>px"><%- displayString %></div>', interval)
+  return _.template('<div class="y-axis-label" style="top:<%- top %>px"><%- display %></div>', interval)
 }
