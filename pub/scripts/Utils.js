@@ -49,7 +49,7 @@ Utils.getRoundedValue = function (string, extent) {
   var ordersHigh = Utils.log10Floor(Math.abs(extent[0]))
   var ordersDiff = Math.abs(ordersLow - ordersHigh)
   var ordersMax = Math.max(ordersLow, ordersHigh)
-  var ordersToUse = ordersDiff <= maxOrdersDiff ? ordersMax : Utils.log10Floor(val)
+  var ordersToUse = ordersDiff <= maxOrdersDiff ? ordersMax : Utils.log10Floor(Math.abs(val))
 
   return this.roundToDecimalOrder(val, ordersToUse, digitsVisible)
 }

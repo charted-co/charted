@@ -101,6 +101,16 @@ ChartData.prototype.getStackedExtent = function () {
   })
 }
 
+ChartData.prototype.getStackedExtentForIndex = function (index) {
+  var extent = [0, 0]
+  this._data.forEach(function (series) {
+    var minOrMax = series[index].y < 0 ? 0 : 1
+    extent[minOrMax] += series[index].y
+  })
+
+  return extent
+}
+
 ChartData.prototype.getUnstackedExtent = function () {
   return d3.extent(this.getFlattenedData(), function (datum) {
     return datum.y

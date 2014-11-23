@@ -122,10 +122,6 @@ Chart.prototype.createChartElements = function () {
       .each(function (d) {
         _this.data.getDatum(i, d.x).columnEl = this
       })
-      .on('mouseover', function(d) {
-        _this.focusedSeriesIndex = d.ySeries
-        _this.updateSelectionText()
-      })
     layer.append('circle')
       .attr('class', 'end-dot last-dot')
       .attr('r', 3)
@@ -311,17 +307,21 @@ Chart.prototype.updateSelectedX = function (index) {
 }
 
 Chart.prototype.updateSelectionText = function() {
-  // a focusedSeriesIndex equal to the ySeries length means use the total (taken from the last ySeries)
-  var chartYSeries = this.focusedSeriesIndex === this.data.getSeriesCount() ? this.data.getSeriesCount() - 1 : this.focusedSeriesIndex
+  // a focusedSeriesIndex >= to the ySeries length means use the total
+  var showTotal = this.focusedSeriesIndex >= this.data.getSeriesCount()
+  var chartYSeries = showTotal ? this.data.getSeriesCount() - 1 : this.focusedSeriesIndex
   var thisPoint = this.data.getDatum(chartYSeries, this.selectedX)
 
   var thisYLabel = ''
-  var thisYColor = this.focusedSeriesIndex === this.data.getSeriesCount() ? this.colorBase : this.colorFn(this.data.getSeries(thisPoint.ySeries).label)
+  var thisYColor = showTotal ? this.colorBase : this.colorFn(this.data.getSeries(thisPoint.ySeries).label)
   if (this.data.getSeriesCount() > 1) {
     var pageYSeries = this.getChartSeries()[chartYSeries]
-    thisYLabel = this.focusedSeriesIndex === this.data.getSeriesCount() ? 'total' : this.pageController.getSeriesName(pageYSeries)
+    thisYLabel = showTotal ? 'total' : this.pageController.getSeriesName(pageYSeries)
   }
-  var thisValue = this.focusedSeriesIndex === this.data.getSeriesCount() ? thisPoint.y0 + thisPoint.y : thisPoint.yRaw
+
+  var seriesExtent = this.data.getStackedExtentForIndex(this.selectedX)
+  var seriesTotal = seriesExtent[1] + seriesExtent[0]
+  var thisValue = showTotal ? seriesTotal : thisPoint.yRaw
   var thisValueFormatted = this.params.rounding === 'on' ? Utils.getRoundedValue(thisValue, this.yRange) : thisValue
 
   // update selection
@@ -395,24 +395,26 @@ Chart.prototype.getClosestPoint = function(pixel) {
   var currentX = Math.min(Math.floor(Math.max(pixelX, 0)), this.data.getIndexCount() - 1)
   var currentY = this.focusedSeriesIndex
 
-  if (this.params.type === 'line') {
-    // determine the closest y series
-    var diffs = d3.range(this.data.getSeriesCount()).map(function (i) {
-      var diff = Math.abs(this.yPosition(this.data.getDatum(i, this.selectedX)) - pixelY)
-      var seriesExtent = this.data.getSeriesExtent(i)
-      var inRange = (this.selectedX >= seriesExtent[0] && this.selectedX <= seriesExtent[1])
-      return {diff: diff, series: i, inRange: inRange}
-    }.bind(this))
+  // determine the closest y series
+  var diffs = d3.range(this.data.getSeriesCount()).map(function (i) {
+    var thisDatum = this.data.getDatum(i, currentX)
+    var indexPixelY = this.params.type === 'line' ? this.yPosition(thisDatum) : this.yPositionStacked(thisDatum)
+    var diff = this.params.type === 'line' ? Math.abs(pixelY - indexPixelY) : pixelY - indexPixelY
+    var isValid = (this.params.type === 'line' || diff > 0)
+    return {diff: diff, series: i, isValid: isValid}
+  }.bind(this))
 
-    var validYSeries = diffs.filter(function (series) {
-      return series.inRange
-    })
+  var validDiffs = diffs.filter(function (diff) {
+    return diff.isValid
+  })
+  currentY = _.min(validDiffs, 'diff').series
 
-    currentY = validYSeries.length ? _.min(validYSeries, 'diff').series : 0
-  } else {
-    // if not triggering a column mouseover, use the total
-    var stackTotal = this.yPositionStacked(this.data.getDatum(this.data.getSeriesCount() - 1, currentX))
-    if (pixelY < stackTotal) {
+  // use the total if it's a column chart and the mouse position it
+  if (this.params.type === 'column') {
+    // determine if position is over a y series stack, else show the total
+    var yValueExtent = this.data.getStackedExtentForIndex(currentX)
+    var yPixelExtent = [this.yScale(yValueExtent[0]), this.yScale(yValueExtent[1])]
+    if (pixelY < yPixelExtent[1] || pixelY > yPixelExtent[0]) {
       currentY = this.data.getSeriesCount()
     }
   }
