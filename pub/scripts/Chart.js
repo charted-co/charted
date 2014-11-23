@@ -371,7 +371,7 @@ Chart.prototype.bindInteractions = function () {
 Chart.prototype.handleMouseover = function(pixel) {
   // show the options
   this.$container.addClass('active')
-  $('body').addClass('active')
+  $('body').addClass('page-active')
   clearTimeout(this.mouseTimer)
   this.mouseTimer = setTimeout(function () {
     if (! this.$optionsElem.is(':hover') && ! this.$chartDescription.is(':hover') && ! this.$pageSettings.is(':hover')) {
