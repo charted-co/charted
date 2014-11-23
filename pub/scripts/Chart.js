@@ -175,9 +175,9 @@ Chart.prototype.applyChartColors = function () {
   var _this = this
   this.layers.each(function (yLabel) {
     var layer = d3.select(this)
-    layer.selectAll('.line, .end-dot')
+    layer.selectAll('.line')
       .attr('stroke', _this.colorFn(yLabel))
-    layer.selectAll('.column, .selected-column, .selected-dot')
+    layer.selectAll('.column, .selected-column, .selected-dot, .end-dot')
       .attr('fill', _this.colorFn(yLabel))
   })
 }
