@@ -31,7 +31,6 @@ PageController.prototype.setupPage = function (urlParameters) {
   this.parameters.dataUrl = this.prepareDataUrl(this.parameters.dataUrl)
   this.parameters.charts = this.parameters.charts || [{}]
   this.clearExisting()
-  this.setupPageSettings()
 
   // populate charts and refresh every 30 minutes
   this.resetCharts()
@@ -85,6 +84,7 @@ PageController.prototype.setupPageSettings = function () {
 
 PageController.prototype.resetCharts = function () {
   this.fetchData(this.parameters.dataUrl, function (data) {
+    this.setupPageSettings()
     this.data = data
 
     // set first title
