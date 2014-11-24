@@ -10,7 +10,7 @@ $(function () {
     if($dataInput.val()) {
       pageController.setupPage({dataUrl: $dataInput.val()})
     } else {
-      var emptyInputError = new Error('You’ll need to paste in the URL to a .csv file or Google Spreadhseet first.')
+      var emptyInputError = new Error('You’ll need to paste in the URL to a .csv file or Google Spreadsheet first.')
       pageController.errorNotify(emptyInputError)
     }
   })
