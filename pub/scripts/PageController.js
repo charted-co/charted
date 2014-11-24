@@ -456,12 +456,12 @@ PageController.prototype.useUrl = function () {
 
 PageController.prototype.prepareDataUrl = function (url) {
   // Prepare Google Spreadsheets url
-  if (url.indexOf('https://docs.google.com/spreadsheets/d/') === 0) {
+  if (url.indexOf('https://docs.google.com/') === 0 && url.indexOf('spreadsheets/d/') != 1) {
     // the gid is the specific sheet within the document
     var gid = url.indexOf('gid=') >= 0 ? url.substring(url.indexOf('gid=') + 4) : 0
 
     // the structure should be: "https://docs.google.com/spreadsheets/d/[Doc_ID]/export?gid=[gid]&format=csv
-    url = url.substring(0, url.indexOf('/', 39)) + '/export'
+    url = url.substring(0, url.indexOf('/', url.indexOf('spreadsheets/d/') + 15)) + '/export'
     url = Utils.addParamToUrl(url, 'gid', gid)
     url = Utils.addParamToUrl(url, 'format', 'csv')
     return url
