@@ -1,7 +1,7 @@
 # Charted
 Charted is a tool for automatically visualizing data, created by the
 Product Science team at [Medium](https://medium.com/). Provide the
-URL to a data file and Charted returns a beautiful, interactive,
+link to a data file and Charted returns a beautiful, interactive,
 and shareable chart of the data. Charted is deliberately sparse in
 formatting and data transformation options, and instead gives you
 a few powerful core features:
@@ -19,7 +19,7 @@ data points along the x-axis.
 ## Supported files
 Charted currently supports csv files (including links to csv files on
 Dropbox) and Google Spreadsheets. The settings for Dropbox links and
-Google Spreadsheets must both be set to publically shareable.
+Google Spreadsheets must both be set to publicly shareable.
 
 ## Running Charted
 To try Charted out, simply download the repo and run `npm install`
