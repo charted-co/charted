@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Medium/charted.git"
+    "url": "git@github.com:mikesall/charted.git"
   },
   "keywords": [
     "charts"
@@ -18,7 +18,7 @@
   "author": "Mike Sall <mike@medium.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Medium/charted/issues"
+    "url": "https://github.com/mikesall/charted/issues"
   },
   "dependencies": {
     "less": "1.7.x",
@@ -26,5 +26,5 @@
     "jshint": "2.5.x",
     "request": "2.47.x"
   },
-  "homepage": "https://github.com/Medium/charted"
+  "homepage": "http://www.charted.co/"
 }
