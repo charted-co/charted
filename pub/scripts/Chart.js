@@ -377,7 +377,7 @@ Chart.prototype.handleMouseover = function(pixel) {
   this.mouseTimer = setTimeout(function () {
     if (! this.$optionsElem.is(':hover') && ! this.$chartDescription.is(':hover') && ! this.$pageSettings.is(':hover')) {
       this.$container.removeClass('active')
-      $('body').removeClass('active')
+      $('body').removeClass('page-active')
       this.$pageSettings.removeClass('open')
     }
   }.bind(this), 1000)
