@@ -25,3 +25,9 @@ Google Spreadsheets must both be set to publicly shareable.
 To try Charted out, simply download the repo and run `npm install`
 to install dependencies. After that you will be able to run
 `npm start`. This will start a server at localhost:3000.
+
+You can also run Charted via _docker_ by running
+`docker build -t charted .` in the repo to build the container. You
+will them be able to run the container using
+`docker run -p 3000:3000 charted`. Server will be accessible at 
+localhost:3000
