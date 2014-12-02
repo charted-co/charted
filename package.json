@@ -1,6 +1,6 @@
 {
   "name": "charted",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A charting library from Medium",
   "main": "index.js",
   "scripts": {
