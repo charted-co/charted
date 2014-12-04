@@ -27,6 +27,7 @@ function PageController () {
 
 PageController.prototype.setupPage = function (urlParameters) {
   this.$body.addClass('loading')
+  this.updatePageTitle('Charted (...)')
   this.parameters = urlParameters
   this.parameters.dataUrl = this.prepareDataUrl(this.parameters.dataUrl)
   this.parameters.charts = this.parameters.charts || [{}]
@@ -100,7 +101,7 @@ PageController.prototype.resetCharts = function () {
     }.bind(this))
 
     this.setDimensions()
-    this.setUrl()
+    this.updatePageState()
   }.bind(this))
 }
 
@@ -202,7 +203,7 @@ PageController.prototype.moveToChart = function (series, fromChartIndex, toChart
   }
 
   this.setDimensions()
-  this.setUrl()
+  this.updatePageState()
 }
 
 
@@ -294,7 +295,7 @@ PageController.prototype.toggleColor = function () {
   this.chartObjects.forEach(function (chart) {
     chart.render()
   })
-  this.setUrl()
+  this.updatePageState()
 }
 
 
@@ -374,6 +375,7 @@ PageController.prototype.errorNotify = function (error) {
   /*jshint devel:true */
 
   this.$body.addClass('error').removeClass('loading')
+  this.updatePageTitle()
   var displayMessage = error.message || 'There’s been an error. Please check that you are using a valid .csv file. If you are using a Google Spreadsheet or Dropbox link, the privacy setting must be set to shareable.'
   $('.error-message').html(displayMessage)
 
@@ -383,10 +385,41 @@ PageController.prototype.errorNotify = function (error) {
 }
 
 
-PageController.prototype.setUrl = function () {
+PageController.prototype.updatePageState = function () {
+  //update page title
+  this.updatePageTitle()
+
+  // set url
   var minParams = this.getMinParams()
   var url = '?' + encodeURIComponent(JSON.stringify(minParams))
   window.history.pushState(null, null, url)
+}
+
+
+PageController.prototype.updatePageTitle = function (pageTitleString) {
+  var pageTitle = 'Charted'
+  var charts = [{}]
+  if (this.parameters && this.parameters.charts) {
+    charts = this.parameters.charts
+  }
+
+  if (pageTitleString) {
+    pageTitle = pageTitleString
+  } else if (charts.length > 0) {
+    // if there's a chart, use the chart titles
+    pageTitle = charts.map(function (chart, i) {
+      return chart.title || this.getDefaultTitle(i)
+    }.bind(this)).join(', ')
+
+    // if it's just one chart called "Chart", add the series names
+    if (pageTitle === 'Chart') {
+      pageTitle += ' of ' + charts[0].series.map(function (series) {
+        return this.getSeriesName(series)
+      }.bind(this)).join(', ')
+    }
+  }
+
+  document.title = pageTitle
 }
 
 
@@ -449,7 +482,7 @@ PageController.prototype.useUrl = function () {
   urlParameters.dataUrl = urlParameters.csvUrl || urlParameters.dataUrl
 
   if (!urlParameters.dataUrl) return
-  $('.data-input').val(urlParameters.dataUrl)
+  $('.data-file-input').val(urlParameters.dataUrl)
   this.setupPage(urlParameters)
 }
 

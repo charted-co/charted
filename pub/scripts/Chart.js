@@ -344,7 +344,7 @@ Chart.prototype.bindInteractions = function () {
       var options = this.pageController.OPTIONS[option]
       this.params[option] = this.params[option] === options[0] ? options[1] : options[0]
       this.render()
-      this.pageController.setUrl()
+      this.pageController.updatePageState()
     }.bind(this))
   }.bind(this))
 
@@ -359,7 +359,7 @@ Chart.prototype.bindInteractions = function () {
         this.params[item] = $elem.text()
         this.updateEditablePlaceholder(item)
       }
-      this.pageController.setUrl()
+      this.pageController.updatePageState()
     }.bind(this))
   }.bind(this))
 
