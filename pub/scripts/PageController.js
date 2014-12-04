@@ -482,7 +482,7 @@ PageController.prototype.useUrl = function () {
   urlParameters.dataUrl = urlParameters.csvUrl || urlParameters.dataUrl
 
   if (!urlParameters.dataUrl) return
-  $('.data-input').val(urlParameters.dataUrl)
+  $('.data-file-input').val(urlParameters.dataUrl)
   this.setupPage(urlParameters)
 }
 
