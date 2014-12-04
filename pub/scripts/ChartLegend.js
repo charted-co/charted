@@ -40,7 +40,7 @@ ChartLegend.prototype.bindLegendInteractions = function () {
       } else {
         seriesNames[series.seriesIndex] = $legendInput.text()
       }
-      this.controller.setUrl()
+      this.controller.updatePageState()
     }.bind(this))
 
     // open move-chart popover
