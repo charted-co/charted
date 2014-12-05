@@ -1,0 +1,6 @@
+{
+  "name": "charted",
+  "description": "A charting library from Medium",
+  "repository": "https://github.com/mikesall/charted",
+  "keywords": ["node", "express", "static", "charts"]
+}
