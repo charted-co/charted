@@ -398,7 +398,7 @@ PageController.prototype.updatePageState = function () {
 
 PageController.prototype.updatePageTitle = function (pageTitleString) {
   var pageTitle = 'Charted'
-  var charts = [{}]
+  var charts = []
   if (this.parameters && this.parameters.charts) {
     charts = this.parameters.charts
   }
