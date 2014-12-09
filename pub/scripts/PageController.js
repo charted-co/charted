@@ -392,7 +392,11 @@ PageController.prototype.updatePageState = function () {
   // set url
   var minParams = this.getMinParams()
   var url = '?' + encodeURIComponent(JSON.stringify(minParams))
-  window.history.pushState(null, null, url)
+
+  // only push a new state if the new url differs from the current url
+  if (window.location.search !== url) {
+    window.history.pushState(null, null, url)
+  }
 }
 
 
@@ -481,7 +485,13 @@ PageController.prototype.useUrl = function () {
   // support prior csvUrl parameter
   urlParameters.dataUrl = urlParameters.csvUrl || urlParameters.dataUrl
 
-  if (!urlParameters.dataUrl) return
+  // handle the state change from chart -> pre-load
+  if (!urlParameters.dataUrl) {
+    this.clearExisting()
+    this.$body.addClass('pre-load')
+    return
+  }
+
   $('.data-file-input').val(urlParameters.dataUrl)
   this.setupPage(urlParameters)
 }
