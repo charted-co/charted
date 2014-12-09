@@ -420,7 +420,7 @@ Chart.prototype.getClosestPoint = function(pixel) {
     // determine if position is over a y series stack, else show the total
     var yValueExtent = this.data.getStackedExtentForIndex(currentX)
     var yPixelExtent = [this.yScale(yValueExtent[0]), this.yScale(yValueExtent[1])]
-    if (pixelY < yPixelExtent[1] || pixelY > yPixelExtent[0]) {
+    if (pixelY <= yPixelExtent[1] || pixelY > yPixelExtent[0]) {
       currentY = this.data.getSeriesCount()
     }
   }
