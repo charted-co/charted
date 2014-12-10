@@ -15,5 +15,7 @@ $(function () {
     }
   })
 
-  $(window).on('popstate', pageController.useUrl())
+  // parse the url on page load and every state change
+  pageController.useUrl()
+  $(window).on('popstate', pageController.useUrl.bind(pageController))
 })
