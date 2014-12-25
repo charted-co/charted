@@ -21,6 +21,7 @@ app.get('/get', function (req, res) {
       return
     }
 
+    res.set('Content-Type', 'text/plain')
     res.status(200).send(body)
   })
 })
