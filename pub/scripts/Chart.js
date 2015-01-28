@@ -144,7 +144,7 @@ Chart.prototype.updateSizes = function () {
   this.xScale.range([this.margin.left, (this.width - this.margin.right - this.margin.left)])
   this.yScale.range([this.height - this.margin.bottom, this.margin.top])
   this.xEndEdge = this.$xEnd.offset().left - this.$plot.offset().left
-  this.xBegEdge = this.$xBeg.offset().left - this.$plot.offset().left + this.$xEnd.width()
+  this.xBegEdge = this.$xBeg.offset().left - this.$plot.offset().left + this.$xBeg.width()
 }
 
 Chart.prototype.render = function () {
