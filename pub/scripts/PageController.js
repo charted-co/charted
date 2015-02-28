@@ -534,7 +534,7 @@ PageController.prototype.pageSettingsHTML = function () {
   template += '      <div class="data-url info-input" contenteditable="true"></div>'
   template += '      <button type="submit" class="update-data-url">Save</button>'
   template += '    </div>'
-  template += '    <a href="/" class="page-option-item go-home"><span class="icon icon-back"></span>Charted home</a>'
+  template += '    <a href="." class="page-option-item go-home"><span class="icon icon-back"></span>Charted home</a>'
   template += '  </div>'
   template += '</div>'
   return _.template(template)
