@@ -9,7 +9,7 @@ function PageData(dataUrl, callback) {
 }
 
 PageData.prototype.fetchData = function () {
-  var url = '/get/?url=' + encodeURIComponent(this.dataUrl)
+  var url = 'get/?url=' + encodeURIComponent(this.dataUrl)
   d3.text(url, function (error, fileString) {
     if (error) {
       return this.callback(error, null)

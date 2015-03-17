@@ -1,12 +1,13 @@
 {
-  "name": "charted",
-  "version": "0.1.1",
-  "description": "A charting library from Medium",
-  "main": "index.js",
+  "name": "chartedjs",
+  "version": "0.2.0",
+  "description": "A charting library originally created by the Product Science team at Medium",
+  "main": "lib/charted.js",
   "scripts": {
+    "postinstall": "lessc less/charted.less pub/charted.css",
     "prestart": "lessc less/charted.less pub/charted.css",
     "start": "node index.js",
-    "test": "jshint index.js && jshint pub/scripts/*.js && echo 'Lint OK'"
+    "test": "jshint index.js && jshint lib/*.js && jshint pub/scripts/*.js && echo 'Lint OK'"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
     "less": "1.7.x",
     "express": "4.10.x",
     "jshint": "2.5.x",
-    "request": "2.47.x"
+    "request": "2.47.x",
+    "serve-static": "~1.7.2"
   },
   "homepage": "http://www.charted.co/"
 }
