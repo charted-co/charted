@@ -1,6 +1,6 @@
 {
   "name": "chartedjs",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "A charting library originally created by the Product Science team at Medium",
   "main": "lib/charted.js",
   "scripts": {
