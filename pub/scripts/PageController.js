@@ -238,7 +238,9 @@ PageController.prototype.getFullParams = function (chartIndex) {
 
 PageController.prototype.getDefaultTitle = function (chartIndex) {
   var series = this.parameters.charts[chartIndex].series
-  if (series.length === 1) {
+  if (!series) {
+    return 'Charted'
+  } else if (series.length === 1) {
     return this.getSeriesName(series[0])
   }
   var earlierCharts = this.parameters.charts.filter(function (chart, i) {

@@ -1,6 +1,6 @@
 {
   "name": "chartedjs",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "description": "A charting library originally created by the Product Science team at Medium",
   "main": "lib/charted.js",
   "scripts": {
@@ -22,9 +22,10 @@
     "url": "https://github.com/mikesall/charted/issues"
   },
   "dependencies": {
-    "less": "1.7.x",
+    "connect": "^3.3.5",
     "express": "4.10.x",
     "jshint": "2.5.x",
+    "less": "1.7.x",
     "request": "2.47.x",
     "serve-static": "~1.7.2"
   },
