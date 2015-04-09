@@ -484,7 +484,8 @@ PageController.prototype.getMinParams = function () {
 PageController.prototype.useUrl = function () {
   var urlParameters = Utils.getUrlParameters()
 
-  // support prior csvUrl parameter
+  // support prior csvUrl parameter and array format
+  urlParameters = (urlParameters instanceof Array) ? urlParameters[0] : urlParameters
   urlParameters.dataUrl = urlParameters.csvUrl || urlParameters.dataUrl
 
   // handle the state change from chart -> pre-load
