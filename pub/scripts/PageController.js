@@ -22,15 +22,25 @@ function PageController () {
       this.setDimensions()
     }.bind(this), 30)
   }.bind(this))
+
+  // setup keystrokes
+  $(document).keyup(function(e) {
+    if (e.keyCode == 27) {
+      $('.overlay-container').remove()
+      $('.page-settings').removeClass('open')
+
+    }
+  })
 }
 
 
-PageController.prototype.setupPage = function (urlParameters) {
+PageController.prototype.setupPage = function (parameters) {
   this.$body.addClass('loading')
   this.updatePageTitle('Charted (...)')
-  this.parameters = urlParameters
+  this.parameters = parameters
   this.parameters.dataUrl = this.prepareDataUrl(this.parameters.dataUrl)
   this.parameters.charts = this.parameters.charts || [{}]
+  this.parameters.embed = this.parameters.embed || false
   this.clearExisting()
 
   // populate charts and refresh every 30 minutes
@@ -49,6 +59,9 @@ PageController.prototype.clearExisting = function () {
 
 
 PageController.prototype.setupPageSettings = function () {
+  // if this is an embed, don't add the page settings
+  if (this.parameters.embed === true) return
+
   // populate UI
   this.$body.append(this.pageSettingsHTML())
   var $pageSettings = this.$body.find('.page-settings')
@@ -56,8 +69,6 @@ PageController.prototype.setupPageSettings = function () {
   $('.download-data').attr('href', this.parameters.dataUrl)
   $('.data-url').text(this.parameters.dataUrl)
 
-   // set background color
-  this.applyColor()
 
   // bind intereactions
   $pageSettings.find('.settings').click(function (event) {
@@ -77,6 +88,10 @@ PageController.prototype.setupPageSettings = function () {
     this.toggleColor()
   }.bind(this))
 
+  $pageSettings.find('.get-embed').click(function () {
+    this.getEmbed()
+  }.bind(this))
+
   $pageSettings.find('.update-data-url').click(function () {
     this.setupPage({dataUrl: $('.data-url').text()})
   }.bind(this))
@@ -85,6 +100,12 @@ PageController.prototype.setupPageSettings = function () {
 
 PageController.prototype.resetCharts = function () {
   this.fetchData(this.parameters.dataUrl, function (data) {
+    // set background color
+    this.applyColor()
+
+    // set embed style
+    this.applyEmbed()
+
     this.setupPageSettings()
     this.data = data
 
@@ -302,7 +323,7 @@ PageController.prototype.toggleColor = function () {
 
 
 PageController.prototype.applyColor = function () {
-  if (this.parameters.color == this.DARK) {
+  if (this.parameters.color === this.DARK) {
     this.$body.addClass(this.DARK)
   } else {
     this.$body.removeClass(this.DARK)
@@ -312,6 +333,38 @@ PageController.prototype.applyColor = function () {
 
 PageController.prototype.getPageColor = function () {
   return this.parameters.color
+}
+
+
+PageController.prototype.getEmbed = function () {
+  // var minDataParams = this.getMinDataParams()
+  var embedUrl = window.location.href + '&format=embed'
+  var iframeHTML = '<iframe src="' + embedUrl + '" height="600px" width="100%" scrolling="yes" style="padding: 0 10px"></iframe>'
+  var embedOverlayHTML = this.embedOverlayHTML({iframeHTML: iframeHTML})
+  this.$body.append(embedOverlayHTML)
+
+  this.$body.find('.overlay-content').click(function (event) {
+    event.stopPropagation()
+  })
+
+  this.$body.click(function () {
+    $('.overlay-container').remove()
+  })
+
+}
+
+
+PageController.prototype.applyEmbed = function () {
+  if (this.parameters.embed === true) {
+    this.$body.addClass('embed')
+  } else {
+    this.$body.removeClass('embed')
+  }
+}
+
+
+PageController.prototype.getEditability = function () {
+  return !this.parameters.embed
 }
 
 
@@ -392,8 +445,9 @@ PageController.prototype.updatePageState = function () {
   this.updatePageTitle()
 
   // set url
-  var minParams = this.getMinParams()
-  var url = '?' + encodeURIComponent(JSON.stringify(minParams))
+  var minDataParams = this.getMinDataParams()
+  var embedString = this.parameters.embed ? '&format=embed' : ''
+  var url = '?' + encodeURIComponent(JSON.stringify(minDataParams)) + embedString
 
   // only push a new state if the new url differs from the current url
   if (window.location.search !== url) {
@@ -429,7 +483,7 @@ PageController.prototype.updatePageTitle = function (pageTitleString) {
 }
 
 
-PageController.prototype.getMinParams = function () {
+PageController.prototype.getMinDataParams = function () {
   var minParams = {}
   minParams.dataUrl = this.parameters.dataUrl
 
@@ -483,20 +537,24 @@ PageController.prototype.getMinParams = function () {
 
 PageController.prototype.useUrl = function () {
   var urlParameters = Utils.getUrlParameters()
+  var parameters = urlParameters.data || {}
 
   // support prior csvUrl parameter and array format
-  urlParameters = (urlParameters instanceof Array) ? urlParameters[0] : urlParameters
-  urlParameters.dataUrl = urlParameters.csvUrl || urlParameters.dataUrl
+  parameters = (parameters instanceof Array) ? parameters[0] : parameters
+  parameters.dataUrl = parameters.csvUrl || parameters.dataUrl
+
+  // add embed value
+  parameters.embed = urlParameters.format === "embed" ? true : false
 
   // handle the state change from chart -> pre-load
-  if (!urlParameters.dataUrl) {
+  if (!parameters.dataUrl) {
     this.clearExisting()
     this.$body.addClass('pre-load')
     return
   }
 
-  $('.data-file-input').val(urlParameters.dataUrl)
-  this.setupPage(urlParameters)
+  $('.data-file-input').val(parameters.dataUrl)
+  this.setupPage(parameters)
 }
 
 
@@ -522,7 +580,6 @@ PageController.prototype.prepareDataUrl = function (url) {
   return url
 }
 
-
 PageController.prototype.pageSettingsHTML = function () {
   var template = ''
   template += '<div class="page-settings">'
@@ -531,6 +588,7 @@ PageController.prototype.pageSettingsHTML = function () {
   template += '    <div class="page-options">'
   template += '      <a class="page-option-item download-data" title="Download data"><span class="icon icon-download"></span>Download data</a>'
   template += '      <button class="page-option-item toggle-color" title="Switch background color"><span class="icon icon-color"></span>Switch background</button>'
+  template += '      <button class="page-option-item get-embed" title="Get embed code"><span class="icon icon-embed"></span>Get embed code</button>'
   template += '    </div>'
   template += '    <div class="data-source">'
   template += '      <p>Data File:</p>'
@@ -542,3 +600,19 @@ PageController.prototype.pageSettingsHTML = function () {
   template += '</div>'
   return _.template(template)
 }
+
+
+PageController.prototype.embedOverlayHTML = function (params) {
+  var template = ''
+  template += '<div class="overlay-container">'
+  template += '  <div class="overlay-content">'
+  template += '    <h1 class="overlay-title">Embed this Charted page</h1>'
+  template += '    <p class="overlay-description">You can add this embed to your website by copying and pasting the HTML code below.</p>'
+  template += '    <input class="embed-link" value="<%- iframeHTML %>">'
+  template += '    <div class="iframe-container"><%= iframeHTML %></div>'
+  template += '  </div>'
+  template += '  <div class="overlay-close"><span class="icon icon-x"></span></div>'
+  template += '</div>'
+  return _.template(template, params)
+}
+

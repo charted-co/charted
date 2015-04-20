@@ -1,0 +1,78 @@
+.overlay-container{
+	background-color: rgba(255, 255, 255, 0.96);
+	bottom: 0;
+	left: 0;
+	overflow-y: scroll;
+	position: fixed;
+	right: 0;
+	text-align: center;
+	top: 0;
+	z-index: 10;
+}
+.overlay-content{
+	margin: 0 auto;
+	max-width: 760px;
+	padding: 40px 10px;
+	width: 100%;
+}
+.overlay-title{
+	color: @gray-darker;
+	font-size: @fontSize-larger;
+	margin: 0 auto 20px;
+	max-width: 500px;
+}
+.overlay-description{
+	color: @gray;
+	font-size: @fontSize-base;
+	line-height: @lineHeight-tight;
+	margin: 0 auto;
+	max-width: 500px;
+}
+.overlay-close{
+  .transition(all 0.2s ease);
+	cursor: pointer;
+	opacity: 0.6;
+	position: absolute;
+	right: 12px;
+	top: 12px;
+}
+.overlay-close:hover{
+	opacity: 1;
+}
+.overlay-close .icon{
+	display: inline-block;
+	height: 26px;
+	width: 26px;
+}
+.iframe-container{
+	.border-radius(4px);
+	background-color: white;
+	border: 1px solid @gray-light;
+}
+.embed-link{
+	.border-radius(4px);
+	.m-fontSans400();
+	background-color: white;
+	border: 1px solid @gray-light;
+	color: @gray-dark;
+	font-size: @fontSize-base;
+	margin: 40px 0 30px;
+	overflow: hidden;
+	padding: 18px 20px;
+	resize: none;
+	width: 100%;
+}
+
+@media screen and (min-width: @width-tablet) {
+	.overlay-content{
+		padding: 80px 10px;
+	}
+	.overlay-close{
+		right: 20px;
+		top: 20px;
+	}
+	.overlay-close .icon{
+		height: 40px;
+		width: 40px;
+	}
+}

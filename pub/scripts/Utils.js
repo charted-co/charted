@@ -8,7 +8,20 @@ Utils.log10Floor = function (val) {
 
 Utils.getUrlParameters = function () {
   var string = window.location.search.slice(1)
-  return string ? JSON.parse(decodeURIComponent(string)) : []
+  if (!string) return []
+
+  var queries = string.split("&")
+  var params = {}
+  queries.forEach(function (query) {
+    var pair = query.split("=")
+    if (pair.length === 1) {
+      params.data = JSON.parse(decodeURIComponent(pair[0]))
+    } else {
+      params[pair[0]] = pair[1]
+    }
+  })
+
+  return params
 }
 
 Utils.addParamToUrl = function (url, paramName, paramValue) {
