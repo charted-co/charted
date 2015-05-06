@@ -118,9 +118,11 @@ Utils.getTrimmedExtent = function (array) {
   var lastNonEmptyItem = 0
 
   array.forEach(function (value, i) {
-    if (value === '' && i === firstNonEmptyItem) {
+    var isEmpty = !value || value.toLowerCase() === 'null'
+
+    if (isEmpty && i === firstNonEmptyItem) {
       firstNonEmptyItem = i + 1
-    } else if (value !== '') {
+    } else if (!isEmpty) {
       lastNonEmptyItem = i
     }
   })
