@@ -18,13 +18,20 @@ ChartLegend.prototype.update = function() {
   var $legend = $('')
   _(this.data.getSerieses()).eachRight(function (series, i) {
     var label = this.controller.getSeriesName(this.series[i])
-    var thisLabel = {label: label, color: this.chart.colorFn(series.label)}
+    var thisLabel = {
+      label: label,
+      color: this.chart.colorFn(series.label),
+      editable: this.controller.getEditability()
+    }
     var $legendEl = $(this.legendItemHTML(thisLabel))
     $legend = $legend.add($legendEl)
     series.legendEl = $legendEl
   }.bind(this))
   this.$container.find('.legend').html($legend).removeClass('hidden')
-  this.bindLegendInteractions()
+
+  if (this.controller.getEditability()) {
+    this.bindLegendInteractions()  
+  }
 }
 
 ChartLegend.prototype.bindLegendInteractions = function () {
@@ -90,11 +97,13 @@ ChartLegend.prototype.bindLegendInteractions = function () {
 ChartLegend.prototype.legendItemHTML = function(label) {
   var template = ''
   template +='<li class="legend-item">'
-  template +='  <div class="legend-label">'
-  template +='    <span class="legend-input" contenteditable="true"><%- label %></span>'
+  template +='  <div class="legend-label info-input">'
+  template +='    <span class="legend-input" <% if (editable) {%> contenteditable="true" <%}%> ><%- label %></span>'
   template +='    <span style="background-color:<%- color %>;" class="legend-box"></span>'
   template +='  </div>'
-  template +='  <button class="move-chart"><span class="icon icon-move"></span></button>'
+  template +='  <% if (editable) { %>'
+  template +='    <button class="move-chart"><span class="icon icon-move"></span></button>'
+  template +='  <% } %>'
   template +='</li>'
   return _.template(template, label)
 }

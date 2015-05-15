@@ -5,7 +5,10 @@ function Chart(pageController, chartIndex, $wrapper, params, data) {
   this.$wrapper = $wrapper
 
   // create initial HTML
-  this.$wrapper.html(this.chartHTML())
+  var chartHtmlParameters = {
+    editable: pageController.getEditability()
+  }
+  this.$wrapper.html(this.chartHTML(chartHtmlParameters))
 
   // cache elements
   this.$container = $wrapper.find('.chart').first()
@@ -463,8 +466,8 @@ Chart.prototype.chartHTML = function (parameters) {
   var template = ''
   template +='<div class="chart show-columns">'
   template +='  <div class="chart-description">'
-  template +='    <h1 class="title info-input" contenteditable="true"></h1>'
-  template +='    <div class="note info-input" contenteditable="true"></div>'
+  template +='    <h1 class="title info-input" <% if (editable) {%> contenteditable="true" <%}%> ></h1>'
+  template +='    <div class="note info-input" <% if (editable) {%> contenteditable="true" <%}%> ></div>'
   template +='  </div>'
   template +='  <div class="chart-plot-outer-container">'
   template +='    <div class="chart-plot-inner-container">'
@@ -483,16 +486,18 @@ Chart.prototype.chartHTML = function (parameters) {
   template +='  </div>'
   template +='  <aside class="chart-info">'
   template +='    <ul class="legend hidden"></ul>'
-  template +='    <div class="chart-options">'
-  template +='      <a class="option-item toggle-type" href="#" title="Switch chart type">'
-  template +='        <span class="icon icon-line"></span>'
-  template +='        <span class="icon icon-column"></span>'
-  template +='      </a>'
-  template +='      <a class="option-item toggle-rounding" href="#" title="Turn rounding on/off">'
-  template +='        <span class="icon icon-round-off"></span>'
-  template +='        <span class="icon icon-round-on"></span>'
-  template +='      </a>'
-  template +='    </div>'
+  template +='    <% if (editable) { %>'
+  template +='      <div class="chart-options">'
+  template +='        <a class="option-item toggle-type" href="#" title="Switch chart type">'
+  template +='          <span class="icon icon-line"></span>'
+  template +='          <span class="icon icon-column"></span>'
+  template +='        </a>'
+  template +='        <a class="option-item toggle-rounding" href="#" title="Turn rounding on/off">'
+  template +='          <span class="icon icon-round-off"></span>'
+  template +='          <span class="icon icon-round-on"></span>'
+  template +='        </a>'
+  template +='      </div>'
+  template +='    <% } %>'
   template +='  </aside>'
   template +='</div>'
   return _.template(template, parameters)

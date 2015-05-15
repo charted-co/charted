@@ -13,7 +13,6 @@
   .border-radius(4px);
   .transitionMultiple(background-color 0.3s ease, opacity 0.2s ease);
   overflow: hidden;
-  padding: 8px;
 }
 .info-input:hover,
 .info-input:focus{
@@ -23,19 +22,23 @@
 .dark .info-input:focus{
   background-color: @gray-darker;
 }
-.dark .info-input::before{
-  color: @gray-dark;
-  opacity: 1;
+.embed .info-input:hover,
+.embed .info-input:focus,
+.dark.embed .info-input:hover,
+.dark.embed .info-input:focus{
+  background-color: transparent;
 }
 .title{
   color: @gray-darker;
   font-size: @fontSize-large;
+  padding: 8px;
 }
 .dark .title{
   color: white;
 }
 .note{
   color: @gray;
+  padding: 8px;
 }
 .dark .note{
   color: @gray-dark;
@@ -82,6 +85,9 @@
   }
   .empty.note{
     display: block;
+  }
+  .embed .empty.note{
+    display: none;
   }
 }
 
