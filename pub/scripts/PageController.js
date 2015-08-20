@@ -451,7 +451,7 @@ PageController.prototype.updatePageState = function () {
 
   // only push a new state if the new url differs from the current url
   if (window.location.search !== url) {
-    window.history.pushState(null, null, url)
+    window.history.pushState({isChartUpdate: true}, null, url)
   }
 }
 

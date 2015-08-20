@@ -17,5 +17,13 @@ $(function () {
 
   // parse the url on page load and every state change
   pageController.useUrl()
-  $(window).on('popstate', pageController.useUrl.bind(pageController))
+
+  $(window).on('popstate', function (ev) {
+    // Safari and some earlier versions of Chrome fire 'popstate' on
+    // page load so here we make sure that it was actually us who
+    // initiated the state change.
+    if (!ev.state.isChartUpdate) {
+      pageController.useUrl()
+    }
+  })
 })
