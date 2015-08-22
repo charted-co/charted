@@ -43,11 +43,15 @@ PageController.prototype.setupPage = function (parameters) {
   this.parameters.embed = this.parameters.embed || false
   this.clearExisting()
 
-  // populate charts and refresh every 30 minutes
+  // populate charts and refresh every 30 minutes,
+  // unless this is an embed.
   this.resetCharts()
-  setInterval(function () {
-    this.resetCharts()
-  }.bind(this), 1000 * 60 * 30)
+
+  if (!this.parameters.embed) {
+    setInterval(function () {
+      this.resetCharts()
+    }.bind(this), 1000 * 60 * 30)
+  }
 }
 
 
@@ -337,9 +341,8 @@ PageController.prototype.getPageColor = function () {
 
 
 PageController.prototype.getEmbed = function () {
-  // var minDataParams = this.getMinDataParams()
   var embedUrl = window.location.href + '&format=embed'
-  var iframeHTML = '<iframe src="' + embedUrl + '" height="600px" width="100%" scrolling="yes" style="padding: 0 10px"></iframe>'
+  var iframeHTML = '<iframe src="' + embedUrl + '" height="600px" width="100%" scrolling="yes" style="border: solid 1px #ccc"></iframe>'
   var embedOverlayHTML = this.embedOverlayHTML({iframeHTML: iframeHTML})
   this.$body.append(embedOverlayHTML)
 
@@ -544,7 +547,7 @@ PageController.prototype.useUrl = function () {
   parameters.dataUrl = parameters.csvUrl || parameters.dataUrl
 
   // add embed value
-  parameters.embed = urlParameters.format === "embed" ? true : false
+  parameters.embed = urlParameters.format === "embed"
 
   // handle the state change from chart -> pre-load
   if (!parameters.dataUrl) {
