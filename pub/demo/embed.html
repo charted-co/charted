@@ -1,0 +1,71 @@
+<!doctype html>
+
+<style>
+  body {
+    padding: 10px 20px;
+  }
+
+  h1 {
+    font-size: 25pt;
+    font-family: Helvetica, Arial, Sans-Serif;
+    font-weight: normal;
+    margin: 0 0 10px 0;
+    color: #666666;
+  }
+
+  p {
+    font-size: 12pt;
+    font-family: Helvetica, Arial, Sans-Serif;
+    font-weight: normal;
+    margin: 0;
+  }
+
+  a, button {
+    color: #666666;
+    text-decoration: none;
+    font-size: 12pt;
+    font-family: Helvetica, Arial, Sans-Serif;
+    cursor: pointer;
+  }
+
+  a:hover {
+    color: #232322;
+  }
+
+  button {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+  }
+
+  iframe {
+    margin-top: 40px;
+  }
+
+  .divider {
+    display: inline-block;
+    width: 25px;
+  }
+</style>
+
+<script>
+  function resize(width) {
+    var iframe = document.querySelector('iframe')
+    iframe.style.width = width ? width + 'px' : '100%';
+  }
+</script>
+
+<title>Charted embed demo</title>
+
+<h1>Charted embed demo</h1>
+<p>
+  go: <a href="/">homepage</a>
+  <span class="divider"></span>
+  resize:
+  <button onclick="resize(500)">500px</button> ·
+  <button onclick="resize()">100%</button>
+</p>
+
+<iframe id="charted:1657992187" src="http://localhost:3000/?%7B%22dataUrl%22%3A%22https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1PSaAXtklG4UyFm2lui5d4k_UNEO1laAMpzMWVh0FMTU%2Fexport%3Fgid%3D0%26format%3Dcsv%22%2C%22charts%22%3A%5B%7B%22title%22%3A%22An%20Example%20Chart%22%2C%22note%22%3A%22This%20is%20an%20example%20chart%20visualizing%20some%20fake%20data%22%7D%5D%7D&embed=1657992187" height="600px" width="100%" scrolling="yes" style="border: solid 1px #ccc"></iframe>
+<script src="http://localhost:3000/embed.js"></script>

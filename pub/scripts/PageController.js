@@ -40,14 +40,18 @@ PageController.prototype.setupPage = function (parameters) {
   this.parameters = parameters
   this.parameters.dataUrl = this.prepareDataUrl(this.parameters.dataUrl)
   this.parameters.charts = this.parameters.charts || [{}]
-  this.parameters.embed = this.parameters.embed || false
+  this.parameters.embed = this.parameters.embed || null
   this.clearExisting()
 
-  // populate charts and refresh every 30 minutes
+  // populate charts and refresh every 30 minutes,
+  // unless this is an embed.
   this.resetCharts()
-  setInterval(function () {
-    this.resetCharts()
-  }.bind(this), 1000 * 60 * 30)
+
+  if (!this.parameters.embed) {
+    setInterval(function () {
+      this.resetCharts()
+    }.bind(this), 1000 * 60 * 30)
+  }
 }
 
 
@@ -60,7 +64,7 @@ PageController.prototype.clearExisting = function () {
 
 PageController.prototype.setupPageSettings = function () {
   // if this is an embed, don't add the page settings
-  if (this.parameters.embed === true) return
+  if (this.parameters.embed) return
 
   // populate UI
   this.$body.append(this.pageSettingsHTML())
@@ -337,11 +341,14 @@ PageController.prototype.getPageColor = function () {
 
 
 PageController.prototype.getEmbed = function () {
-  // var minDataParams = this.getMinDataParams()
-  var embedUrl = window.location.href + '&format=embed'
-  var iframeHTML = '<iframe src="' + embedUrl + '" height="600px" width="100%" scrolling="yes" style="padding: 0 10px"></iframe>'
-  var embedOverlayHTML = this.embedOverlayHTML({iframeHTML: iframeHTML})
-  this.$body.append(embedOverlayHTML)
+  var embedId = this._getHashCode(window.location.href)
+  var embedUrl = window.location.href + '&embed=' + embedId
+
+  this.$body.append(this.embedOverlayHTML({
+    iframeHTML: '<iframe id="charted:' + embedId + '" src="' + embedUrl + '" '+
+        'height="600px" width="100%" scrolling="yes" style="border: solid 1px #ccc"></iframe>',
+    scriptHTML: '<script src="' + window.location.origin + '/embed.js"></script>'
+  }))
 
   this.$body.find('.overlay-content').click(function (event) {
     event.stopPropagation()
@@ -355,7 +362,7 @@ PageController.prototype.getEmbed = function () {
 
 
 PageController.prototype.applyEmbed = function () {
-  if (this.parameters.embed === true) {
+  if (this.parameters.embed) {
     this.$body.addClass('embed')
   } else {
     this.$body.removeClass('embed')
@@ -423,6 +430,20 @@ PageController.prototype.setDimensions = function () {
     }
     chart.render()
   })
+
+  this.maybeBroadcastDimensions()
+}
+
+
+PageController.prototype.maybeBroadcastDimensions = function () {
+  if (!this.parameters.embed) {
+    return
+  }
+
+  var message = this.parameters.embed + ':' + String(document.body.scrollHeight)
+  if (window.parent) {
+    window.parent.postMessage(message, '*' /* Any site can embed charted */)
+  }
 }
 
 
@@ -431,7 +452,10 @@ PageController.prototype.errorNotify = function (error) {
 
   this.$body.addClass('error').removeClass('loading')
   this.updatePageTitle()
-  var displayMessage = error.message || 'There’s been an error. Please check that you are using a valid .csv file. If you are using a Google Spreadsheet or Dropbox link, the privacy setting must be set to shareable.'
+  var displayMessage = error.message || 'There’s been an error. Please check that '+
+    'you are using a valid .csv file. If you are using a Google Spreadsheet or Dropbox '+
+    'link, the privacy setting must be set to shareable.'
+
   $('.error-message').html(displayMessage)
 
   if(error && error.reponseText) {
@@ -544,7 +568,7 @@ PageController.prototype.useUrl = function () {
   parameters.dataUrl = parameters.csvUrl || parameters.dataUrl
 
   // add embed value
-  parameters.embed = urlParameters.format === "embed" ? true : false
+  parameters.embed = urlParameters.embed
 
   // handle the state change from chart -> pre-load
   if (!parameters.dataUrl) {
@@ -608,11 +632,32 @@ PageController.prototype.embedOverlayHTML = function (params) {
   template += '  <div class="overlay-content">'
   template += '    <h1 class="overlay-title">Embed this Charted page</h1>'
   template += '    <p class="overlay-description">You can add this embed to your website by copying and pasting the HTML code below.</p>'
-  template += '    <input class="embed-link" value="<%- iframeHTML %>">'
+  template += '    <input class="embed-link" value="<%- iframeHTML %>\n<%- scriptHTML %>"/>'
   template += '    <div class="iframe-container"><%= iframeHTML %></div>'
   template += '  </div>'
   template += '  <div class="overlay-close"><span class="icon icon-x"></span></div>'
   template += '</div>'
   return _.template(template, params)
+}
+
+
+/**
+ * Converts a string into a hash code. A clone of Java's String.hashCode()
+ *
+ * @param {string} str
+ * @return {number}
+ */
+PageController.prototype._getHashCode = function (str) {
+  if (str.length == 0) {
+    return 0
+  }
+
+  var hash = 0
+  for (var i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i)
+    hash = hash & hash // convert to 32 bit integer
+  }
+
+  return hash
 }
 
