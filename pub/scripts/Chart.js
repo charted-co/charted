@@ -381,11 +381,21 @@ Chart.prototype.handleMouseover = function(pixel) {
   }
 
   this.mouseTimer = setTimeout(function () {
-    if (! this.$optionsElem.is(':hover') && ! this.$chartDescription.is(':hover') && ! this.$pageSettings.is(':hover')) {
-      this.$container.removeClass('active')
-      $('body').removeClass('page-active')
-      this.$pageSettings.removeClass('open')
+    if (this.$optionsElem.length && this.$optionsElem.is(':hover')) {
+      return
     }
+
+    if (this.$chartDescription.length && this.$chartDescription.is(':hover')) {
+      return
+    }
+
+    if (this.$pageSettings.length && this.$pageSettings.is(':hover')) {
+      return
+    }
+
+    this.$container.removeClass('active')
+    $('body').removeClass('page-active')
+    this.$pageSettings.removeClass('open')
   }.bind(this), 1000)
 
   // don't change the selection if mouseover is below the plot
