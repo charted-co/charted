@@ -1,3 +1,4 @@
 node_modules/
 pub/charted.css
 npm-debug.log
+.DS_Store

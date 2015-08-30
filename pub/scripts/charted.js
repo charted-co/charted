@@ -22,7 +22,7 @@ $(function () {
     // Safari and some earlier versions of Chrome fire 'popstate' on
     // page load so here we make sure that it was actually us who
     // initiated the state change.
-    if (!ev.state.isChartUpdate) {
+    if (!ev || !ev.state || !ev.state.isChartUpdate) {
       pageController.useUrl()
     }
   })

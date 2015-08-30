@@ -1,7 +1,8 @@
+.loading-embed-spinner,
 .pre-load .page-title,
 .pre-load .page-subtitle,
-.pre-load .load-data-form,
-.pre-load footer{
+.pre-load:not(.is-embed) .load-data-form,
+.pre-load:not(.is-embed) footer{
   display: block;
 }
 .page-title{
@@ -93,6 +94,15 @@
 }
 .loading .loading-spinner{
   display: block;
+}
+.loading-embed-spinner {
+  display: none;
+}
+.loading.is-embed .loading-embed-spinner {
+  display: block;
+}
+.loading.is-embed .loading-spinner-img {
+  margin: 50px auto;
 }
 .error .error-message{
   color: @red;
