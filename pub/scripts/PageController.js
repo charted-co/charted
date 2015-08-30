@@ -567,8 +567,12 @@ PageController.prototype.useUrl = function () {
   parameters = (parameters instanceof Array) ? parameters[0] : parameters
   parameters.dataUrl = parameters.csvUrl || parameters.dataUrl
 
-  // add embed value
-  parameters.embed = urlParameters.embed
+  // add embed values
+  if (urlParameters.embed) {
+    parameters.embed = urlParameters.embed
+    this.$body.addClass('is-embed')
+
+  }
 
   // handle the state change from chart -> pre-load
   if (!parameters.dataUrl) {
