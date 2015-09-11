@@ -3,6 +3,8 @@
 function PageController () {
   this.DARK = 'dark'
   this.LIGHT = 'light'
+  this.FULL = 'full'
+  this.SPLIT = 'split'
   this.chartObjects = []
 
   // default values are first
@@ -335,6 +337,29 @@ PageController.prototype.applyColor = function () {
 }
 
 
+PageController.prototype.toggleGrid = function () {
+  this.parameters.grid = this.parameters.grid === this.FULL ? this.SPLIT : this.FULL
+  this.applyGrid()
+  this.setDimensions()
+  this.updatePageState()
+}
+
+
+PageController.prototype.applyGrid = function () {
+  if (this.parameters.grid === this.FULL) {
+    this.$body.addClass(this.FULL)
+  } else {
+    this.$body.removeClass(this.FULL)
+  }
+
+  var gridSettingHTML = this.gridSettingsHTML()
+  $('.grid-option').html(gridSettingHTML)
+  $('.toggle-grid').click(function () {
+    this.toggleGrid()
+  }.bind(this))
+}
+
+
 PageController.prototype.getPageColor = function () {
   return this.parameters.color
 }
@@ -380,30 +405,22 @@ PageController.prototype.getChartDimensions = function () {
   var minHeightForHalfHeight = 600
   var minWidthForHalfWidth = 1200
   var minWidthForFullHeight = 800
-  var minPixelsPerDatum = 5
   var windowWidth = $(window).innerWidth()
   var windowHeight = 'innerHeight' in window ? window.innerHeight: document.documentElement.offsetHeight
-  var approximateChartSpaceInGrid = (windowWidth / 2) - 200 //200px are taken up by the title/legend side pane
-  var pixelsPerDatum = approximateChartSpaceInGrid / this.data.getDatumCount()
   var defaultHeight = windowWidth > minWidthForFullHeight ? windowHeight : 'auto'
   var chartCount = this.chartObjects ? this.chartObjects.length : 0
 
   // check conditions for adjusting dimensions
-  var enoughWidthForHalfWidth = windowWidth > minWidthForHalfWidth && pixelsPerDatum >= minPixelsPerDatum
+  var useHalfWidth = chartCount >= 2 && windowWidth > minWidthForHalfWidth && this.parameters.grid !== this.FULL
   var enoughHeightForHalfHeight = windowHeight > minHeightForHalfHeight && windowWidth > minWidthForFullHeight
-  var enoughChartsForHalfWidth = chartCount >= 2
-  var enoughChartsForHalfHeight = chartCount >= 3 || (chartCount === 2 && !enoughWidthForHalfWidth)
-
-  // determine dimension types
-  var useGrid = chartCount >= 3 && windowWidth > minWidthForHalfWidth && windowHeight > minHeightForHalfHeight
-  var useHalfWidth = useGrid || (enoughWidthForHalfWidth && enoughChartsForHalfWidth)
-  var useHalfHeight = useGrid || (enoughHeightForHalfHeight && enoughChartsForHalfHeight)
+  var enoughChartsForHalfHeight = chartCount >= 3 || (chartCount === 2 && !useHalfWidth)
+  var useHalfHeight = enoughHeightForHalfHeight && enoughChartsForHalfHeight
 
   return {
     width: useHalfWidth ? windowWidth / 2 : windowWidth,
     height: useHalfHeight ? windowHeight / 2 : defaultHeight,
     isHalfHeight: useHalfHeight,
-    isGrid: useGrid || (enoughWidthForHalfWidth && enoughChartsForHalfWidth)
+    isGrid: useHalfWidth
   }
 }
 
@@ -431,6 +448,7 @@ PageController.prototype.setDimensions = function () {
     chart.render()
   })
 
+  this.applyGrid()
   this.maybeBroadcastDimensions()
 }
 
@@ -519,6 +537,11 @@ PageController.prototype.getMinDataParams = function () {
   // add color if applicable
   if (this.parameters.color && this.parameters.color !== this.LIGHT) {
     minParams.color = this.parameters.color
+  }
+
+  // add grid if applicable
+  if (this.parameters.grid && this.parameters.grid !== this.SPLIT) {
+    minParams.grid = this.parameters.grid
   }
 
   // add applicable chart parameters
@@ -616,6 +639,7 @@ PageController.prototype.pageSettingsHTML = function () {
   template += '    <div class="page-options">'
   template += '      <a class="page-option-item download-data" title="Download data"><span class="icon icon-download"></span>Download data</a>'
   template += '      <button class="page-option-item toggle-color" title="Switch background color"><span class="icon icon-color"></span>Switch background</button>'
+  template += '      <div class="grid-option"></div>'
   template += '      <button class="page-option-item get-embed" title="Get embed code"><span class="icon icon-embed"></span>Get embed code</button>'
   template += '    </div>'
   template += '    <div class="data-source">'
@@ -627,6 +651,15 @@ PageController.prototype.pageSettingsHTML = function () {
   template += '  </div>'
   template += '</div>'
   return _.template(template)
+}
+
+
+PageController.prototype.gridSettingsHTML = function () {
+  var fullTemplate = '<button class="page-option-item toggle-grid" title="Show full width charts"><span class="icon icon-full-screen"></span>Show full width charts</button>'
+  var splitTemplate = '<button class="page-option-item toggle-grid" title="Show split-screen charts"><span class="icon icon-split-screen"></span>Show split-screen charts</button>'
+  var templateToUse = this.parameters.grid === this.FULL ? splitTemplate : fullTemplate
+  var chartCount = this.chartObjects ? this.chartObjects.length : 0
+  return chartCount > 1 ? templateToUse : ''
 }
 
 
