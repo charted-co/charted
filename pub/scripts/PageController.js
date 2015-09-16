@@ -294,6 +294,22 @@ PageController.prototype.getSeriesName = function (i) {
 }
 
 
+PageController.prototype.getSeriesColors = function () {
+  if (! this.parameters.seriesColors) {
+    this.parameters.seriesColors = {}
+  }
+  return this.parameters.seriesColors
+}
+
+
+PageController.prototype.getSeriesColor = function (i) {
+  if (this.parameters.seriesColors) {
+    return this.parameters.seriesColors[i]    
+  }
+  return
+}
+
+
 PageController.prototype.getChartCount = function () {
   return this.parameters.charts.length
 }
@@ -532,6 +548,11 @@ PageController.prototype.getMinDataParams = function () {
   // add seriesNames if applicable
   if (this.parameters.seriesNames && Object.keys(this.parameters.seriesNames).length > 0) {
     minParams.seriesNames = this.parameters.seriesNames
+  }
+
+  // add seriesColors if applicable
+  if (this.parameters.seriesColors && Object.keys(this.parameters.seriesColors).length > 0) {
+    minParams.seriesColors = this.parameters.seriesColors
   }
 
   // add color if applicable
