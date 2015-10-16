@@ -60,7 +60,7 @@ PageController.prototype.setupPage = function (parameters) {
 PageController.prototype.clearExisting = function () {
   $('.chart-wrapper, .page-settings').remove()
   this.chartObjects = []
-  $('body, .settings, .settings-popover, .toggle-color, .update-data-url').unbind()
+  $('body, .settings, .settings-popover, .toggle-color').unbind()
 }
 
 
@@ -73,8 +73,6 @@ PageController.prototype.setupPageSettings = function () {
   var $pageSettings = this.$body.find('.page-settings')
 
   $('.download-data').attr('href', this.parameters.dataUrl)
-  $('.data-url').text(this.parameters.dataUrl)
-
 
   // bind intereactions
   $pageSettings.find('.settings').click(function (event) {
@@ -96,10 +94,6 @@ PageController.prototype.setupPageSettings = function () {
 
   $pageSettings.find('.get-embed').click(function () {
     this.getEmbed()
-  }.bind(this))
-
-  $pageSettings.find('.update-data-url').click(function () {
-    this.setupPage({dataUrl: $('.data-url').text()})
   }.bind(this))
 }
 
@@ -304,7 +298,7 @@ PageController.prototype.getSeriesColors = function () {
 
 PageController.prototype.getSeriesColor = function (i) {
   if (this.parameters.seriesColors) {
-    return this.parameters.seriesColors[i]    
+    return this.parameters.seriesColors[i]
   }
   return
 }
@@ -662,11 +656,6 @@ PageController.prototype.pageSettingsHTML = function () {
   template += '      <button class="page-option-item toggle-color" title="Switch background color"><span class="icon icon-color"></span>Switch background</button>'
   template += '      <div class="grid-option"></div>'
   template += '      <button class="page-option-item get-embed" title="Get embed code"><span class="icon icon-embed"></span>Get embed code</button>'
-  template += '    </div>'
-  template += '    <div class="data-source">'
-  template += '      <p>Data File:</p>'
-  template += '      <div class="data-url info-input" contenteditable="true"></div>'
-  template += '      <button type="submit" class="update-data-url">Save</button>'
   template += '    </div>'
   template += '    <a href="." class="page-option-item go-home"><span class="icon icon-back"></span>Charted home</a>'
   template += '  </div>'
