@@ -7,7 +7,7 @@
   display: none;
 }
 .legend-item{
-  padding: 0 42px 0 0;
+  padding: 0 42px 0 26px;
   position: relative;
 }
 .legend-label{
@@ -18,17 +18,53 @@
   .transition(all 0.3s ease);
   display: block;
   overflow: hidden;
-  padding: 5px 0 5px 26px;
+  padding: 5px 0 5px 3px;
   width: 100%;
 }
-.legend-box{
-  .border-radius(20px);
-  display: inline-block;
-  height: 11px;
-  left: 8px;
+.legend-color{
+  .border-radius(100%);
+  height: 19px;
+  left: 3px;
   position: absolute;
-  top: 6px;
+  top: 2px;
+  width: 19px;
+}
+.legend-dot{
+  .border-radius(100%);
+  height: 11px;
+  left: 4px;
+  display: inline-block;
+  position: absolute;
+  top: 4px;
   width: 11px;
+}
+.legend-color:hover,
+.active-color-input .legend-color{
+  background-color: @gray-lighter;
+}
+.dark .legend-color:hover,
+.dark .active-color-input .legend-color{
+  background-color: @gray-darkest;
+}
+.change-series-color.popover{
+  bottom: 30px;
+  left: -9px;
+  width: auto;
+}
+.change-series-color.popover p{
+  padding: 6px 8px 10px;
+}
+.color-hex-input{
+  .border-radius(4px);
+  background-color: @gray-lightest;
+  color: @gray-darker;
+  font-size: @fontSize-small;
+  padding: 4px 8px;
+}
+.color-hex-input::before{
+  color: @gray;
+  content:"#";
+  margin: 0 4px 0 0;
 }
 .move-chart{
   .transition(all 0.3s ease);
@@ -43,10 +79,12 @@
   height: 30px;
   width: 30px;
 }
-.legend-item.active .legend-input{
+.legend-item.active .legend-input,
+.legend-item:hover .legend-input{
   background-color: @gray-lightest;
 }
-.dark .legend-item.active .legend-input{
+.dark .legend-item.active .legend-input,
+.dark .legend-item:hover .legend-input{
   background-color: @gray-darkest;
 }
 .legend-item:hover .move-chart{
@@ -99,6 +137,17 @@
   top: 2px;
   width: 26px;
 }
+.embed .legend-item.active .legend-input,
+.embed .legend-item:hover .legend-input,
+.embed .dark .legend-item.active .legend-input,
+.embed .dark .legend-item:hover .legend-input,
+.embed .legend-color:hover,
+.embed .active-color-input .legend-color,
+.embed .dark .legend-color:hover,
+.embed .dark .active-color-input .legend-color{
+  background-color: transparent;
+  cursor: auto;
+}
 
 
 @media screen and (min-width: @width-tablet) {
@@ -118,11 +167,15 @@
   }
   .legend-input{
     min-height: 30px;
-    padding: 6px 0 6px 30px;  
+    padding: 6px 0 6px 4px;
   }
-  .legend-box{
+  .legend-color{
+    height: 21px;
+    top: 5px;
+    width: 21px;
+  }
+  .legend-dot{
     height: 13px;
-    top: 9px;
     width: 13px;
   }
   .move-chart{
@@ -136,11 +189,15 @@
   }
   .chart-grid .legend-input{
     min-height: 0px;
-    padding: 5px 0 5px 26px;
+    padding: 5px 0 5px 3px;
   }
-  .chart-grid .legend-box{
+  .chart-grid .legend-color{
+    height: 19px;
+    top: 2px;
+    width: 19px;
+  }
+  .chart-grid .legend-dot{
     height: 11px;
-    top: 6px;
     width: 11px;
   }
   .chart-grid .move-chart{

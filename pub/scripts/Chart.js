@@ -88,13 +88,9 @@ Chart.prototype.setScales = function () {
   this.yRangeUnstacked = this.data.getUnstackedExtent()
 
   // set color scales
-  this.colorLight = ['#333333']
-  this.colorDark = ['#FFFFFF']
+  this.colorLight = '#333333'
+  this.colorDark = '#FFFFFF'
   this.colorRange = ['#6DCC73', '#1D7775', '#4FCFD5', '#FCE651', '#FF7050', '#FFC050', '#999999']
-  this.color = d3.scale.ordinal().domain(this.data.getSeriesLabels())
-  this.colorFn = function (yLabel) {
-    return this.color(yLabel)
-  }.bind(this)
 }
 
 Chart.prototype.createChartElements = function () {
@@ -107,12 +103,12 @@ Chart.prototype.createChartElements = function () {
   this.layerGroup = this.svg.append('g')
     .attr('class', 'layers')
   this.layers = this.layerGroup.selectAll('g')
-    .data(this.data.getSeriesLabels())
+    .data(this.data.getSeriesIndices())
     .enter().append('g')
     .attr('class', 'layer')
 
   var _this = this
-  this.layers.each(function (yLabel, i) {
+  this.layers.each(function (seriesIndex, i) {
     var layer = d3.select(this)
     layer.append('path')
       .attr('class', 'line')
@@ -170,18 +166,31 @@ Chart.prototype.render = function () {
   this.legend.update()
 }
 
-Chart.prototype.applyChartColors = function () {
-  this.colorBase = this.pageController.getPageColor() === 'dark' ? this.colorDark : this.colorLight
-  var colorsToUse = this.data.getSeriesCount() === 1 ? this.colorBase : this.colorRange
-  this.color.range(colorsToUse)
+Chart.prototype.getDefaulSeriesColor = function (seriesIndex) {
+  var seriesIndicies = this.data.getSeriesIndices()
+  if (seriesIndicies.length === 1) {
+    return this.pageController.getPageColor() === 'dark' ? this.colorDark : this.colorLight
+  } 
 
+  var chartSeriesIndex = seriesIndicies.indexOf(seriesIndex)
+  var colorCount = this.colorRange.length
+  var seriesColorIndex = chartSeriesIndex % colorCount
+
+  return this.colorRange[seriesColorIndex]
+}
+
+Chart.prototype.getSeriesColor = function (seriesIndex) {
+  return this.pageController.getSeriesColor(seriesIndex) || this.getDefaulSeriesColor(seriesIndex)
+}
+
+Chart.prototype.applyChartColors = function () {
   var _this = this
-  this.layers.each(function (yLabel) {
+  this.layers.each(function (seriesIndex) {
     var layer = d3.select(this)
     layer.selectAll('.line')
-      .attr('stroke', _this.colorFn(yLabel))
+      .attr('stroke', _this.getSeriesColor(seriesIndex))
     layer.selectAll('.column, .selected-column, .selected-dot, .end-dot')
-      .attr('fill', _this.colorFn(yLabel))
+      .attr('fill', _this.getSeriesColor(seriesIndex))
   })
 }
 
@@ -209,7 +218,7 @@ Chart.prototype.applyChartType = function () {
 
 Chart.prototype.plotAll = function () {
   var _this = this
-  this.layers.each(function (yLabel, i) {
+  this.layers.each(function (seriesIndex, i) {
     var layer = d3.select(this)
     layer.selectAll('.column')
       .attr('x', _this.xPosition)
@@ -287,7 +296,7 @@ Chart.prototype.updateSelectedX = function (index) {
 
   // move selected dots
   var _this = this
-  this.layers.each(function (yLabel, i) {
+  this.layers.each(function (seriesIndex, i) {
     var seriesExtent = _this.data.getSeriesExtent(i)
     if (_this.selectedX >= seriesExtent[0] && _this.selectedX <= seriesExtent[1]) {
       d3.select(this).selectAll('.selected-dot')
@@ -322,7 +331,7 @@ Chart.prototype.updateSelectionText = function() {
   var thisPoint = this.data.getDatum(chartYSeries, this.selectedX)
 
   var thisYLabel = ''
-  var thisYColor = showTotal ? this.colorBase : this.colorFn(this.data.getSeries(thisPoint.ySeries).label)
+  var thisYColor = showTotal ? this.colorBase : this.getSeriesColor(this.data.getSeries(thisPoint.ySeries).seriesIndex)
   if (this.data.getSeriesCount() > 1) {
     var pageYSeries = this.getChartSeries()[chartYSeries]
     thisYLabel = showTotal ? 'total' : this.pageController.getSeriesName(pageYSeries)

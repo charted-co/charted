@@ -16,14 +16,22 @@
 .dark .popover p{
   color: @gray-dark;
 }
-.popover .arrow-bottom-right {
+.popover .arrow-bottom-right,
+.popover .arrow-bottom-left {
   bottom: -14px;
   clip: rect(0px 18px 18px -4px);
-  margin: 0px -7px 0 0;
-  right: 20px;
   position: absolute;
 }
-.popover .arrow-bottom-right:after {
+.popover .arrow-bottom-right{
+  right: 20px;
+  margin: 0px -7px 0 0;
+}
+.popover .arrow-bottom-left{
+  left: 20px;
+  margin: 0px 0 0 -7px;
+}
+.popover .arrow-bottom-right:after, 
+.popover .arrow-bottom-left:after {
   .box-shadow(0 1px 1px rgba(0,0,0,.05));
   .transform(rotate(45deg) translate(-6px, -6px));
   border: 1px solid @gray-light;
@@ -34,6 +42,7 @@
   width: 14px;
 }
 .dark .popover .arrow-bottom-right:after,
+.dark .popover .arrow-bottom-left:after,
 .dark .popover{
   background-color: black;
   border: 1px solid @gray-dark;

@@ -57,6 +57,10 @@ ChartData.prototype.getSeriesLabels = function () {
   return this._serieses.map(function (series) { return series.label })
 }
 
+ChartData.prototype.getSeriesIndices = function () {
+  return this._serieses.map(function (series) { return series.seriesIndex })
+}
+
 ChartData.prototype.getSeriesCount = function () {
   return this._serieses.length
 }
