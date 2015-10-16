@@ -1,4 +1,4 @@
-/*global _ */
+/* @flow */
 
 function Utils() {}
 
@@ -97,8 +97,9 @@ Utils.getNiceIntervals = function (range, height) {
   // get the smallest nice interval value that produces no more than the max potential ticks
   var minInterval = fullRange/maxPotentialTicks
   var minMultipleOf10 = Math.pow(10, Utils.log10Floor(minInterval) + 1)
-  var interval = minMultipleOf10
-  _.each([2, 4, 5, 10], function (divisor) {
+  var interval = minMultipleOf10;
+
+  [2, 4, 5, 10].forEach(function (divisor) {
     var thisInterval = minMultipleOf10 / divisor
     interval = thisInterval >= minInterval ? thisInterval : interval
   })

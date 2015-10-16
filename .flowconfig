@@ -1,0 +1,9 @@
+[ignore]
+pub/lib
+pub/scripts
+node_modules
+[include]
+
+[libs]
+
+[options]
