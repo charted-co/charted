@@ -31,6 +31,10 @@ To try Charted out, simply download the repo and run `npm install`
 to install dependencies. After that you will be able to run
 `npm start`. This will start a server at localhost:3000.
 
+If you install [Watchman](https://facebook.github.io/watchman/), you can
+run bin/watch to automatically recompile whenever you change JavaScript
+or LESS files.
+
 ### On Heroku
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/mikesall/charted)

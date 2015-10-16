@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+
+watchman watch $PWD
+watchman -- trigger $PWD/less lessfiles '*.less' -- $PWD/bin/build
+watchman -- trigger $PWD/js jsfiles '*.js' -- $PWD/bin/build

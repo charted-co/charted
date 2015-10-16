@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+var sh = require('shelljs/global')
+
+function main(args) {
+  var cmd = args[2] || ''
+
+  if (cmd.endsWith('.less')) {
+    css()
+    return
+  }
+
+  if (cmd.endsWith('.js')) {
+    exec('babel js/' + cmd + ' -o pub/scripts/' + cmd)
+    return
+  }
+
+  // compile all javascript and less files
+  exec('babel js/ -d pub/scripts/')
+  css()
+}
+
+function css() {
+  echo('less/charted.less -> pub/charted.css')
+  exec('lessc less/charted.less pub/charted.css')
+}
+
+// get to the root of the project
+while (!test('-f', 'package.json')) { cd('..') }
+main(process.argv)

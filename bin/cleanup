@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+watchman trigger-del $PWD/less lessfiles
+watchman trigger-del $PWD/js jsfiles
+watchman watch-del-all
+watchman shutdown-server
+
+rm $PWD/pub/scripts/*
+rm $PWD/pub/charted.css
