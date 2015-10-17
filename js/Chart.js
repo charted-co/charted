@@ -8,7 +8,7 @@ function Chart(pageController, chartIndex, $wrapper, params, data) {
   var chartHtmlParameters = {
     editable: pageController.getEditability()
   }
-  this.$wrapper.html(this.chartHTML(chartHtmlParameters))
+  this.$wrapper.html(charted.templates.chart(chartHtmlParameters))
 
   // cache elements
   this.$container = $wrapper.find('.chart').first()
@@ -170,7 +170,7 @@ Chart.prototype.getDefaulSeriesColor = function (seriesIndex) {
   var seriesIndicies = this.data.getSeriesIndices()
   if (seriesIndicies.length === 1) {
     return this.pageController.getPageColor() === 'dark' ? this.colorDark : this.colorLight
-  } 
+  }
 
   var chartSeriesIndex = seriesIndicies.indexOf(seriesIndex)
   var colorCount = this.colorRange.length
@@ -249,7 +249,7 @@ Chart.prototype.updateYAxis = function () {
     interval.top = this.yScale(interval.value)
     if (interval.top >= maxTop) {
       interval.display = this.params.rounding === 'on' ? interval.displayString : interval.rawString
-      HTML += this.yAxisLabelHTML(interval)
+      HTML += charted.templates.yAxisLabel(interval)
     }
   }.bind(this))
   this.$yAxis.html(HTML)
@@ -482,49 +482,4 @@ Chart.prototype.getChartContainer = function () {
 
 Chart.prototype.getChartSeries = function () {
   return this.params.series
-}
-
-Chart.prototype.chartHTML = function (parameters) {
-  var template = ''
-  template +='<div class="chart show-columns">'
-  template +='  <div class="chart-description">'
-  template +='    <h1 class="title info-input" <% if (editable) {%> contenteditable="true" <%}%> ></h1>'
-  template +='    <div class="note info-input" <% if (editable) {%> contenteditable="true" <%}%> ></div>'
-  template +='  </div>'
-  template +='  <div class="chart-plot-outer-container">'
-  template +='    <div class="chart-plot-inner-container">'
-  template +='      <div class="y-axis-container"><div class="y-axis chart-height"></div></div>'
-  template +='      <div class="zero-line-container chart-height"><div class="zero-line"></div></div>'
-  template +='      <div class="x-axis"><span class="x-beginning"></span><span class="x-end"></span></div>'
-  template +='      <div class="selection">'
-  template +='        <div class="selection-info">'
-  template +='          <div class="selection-value"></div>'
-  template +='          <div class="selection-xlabel"></div>'
-  template +='          <div class="selection-ylabel"></div>'
-  template +='        </div>'
-  template +='      </div>'
-  template +='      <figure class="chart-plot chart-height"></figure>'
-  template +='    </div>'
-  template +='  </div>'
-  template +='  <aside class="chart-info">'
-  template +='    <ul class="legend hidden"></ul>'
-  template +='    <% if (editable) { %>'
-  template +='      <div class="chart-options">'
-  template +='        <a class="option-item toggle-type" href="#" title="Switch chart type">'
-  template +='          <span class="icon icon-line"></span>'
-  template +='          <span class="icon icon-column"></span>'
-  template +='        </a>'
-  template +='        <a class="option-item toggle-rounding" href="#" title="Turn rounding on/off">'
-  template +='          <span class="icon icon-round-off"></span>'
-  template +='          <span class="icon icon-round-on"></span>'
-  template +='        </a>'
-  template +='      </div>'
-  template +='    <% } %>'
-  template +='  </aside>'
-  template +='</div>'
-  return _.template(template, parameters)
-}
-
-Chart.prototype.yAxisLabelHTML = function (interval) {
-  return _.template('<div class="y-axis-label" style="top:<%- top %>px"><%- display %></div>', interval)
 }

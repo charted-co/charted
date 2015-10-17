@@ -23,14 +23,14 @@ ChartLegend.prototype.update = function() {
       color: this.chart.getSeriesColor(series.seriesIndex),
       editable: this.controller.getEditability()
     }
-    var $legendEl = $(this.legendItemHTML(thisLabel))
+    var $legendEl = $(charted.templates.legendItem(thisLabel))
     $legend = $legend.add($legendEl)
     series.legendEl = $legendEl
   }.bind(this))
   this.$container.find('.legend').html($legend).removeClass('hidden')
 
   if (this.controller.getEditability()) {
-    this.bindLegendInteractions()  
+    this.bindLegendInteractions()
   }
 }
 
@@ -73,8 +73,8 @@ ChartLegend.prototype.openColorInput = function(series) {
   var colorHex = this.chart.getSeriesColor(series.seriesIndex).replace(/^#/, '')
 
   series.legendEl.addClass('active-color-input')
-  series.legendEl.append(this.changeSeriesColorHTML({
-    colorHex: colorHex, 
+  series.legendEl.append(charted.templates.changeSeriesColor({
+    colorHex: colorHex,
     seriesIndex: series.seriesIndex
   }))
 
@@ -83,7 +83,8 @@ ChartLegend.prototype.openColorInput = function(series) {
     $thisColorInput.on('focusout', function () {
 
       var seriesColors = this.controller.getSeriesColors()
-      var newColorHex = '#' + $thisColorInput.text().replace(/^#/, '')
+      var newColorHex = '#' + $thisColorInput.text().replace(/^#/, '').trim()
+
       var defaultColorHex = this.chart.getDefaulSeriesColor(series)
       var isValidHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(newColorHex)
 
@@ -121,7 +122,7 @@ ChartLegend.prototype.openMoveChart = function(series, i) {
   } else {
     // else, show all the options in a popover
     series.legendEl.addClass('active')
-    series.legendEl.append(this.moveChartHTML({otherCharts: otherCharts, series: this.series}))
+    series.legendEl.append(charted.templates.moveChart({otherCharts: otherCharts, series: this.series}))
 
     otherCharts.forEach(function (chart) {
       this.$container.find('.move-to-chart-' + chart.chartIndex).click(function (e) {
@@ -140,45 +141,4 @@ ChartLegend.prototype.removePopovers = function() {
   $('html').find('.move-chart-options, .change-series-color').remove()
   $('html').find('.page-settings').removeClass('open')
   $('html').find('.legend-item').removeClass('active active-color-input')
-}
-
-ChartLegend.prototype.legendItemHTML = function(label) {
-  var template = ''
-  template +='<li class="legend-item">'
-  template +='  <div class="legend-label info-input">'
-  template +='    <span class="legend-input" <% if (editable) {%> contenteditable="true" <%}%> ><%- label %></span>'
-  template +='  </div>'
-  template +='  <button class="legend-color"><span style="background-color:<%- color %>;" class="legend-dot"></span></button>'
-  template +='  <% if (editable) { %>'
-  template +='    <button class="move-chart"><span class="icon icon-move"></span></button>'
-  template +='  <% } %>'
-  template +='</li>'
-  return _.template(template, label)
-}
-
-ChartLegend.prototype.moveChartHTML = function (otherCharts) {
-  var template = ''
-  template +='<div class="move-chart-options popover">'
-  template +='  <p>Move to:</p>'
-  template +='  <% _.forEach(otherCharts, function (chart) { %>'
-  template +='    <a href= "#" class="move-chart-option move-to-chart-<%- chart.chartIndex %>"><%- chart.title %></a>'
-  template +='  <% }) %>'
-  template +='  <% if(series.length > 1) { %>'
-  template +='    <a href= "#" class="move-chart-option move-to-new-chart">'
-  template +='      <span class="icon icon-plus"></span>New chart'
-  template +='    </a>'
-  template +='  <% } %>'
-  template +='  <span class="arrow-bottom-right"></span>'
-  template +='</div>'
-  return _.template(template, otherCharts)
-}
-
-ChartLegend.prototype.changeSeriesColorHTML = function (params) {
-  var template = ''
-  template +='<div class="change-series-color popover">'
-  template +='  <p>Change color:</p>'
-  template +='  <p><span contenteditable="true" class="color-hex-input change-series-color-<%- seriesIndex %>"><%- colorHex %></span></p>'
-  template +='  <span class="arrow-bottom-left"></span>'
-  template +='</div>'
-  return _.template(template, params)
 }

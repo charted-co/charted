@@ -69,7 +69,7 @@ PageController.prototype.setupPageSettings = function () {
   if (this.parameters.embed) return
 
   // populate UI
-  this.$body.append(this.pageSettingsHTML())
+  this.$body.append(charted.templates.pageSettings())
   var $pageSettings = this.$body.find('.page-settings')
 
   $('.download-data').attr('href', this.parameters.dataUrl)
@@ -362,8 +362,13 @@ PageController.prototype.applyGrid = function () {
     this.$body.removeClass(this.FULL)
   }
 
-  var gridSettingHTML = this.gridSettingsHTML()
-  $('.grid-option').html(gridSettingHTML)
+  var template = charted.templates.gridSettingsFull
+  if (this.parameters.grid == this.FULL) {
+    template = charted.templates.gridSettingsSplit
+  }
+
+  var chartCount = this.chartObjects ? this.chartObjects.length : 0
+  $('.grid-option').html(chartCount > 1 ? template() : '')
   $('.toggle-grid').click(function () {
     this.toggleGrid()
   }.bind(this))
@@ -379,11 +384,7 @@ PageController.prototype.getEmbed = function () {
   var embedId = this._getHashCode(window.location.href)
   var embedUrl = window.location.href + '&embed=' + embedId
 
-  this.$body.append(this.embedOverlayHTML({
-    iframeHTML: '<iframe id="charted:' + embedId + '" src="' + embedUrl + '" '+
-        'height="600px" width="100%" scrolling="yes" style="border: solid 1px #ccc"></iframe>',
-    scriptHTML: '<script src="' + window.location.origin + '/embed.js"></script>'
-  }))
+  this.$body.append(charted.templates.embedOverlay({id: embedId, url: embedUrl}))
 
   this.$body.find('.overlay-content').click(function (event) {
     event.stopPropagation()
@@ -644,47 +645,6 @@ PageController.prototype.prepareDataUrl = function (url) {
   }
 
   return url
-}
-
-PageController.prototype.pageSettingsHTML = function () {
-  var template = ''
-  template += '<div class="page-settings">'
-  template += '  <button class="option-item settings" title="Settings"><span class="icon icon-settings"></span></button>'
-  template += '  <div class="settings-popover popover">'
-  template += '    <div class="page-options">'
-  template += '      <a class="page-option-item download-data" title="Download data"><span class="icon icon-download"></span>Download data</a>'
-  template += '      <button class="page-option-item toggle-color" title="Switch background color"><span class="icon icon-color"></span>Switch background</button>'
-  template += '      <div class="grid-option"></div>'
-  template += '      <button class="page-option-item get-embed" title="Get embed code"><span class="icon icon-embed"></span>Get embed code</button>'
-  template += '    </div>'
-  template += '    <a href="." class="page-option-item go-home"><span class="icon icon-back"></span>Charted home</a>'
-  template += '  </div>'
-  template += '</div>'
-  return _.template(template)
-}
-
-
-PageController.prototype.gridSettingsHTML = function () {
-  var fullTemplate = '<button class="page-option-item toggle-grid" title="Show full width charts"><span class="icon icon-full-screen"></span>Show full width charts</button>'
-  var splitTemplate = '<button class="page-option-item toggle-grid" title="Show split-screen charts"><span class="icon icon-split-screen"></span>Show split-screen charts</button>'
-  var templateToUse = this.parameters.grid === this.FULL ? splitTemplate : fullTemplate
-  var chartCount = this.chartObjects ? this.chartObjects.length : 0
-  return chartCount > 1 ? templateToUse : ''
-}
-
-
-PageController.prototype.embedOverlayHTML = function (params) {
-  var template = ''
-  template += '<div class="overlay-container">'
-  template += '  <div class="overlay-content">'
-  template += '    <h1 class="overlay-title">Embed this Charted page</h1>'
-  template += '    <p class="overlay-description">You can add this embed to your website by copying and pasting the HTML code below.</p>'
-  template += '    <input class="embed-link" value="<%- iframeHTML %>\n<%- scriptHTML %>"/>'
-  template += '    <div class="iframe-container"><%= iframeHTML %></div>'
-  template += '  </div>'
-  template += '  <div class="overlay-close"><span class="icon icon-x"></span></div>'
-  template += '</div>'
-  return _.template(template, params)
 }
 
 
