@@ -40,7 +40,6 @@ PageController.prototype.setupPage = function (parameters) {
   this.$body.addClass('loading')
   this.updatePageTitle('Charted (...)')
   this.parameters = parameters
-  this.parameters.dataUrl = this.prepareDataUrl(this.parameters.dataUrl)
   this.parameters.charts = this.parameters.charts || [{}]
   this.parameters.embed = this.parameters.embed || null
   this.clearExisting()
@@ -622,29 +621,6 @@ PageController.prototype.useUrl = function () {
 
   $('.data-file-input').val(parameters.dataUrl)
   this.setupPage(parameters)
-}
-
-
-PageController.prototype.prepareDataUrl = function (url) {
-  // Prepare Google Spreadsheets url
-  if (url.indexOf('https://docs.google.com/') === 0 && url.indexOf('spreadsheets/d/') != 1) {
-    // the gid is the specific sheet within the document
-    var gid = url.indexOf('gid=') >= 0 ? url.substring(url.indexOf('gid=') + 4) : 0
-
-    // the structure should be: "https://docs.google.com/spreadsheets/d/[Doc_ID]/export?gid=[gid]&format=csv
-    url = url.substring(0, url.indexOf('/', url.indexOf('spreadsheets/d/') + 15)) + '/export'
-    url = Utils.addParamToUrl(url, 'gid', gid)
-    url = Utils.addParamToUrl(url, 'format', 'csv')
-    return url
-  }
-
-  // Prepare Dropbox url
-  if (url.indexOf('https://www.dropbox.com/') === 0) {
-    url = Utils.addParamToUrl(url, 'raw', '1')
-    return url
-  }
-
-  return url
 }
 
 

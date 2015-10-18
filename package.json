@@ -7,7 +7,7 @@
     "postinstall": "bin/build",
     "prestart": "bin/build",
     "start": "node index.js",
-    "test": "jshint index.js && jshint lib/*.js && jshint pub/scripts/*.js && echo 'Lint OK'"
+    "test": "nodeunit lib/*_test.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,8 @@
     "request": "2.47.x",
     "serve-static": "~1.7.2",
     "babel": "5.8.x",
-    "shelljs": "0.5.x"
+    "shelljs": "0.5.x",
+    "nodeunit": "0.9.x"
   },
   "homepage": "http://www.charted.co/"
 }

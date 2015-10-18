@@ -24,18 +24,6 @@ Utils.getUrlParameters = function () {
   return params
 }
 
-Utils.addParamToUrl = function (url, paramName, paramValue) {
-  if (url.indexOf(paramName + '=') >= 0) {
-    var prefix = url.substring(0, url.indexOf(paramName))
-    var suffix = url.substring(url.indexOf(paramName));
-    suffix = suffix.substring(suffix.indexOf('=') + 1);
-    suffix = (suffix.indexOf('&') >= 0) ? suffix.substring(suffix.indexOf('&')) : '';
-    return prefix + paramName + '=' + paramValue + suffix;
-  }
-  var separator = url.indexOf('?') < 0 ? '?' : '&'
-  return url + separator + paramName + '=' + paramValue
-}
-
 Utils.camelToHyphen = function (string) {
   return string.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
 }
