@@ -80,7 +80,7 @@ charted.templates = {
     var editableButtons = ''
 
     if (params.editable) {
-      editableAttribute = 'content-editable="true"'
+      editableAttribute = 'contenteditable="true"'
       editableButtons = `
         <div class="chart-options">
           <a class="option-item toggle-type" href="#" title="Switch chart type">
