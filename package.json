@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "bin/build",
     "prestart": "bin/build",
-    "start": "node index.js",
+    "start": "bin/watch && node index.js",
     "test": "nodeunit lib/*_test.js"
   },
   "repository": {
