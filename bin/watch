@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
-watchman watch $PWD
-watchman -- trigger $PWD/less lessfiles '*.less' -- $PWD/bin/build
-watchman -- trigger $PWD/js jsfiles '*.js' -- $PWD/bin/build
+if ! type "$watchman" &> /dev/null; then
+  watchman watch $PWD
+  watchman -- trigger $PWD/less lessfiles '*.less' -- npm run-script prestart
+  watchman -- trigger $PWD/js jsfiles '*.js' -- npm run-script prestart
+fi
