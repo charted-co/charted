@@ -1,6 +1,11 @@
 /*global $, _, PageData, Chart, Utils */
 
-function PageController () {
+import {Utils} from "Utils"
+import {PageData} from "PageData"
+import {Chart} from "Chart"
+import {templates} from "templates"
+
+export function PageController () {
   this.DARK = 'dark'
   this.LIGHT = 'light'
   this.FULL = 'full'
@@ -68,7 +73,7 @@ PageController.prototype.setupPageSettings = function () {
   if (this.parameters.embed) return
 
   // populate UI
-  this.$body.append(charted.templates.pageSettings())
+  this.$body.append(templates.pageSettings())
   var $pageSettings = this.$body.find('.page-settings')
 
   $('.download-data').attr('href', this.parameters.dataUrl)
@@ -361,9 +366,9 @@ PageController.prototype.applyGrid = function () {
     this.$body.removeClass(this.FULL)
   }
 
-  var template = charted.templates.gridSettingsFull
+  var template = templates.gridSettingsFull
   if (this.parameters.grid == this.FULL) {
-    template = charted.templates.gridSettingsSplit
+    template = templates.gridSettingsSplit
   }
 
   var chartCount = this.chartObjects ? this.chartObjects.length : 0
@@ -383,7 +388,7 @@ PageController.prototype.getEmbed = function () {
   var embedId = this._getHashCode(window.location.href)
   var embedUrl = window.location.href + '&embed=' + embedId
 
-  this.$body.append(charted.templates.embedOverlay({id: embedId, url: embedUrl}))
+  this.$body.append(templates.embedOverlay({id: embedId, url: embedUrl}))
 
   this.$body.find('.overlay-content').click(function (event) {
     event.stopPropagation()
@@ -643,4 +648,3 @@ PageController.prototype._getHashCode = function (str) {
 
   return hash
 }
-

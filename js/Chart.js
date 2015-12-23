@@ -1,6 +1,11 @@
 /*global $, d3, _, ChartData, ChartLegend, Utils */
 
-function Chart(pageController, chartIndex, $wrapper, params, data) {
+import {ChartData} from "ChartData"
+import {ChartLegend} from "ChartLegend"
+import {Utils} from "Utils"
+import {templates} from "templates"
+
+export function Chart(pageController, chartIndex, $wrapper, params, data) {
   this.pageController = pageController
   this.$wrapper = $wrapper
 
@@ -8,7 +13,7 @@ function Chart(pageController, chartIndex, $wrapper, params, data) {
   var chartHtmlParameters = {
     editable: pageController.getEditability()
   }
-  this.$wrapper.html(charted.templates.chart(chartHtmlParameters))
+  this.$wrapper.html(templates.chart(chartHtmlParameters))
 
   // cache elements
   this.$container = $wrapper.find('.chart').first()
@@ -249,7 +254,7 @@ Chart.prototype.updateYAxis = function () {
     interval.top = this.yScale(interval.value)
     if (interval.top >= maxTop) {
       interval.display = this.params.rounding === 'on' ? interval.displayString : interval.rawString
-      HTML += charted.templates.yAxisLabel(interval)
+      HTML += templates.yAxisLabel(interval)
     }
   }.bind(this))
   this.$yAxis.html(HTML)

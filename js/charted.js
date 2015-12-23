@@ -1,4 +1,4 @@
-var charted = {}
+import {PageController} from "PageController"
 
 $(function () {
   var $dataInput = $('.data-file-input')

@@ -22,13 +22,15 @@
     "url": "https://github.com/mikesall/charted/issues"
   },
   "dependencies": {
+    "babel": "6.0.x",
+    "babel-cli": "6.3.x",
+    "babel-plugin-transform-es2015-modules-amd": "6.3.x",
     "connect": "^3.3.5",
     "express": "4.10.x",
     "jshint": "2.5.x",
     "less": "1.7.x",
     "request": "2.47.x",
     "serve-static": "~1.7.2",
-    "babel": "5.8.x",
     "shelljs": "0.5.x",
     "nodeunit": "0.9.x"
   },

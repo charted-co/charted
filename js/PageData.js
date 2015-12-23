@@ -1,6 +1,8 @@
 /*global d3, Utils */
 
-function PageData(dataUrl, callback) {
+import {Utils} from "Utils"
+
+export function PageData(dataUrl, callback) {
   this.dataUrl = dataUrl
   this.callback = callback
   this._serieses = []

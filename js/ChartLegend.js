@@ -1,6 +1,8 @@
 /*global $, _ */
 
-function ChartLegend(controller, data, chart) {
+import {templates} from "templates"
+
+export function ChartLegend(controller, data, chart) {
   this.chart = chart
   this.controller = controller
   this.data = data
@@ -23,7 +25,7 @@ ChartLegend.prototype.update = function() {
       color: this.chart.getSeriesColor(series.seriesIndex),
       editable: this.controller.getEditability()
     }
-    var $legendEl = $(charted.templates.legendItem(thisLabel))
+    var $legendEl = $(templates.legendItem(thisLabel))
     $legend = $legend.add($legendEl)
     series.legendEl = $legendEl
   }.bind(this))
@@ -73,7 +75,7 @@ ChartLegend.prototype.openColorInput = function(series) {
   var colorHex = this.chart.getSeriesColor(series.seriesIndex).replace(/^#/, '')
 
   series.legendEl.addClass('active-color-input')
-  series.legendEl.append(charted.templates.changeSeriesColor({
+  series.legendEl.append(templates.changeSeriesColor({
     colorHex: colorHex,
     seriesIndex: series.seriesIndex
   }))
@@ -122,7 +124,7 @@ ChartLegend.prototype.openMoveChart = function(series, i) {
   } else {
     // else, show all the options in a popover
     series.legendEl.addClass('active')
-    series.legendEl.append(charted.templates.moveChart({otherCharts: otherCharts, series: this.series}))
+    series.legendEl.append(templates.moveChart({otherCharts: otherCharts, series: this.series}))
 
     otherCharts.forEach(function (chart) {
       this.$container.find('.move-to-chart-' + chart.chartIndex).click(function (e) {

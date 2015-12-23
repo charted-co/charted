@@ -1,6 +1,6 @@
 /* @flow */
 
-function Utils() {}
+export function Utils() {}
 
 Utils.log10Floor = function (val) {
   return Math.floor(Math.log(val) / Math.LN10, 0)

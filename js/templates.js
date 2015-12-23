@@ -1,4 +1,4 @@
-charted.templates = {
+export const templates = {
   pageSettings () {
     return `
       <div class="page-settings">

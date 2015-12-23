@@ -1,6 +1,8 @@
 /*global _, d3, Utils */
 
-function ChartData(pageData, seriesIndicesToUse) {
+import {Utils} from "Utils"
+
+export function ChartData(pageData, seriesIndicesToUse) {
   this._data = pageData._data.filter(function (series, i) {
     return seriesIndicesToUse.indexOf(i) > -1
   })
