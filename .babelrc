@@ -1,3 +1,6 @@
 {
-  "plugins": ["transform-es2015-modules-amd"]
+  "plugins": [
+    "transform-es2015-modules-amd",
+    "babel-plugin-transform-flow-strip-types"
+  ]
 }

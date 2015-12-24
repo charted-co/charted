@@ -25,6 +25,7 @@
     "babel": "6.0.x",
     "babel-cli": "6.3.x",
     "babel-plugin-transform-es2015-modules-amd": "6.3.x",
+    "babel-plugin-transform-flow-strip-types": "6.3.x",
     "connect": "^3.3.5",
     "express": "4.10.x",
     "jshint": "2.5.x",
