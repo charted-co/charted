@@ -3,7 +3,7 @@
 import {ChartData} from "./ChartData"
 import {ChartLegend} from "./ChartLegend"
 import {camelToHyphen, getNiceIntervals, getRoundedValue} from "./Utils"
-import {PageController} from "./PageController"
+import {OPTIONS, EDITABLES, PageController} from "./PageController"
 import {PageData} from "./PageData"
 import * as templates from "./templates"
 
@@ -102,7 +102,7 @@ export class Chart {
     this.$plot.empty()
 
     // Update chart UI
-    this.pageController.EDITABLES.forEach(function (item) {
+    EDITABLES.forEach(function (item) {
       this.$container.find('.' + camelToHyphen(item)).text(this.params[item])
       this.updateEditablePlaceholder(item)
     }.bind(this))
@@ -407,10 +407,10 @@ export class Chart {
 
   bindInteractions(): void {
     // chart option toggles
-    Object.keys(this.pageController.OPTIONS).forEach(function (option) {
+    Object.keys(OPTIONS).forEach(function (option) {
       this.$container.find('.toggle-' + option).click(function (event) {
         event.preventDefault()
-        var options = this.pageController.OPTIONS[option]
+        var options = OPTIONS[option]
         this.params[option] = this.params[option] === options[0] ? options[1] : options[0]
         this.render()
         this.pageController.updatePageState()
@@ -418,7 +418,7 @@ export class Chart {
     }.bind(this))
 
     // chart editables
-    this.pageController.EDITABLES.forEach(function (item) {
+    EDITABLES.forEach(function (item) {
       var $elem = this.$container.find('.' + camelToHyphen(item))
       $elem.on('focusout', function () {
         if ($elem.text() === '' && item === 'title') {

@@ -9,7 +9,7 @@ export class PageData {
   _indices: Array<string>;
   _data: Array<any>;
 
-  constructor(dataUrl: string, callback: Function) {
+  constructor(dataUrl: string, callback: (error: ?Object, data: ?PageData) => void) {
     this.dataUrl = dataUrl
     this.callback = callback
     this._serieses = []
