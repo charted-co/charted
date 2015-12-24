@@ -5,6 +5,6 @@ node_modules
 [include]
 
 [libs]
-interfaces
+interfaces/
 
-[options]
+[options]'

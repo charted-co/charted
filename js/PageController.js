@@ -1,9 +1,7 @@
-/*global $, _, PageData, Chart, Utils */
-
-import {Utils} from "Utils"
+import {getUrlParameters} from "Utils"
 import {PageData} from "PageData"
 import {Chart} from "Chart"
-import {templates} from "templates"
+import * as templates from "templates"
 
 export function PageController () {
   this.DARK = 'dark'
@@ -603,7 +601,7 @@ PageController.prototype.getMinDataParams = function () {
 
 
 PageController.prototype.useUrl = function () {
-  var urlParameters = Utils.getUrlParameters()
+  var urlParameters = getUrlParameters()
   var parameters = urlParameters.data || {}
 
   // support prior csvUrl parameter and array format

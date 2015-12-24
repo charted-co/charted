@@ -1,6 +1,4 @@
-/*global $, _ */
-
-import {templates} from "templates"
+import * as templates from "templates"
 
 export function ChartLegend(controller, data, chart) {
   this.chart = chart

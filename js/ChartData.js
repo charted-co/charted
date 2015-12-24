@@ -1,6 +1,4 @@
-/*global _, d3, Utils */
-
-import {Utils} from "Utils"
+import {getTrimmedExtent} from "Utils"
 
 export function ChartData(pageData, seriesIndicesToUse) {
   this._data = pageData._data.filter(function (series, i) {
@@ -90,7 +88,7 @@ ChartData.prototype.getLastDatum = function (seriesIndex) {
 
 ChartData.prototype.getSeriesExtent = function (seriesIndex) {
   var yRawValues = _.pluck(this._data[seriesIndex], 'yRaw')
-  return Utils.getTrimmedExtent(yRawValues)
+  return getTrimmedExtent(yRawValues)
 }
 
 ChartData.prototype.getIndices = function () {

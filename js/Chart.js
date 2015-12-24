@@ -1,9 +1,7 @@
-/*global $, d3, _, ChartData, ChartLegend, Utils */
-
 import {ChartData} from "ChartData"
 import {ChartLegend} from "ChartLegend"
-import {Utils} from "Utils"
-import {templates} from "templates"
+import {camelToHyphen, getNiceIntervals, getRoundedValue} from "Utils"
+import * as templates from "templates"
 
 export function Chart(pageController, chartIndex, $wrapper, params, data) {
   this.pageController = pageController
@@ -51,7 +49,7 @@ Chart.prototype.setupChart = function () {
 
   // Update chart UI
   this.pageController.EDITABLES.forEach(function (item) {
-    this.$container.find('.' + Utils.camelToHyphen(item)).text(this.params[item])
+    this.$container.find('.' + camelToHyphen(item)).text(this.params[item])
     this.updateEditablePlaceholder(item)
   }.bind(this))
   this.$xBeg.html(this.data.getIndexExtent()[0])
@@ -248,7 +246,7 @@ Chart.prototype.plotAll = function () {
 Chart.prototype.updateYAxis = function () {
   // apply Y axis labels
   var HTML = ''
-  var intervals = Utils.getNiceIntervals(this.yRange, this.height)
+  var intervals = getNiceIntervals(this.yRange, this.height)
   var maxTop = this.$yAxis.height() - this.$container.height() + 60 // must be 60px below the top
   intervals.forEach(function (interval) {
     interval.top = this.yScale(interval.value)
@@ -345,7 +343,7 @@ Chart.prototype.updateSelectionText = function() {
   var seriesExtent = this.data.getStackedExtentForIndex(this.selectedX)
   var seriesTotal = seriesExtent[1] + seriesExtent[0]
   var thisValue = showTotal ? seriesTotal : thisPoint.yRaw
-  var thisValueFormatted = this.params.rounding === 'on' ? Utils.getRoundedValue(thisValue, this.yRange) : thisValue
+  var thisValueFormatted = this.params.rounding === 'on' ? getRoundedValue(thisValue, this.yRange) : thisValue
 
   // update selection
   this.$selectionYLabel.text(thisYLabel).css('color', thisYColor)
@@ -367,7 +365,7 @@ Chart.prototype.bindInteractions = function () {
 
   // chart editables
   this.pageController.EDITABLES.forEach(function (item) {
-    var $elem = this.$container.find('.' + Utils.camelToHyphen(item))
+    var $elem = this.$container.find('.' + camelToHyphen(item))
     $elem.on('focusout', function () {
       if ($elem.text() === '' && item === 'title') {
         this.params[item] = this.pageController.getDefaultTitle(this.chartIndex)
@@ -471,9 +469,9 @@ Chart.prototype.updatefocusedSeriesIndex = function () {
 
 Chart.prototype.updateEditablePlaceholder = function (item) {
   if (!this.params[item] || this.params[item] === '') {
-    this.$container.find('.' + Utils.camelToHyphen(item)).addClass('empty')
+    this.$container.find('.' + camelToHyphen(item)).addClass('empty')
   } else {
-    this.$container.find('.' + Utils.camelToHyphen(item)).removeClass('empty')
+    this.$container.find('.' + camelToHyphen(item)).removeClass('empty')
   }
 }
 
