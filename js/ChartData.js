@@ -4,14 +4,14 @@ import {getTrimmedExtent} from "./Utils"
 import {PageData} from "./PageData"
 
 export class ChartData {
-  _data: Array<any>;
-  _serieses: Array<Object>;
+  _data: Array<Array<t_FIELD>>;
+  _serieses: Array<t_SERIES>;
   _indices: Array<string>;
 
   constructor(pageData: PageData, seriesIndicesToUse: Array<any>) {
-    this._data = pageData._data.filter((series, i) => seriesIndicesToUse.indexOf(i) > -1)
-    this._serieses = pageData._serieses.filter((series, i) => seriesIndicesToUse.indexOf(i) > -1)
-    this._indices = pageData._indices
+    this._data = pageData.data.filter((series, i) => seriesIndicesToUse.indexOf(i) > -1)
+    this._serieses = pageData.serieses.filter((series, i) => seriesIndicesToUse.indexOf(i) > -1)
+    this._indices = pageData.indices
     this.formatData()
   }
 

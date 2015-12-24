@@ -2,94 +2,69 @@
 
 import {getFileExtension, stringToNumber} from "./Utils"
 
-export class PageData {
-  dataUrl: string;
-  callback: (error: ?Object, data: ?PageData) => void;
-  _serieses: Array<Object>;
-  _indices: Array<string>;
-  _data: Array<any>;
+class PageData {
+  indices: Array<string>;
+  serieses: Array<t_SERIES>;
+  data: Array<Array<t_FIELD>>;
 
-  constructor(dataUrl: string, callback: (error: ?Object, data: ?PageData) => void) {
-    this.dataUrl = dataUrl
-    this.callback = callback
-    this._serieses = []
-    this._indices = []
-    this.fetchData()
-  }
+  constructor(url: string, resp: string) {
+    let ext = getFileExtension(url)
+    let rows = ext == 'tsv' ? d3.tsv.parseRows(resp) : d3.csv.parseRows(resp)
 
-  fetchData(): void {
-    var url = 'get/?url=' + encodeURIComponent(this.dataUrl)
-    d3.text(url, (error, fileString) => {
-      if (error) {
-        this.callback(error, null)
-        return
-      }
+    // Extract field names and build an array of row objects
+    // with field names as keys.
+    let fieldNames = rows.shift()
+    let fields = rows.map((row) => {
+      return fieldNames.reduce((memo, name, i) => {
+        memo[name] = row[i]
+        return memo
+      }, {})
+    })
 
-      var fileExtention = getFileExtension(this.dataUrl)
-      var fileRows = []
-      if (fileExtention === 'tsv') {
-        fileRows = d3.tsv.parseRows(fileString)
-      } else {
-        fileRows = d3.csv.parseRows(fileString)
-      }
+    // Build a list of indices.
+    if (fieldNames.length != 1) {
+      let indexField = fieldNames.shift()
+      this.indices = fields.map((row) => row[indexField])
+    } else {
+      this.indices = fields.map((row, i) => `Row ${i + 1}`)
+    }
 
-      var fileFieldNames = fileRows.shift()
-      // create array of row objects with the field names as keys
-      var fileData = fileRows.map(function (fileRow) {
-        return fileFieldNames.reduce(function (memo, name, i) {
-          memo[name] = fileRow[i]
-          return memo
-        }, {})
-      })
+    // Build a list of serieses.
+    this.serieses = fieldNames.map((label, i) => {
+      return {label: label, seriesIndex: i}
+    })
 
-      var indexFieldName
-
-      if (fileFieldNames.length !== 1) {
-        indexFieldName = fileFieldNames.shift()
-        this._indices = fileData.map(function (fileRow) {
-          return fileRow[indexFieldName]
-        })
-      } else {
-        this._indices = d3.range(fileData.length).map(function (i) {
-          return 'Row ' + (i + 1)
-        })
-      }
-
-      this._serieses = fileFieldNames.map(function (label, i) {
+    // Build a list of lists per each column.
+    this.data = fieldNames.map((label) => {
+      return fields.map((row, i) => {
         return {
-          label: label,
-          seriesIndex: i
+          x: i,
+          y: stringToNumber(row[label]),
+          xLabel: this.indices[i],
+          yRaw: row[label]
         }
       })
-
-      this._data = fileFieldNames.map((label) => {
-        return fileData.map((fileRow, i) => {
-          return {
-            x: i,
-            xLabel: this._indices[i],
-            y: stringToNumber(fileRow[label]),
-            yRaw: fileRow[label]
-          }
-        })
-      })
-
-      this.callback(null, this)
     })
   }
-
-  getSerieses(): Array<Object> {
-    return this._serieses
-  }
-
-  getSeries(i: number): Object {
-    return this._serieses[i]
-  }
-
-  getSeriesCount(): number {
-    return this._serieses.length
-  }
-
-  getDatumCount(): number {
-    return this._data[0].length
-  }
 }
+
+
+/**
+ * Fetches URL contents from the server and calls a callback
+ * with a response transformed into PageData in it.
+ */
+type t_CALLBACK = (err: ?Object, data: ?PageData) => void
+function fetchPageData(url: string, cb: t_CALLBACK): void {
+  url = 'get/?url=' + encodeURIComponent(url)
+  d3.text(url, (err, resp) => {
+    if (err) {
+      cb(err, null)
+      return
+    }
+
+    let data = new PageData(url, resp)
+    cb(null, data)
+  })
+}
+
+export {fetchPageData, PageData}

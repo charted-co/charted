@@ -1,7 +1,7 @@
 /* @flow */
 
 import {getUrlParameters} from "./Utils"
-import {PageData} from "./PageData"
+import {fetchPageData, PageData} from "./PageData"
 import {Chart} from "./Chart"
 import * as templates from "./templates"
 
@@ -107,7 +107,7 @@ export class PageController {
 
       // set first title
       if (!this.parameters.charts[0].title) {
-        this.parameters.charts[0].title = data.getSeriesCount() > 1 ? 'Chart' : data.getSeries(0).label
+        this.parameters.charts[0].title = data.serieses.length > 1 ? 'Chart' : data.serieses[0].label
       }
 
       this.$body.removeClass('pre-load loading error')
@@ -122,7 +122,7 @@ export class PageController {
 
 
   fetchData(dataUrl: string, callback: (data: PageData) => void): void {
-    new PageData(dataUrl, (error, data) => {
+    fetchPageData(dataUrl, (error, data) => {
       if (error) {
         this.errorNotify(error)
         return
@@ -160,7 +160,7 @@ export class PageController {
       otherChartSeries = otherChartSeries.concat(this.parameters.charts[i].series)
     }
 
-    for (var j = 0; j < this.data.getSeriesCount(); j++) {
+    for (var j = 0; j < this.data.serieses.length; j++) {
       if (otherChartSeries.indexOf(j) > -1) continue
       firstChartSeries.push(j)
     }
@@ -278,7 +278,7 @@ export class PageController {
 
   getSeriesName(i: number): string {
     if (! this.parameters.seriesNames || ! this.parameters.seriesNames[i]) {
-      return this.data.getSerieses()[i].label
+      return this.data.serieses[i].label
     } else {
       return this.parameters.seriesNames[i]
     }
