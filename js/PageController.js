@@ -30,12 +30,10 @@ export class PageController {
     this.$charts = $('.charts')
 
     // re-render charts on window resize
-    $(window).resize(function () {
+    $(window).resize(() => {
       clearTimeout(this.resizeTimer)
-      this.resizeTimer = setTimeout(function () {
-        this.setDimensions()
-      }.bind(this), 30)
-    }.bind(this))
+      this.resizeTimer = setTimeout(() => this.setDimensions(), 30)
+    })
 
     // setup keystrokes
     $(document).keyup(function(e) {
@@ -59,9 +57,7 @@ export class PageController {
     this.resetCharts()
 
     if (!this.parameters.embed) {
-      setInterval(function () {
-        this.resetCharts()
-      }.bind(this), 1000 * 60 * 30)
+      setInterval(() => this.resetCharts(), 1000 * 60 * 30)
     }
   }
 
@@ -84,31 +80,22 @@ export class PageController {
     $('.download-data').attr('href', this.parameters.dataUrl)
 
     // bind intereactions
-    $pageSettings.find('.settings').click(function (event) {
+    $pageSettings.find('.settings').click((event) => {
       event.stopPropagation()
       $pageSettings.addClass('open')
     })
 
-    $pageSettings.find('.settings-popover').click(function (event) {
-      event.stopPropagation()
-    })
+    $pageSettings.find('.settings-popover').click((event) => event.stopPropagation())
 
-    this.$body.click(function () {
-      $pageSettings.removeClass('open')
-    })
+    this.$body.click(() => $pageSettings.removeClass('open'))
 
-    $pageSettings.find('.toggle-color').click(function () {
-      this.toggleColor()
-    }.bind(this))
-
-    $pageSettings.find('.get-embed').click(function () {
-      this.getEmbed()
-    }.bind(this))
+    $pageSettings.find('.toggle-color').click(() => this.toggleColor())
+    $pageSettings.find('.get-embed').click(() => this.getEmbed())
   }
 
 
   resetCharts(): void {
-    this.fetchData(this.parameters.dataUrl, function (data) {
+    this.fetchData(this.parameters.dataUrl, (data) => {
       // set background color
       this.applyColor()
 
@@ -126,18 +113,16 @@ export class PageController {
       this.$body.removeClass('pre-load loading error')
 
       // update charts
-      this.parameters.charts.forEach(function (chart, i) {
-        this.updateChart(i)
-      }.bind(this))
+      this.parameters.charts.forEach((chart, i) => this.updateChart(i))
 
       this.setDimensions()
       this.updatePageState()
-    }.bind(this))
+    })
   }
 
 
   fetchData(dataUrl: string, callback: (data: PageData) => void): void {
-    new PageData(dataUrl, function (error, data) {
+    new PageData(dataUrl, (error, data) => {
       if (error) {
         this.errorNotify(error)
         return
@@ -146,7 +131,7 @@ export class PageController {
       if (data) {
         callback(data)
       }
-    }.bind(this))
+    })
   }
 
 
@@ -198,11 +183,11 @@ export class PageController {
     var toChart = this.parameters.charts[toChartIndex]
 
     // remove default titles
-    this.parameters.charts.forEach(function (chart, i) {
+    this.parameters.charts.forEach((chart, i) => {
       if (chart.title && chart.title == this.getDefaultTitle(i)) {
         delete chart.title
       }
-    }.bind(this))
+    })
 
     // add series to intended chart
     if (toChartIndex > this.parameters.charts.length - 1) {
@@ -255,9 +240,9 @@ export class PageController {
 
   getFullParams(chartIndex: number): Object {
     var params = this.parameters.charts[chartIndex]
-    Object.keys(OPTIONS).forEach(function (option) {
+    Object.keys(OPTIONS).forEach((option) => {
       params[option] = params[option] || OPTIONS[option][0]
-    }.bind(this))
+    })
 
     if (chartIndex === 0) {
       params.series = this.getFirstChartSeries()
@@ -321,14 +306,12 @@ export class PageController {
 
 
   getOtherCharts(chartIndex: number): Array<{title: string, chartIndex: number}> {
-    return this.parameters.charts.map(function (chart, i) {
+    return this.parameters.charts.map((chart, i) => {
       return {
         title: chart.title || this.getDefaultTitle(i),
         chartIndex: i
       }
-    }.bind(this)).filter(function (chart, i) {
-      return i !== chartIndex
-    })
+    }).filter((chart, i) => i !== chartIndex)
   }
 
 
@@ -380,9 +363,7 @@ export class PageController {
 
     var chartCount = this.chartObjects ? this.chartObjects.length : 0
     $('.grid-option').html(chartCount > 1 ? template() : '')
-    $('.toggle-grid').click(function () {
-      this.toggleGrid()
-    }.bind(this))
+    $('.toggle-grid').click(() => this.toggleGrid())
   }
 
 
@@ -531,15 +512,11 @@ export class PageController {
       pageTitle = pageTitleString
     } else if (charts.length > 0) {
       // if there's a chart, use the chart titles
-      pageTitle = charts.map(function (chart, i) {
-        return chart.title || this.getDefaultTitle(i)
-      }.bind(this)).join(', ')
+      pageTitle = charts.map((chart, i) => chart.title || this.getDefaultTitle(i)).join(', ')
 
       // if it's just one chart called "Chart", add the series names
       if (pageTitle === 'Chart') {
-        pageTitle += ' of ' + charts[0].series.map(function (series) {
-          return this.getSeriesName(series)
-        }.bind(this)).join(', ')
+        pageTitle += ' of ' + charts[0].series.map((series) => this.getSeriesName(series)).join(', ')
       }
     }
 
@@ -573,15 +550,15 @@ export class PageController {
 
     // add applicable chart parameters
     minParams.charts = []
-    this.parameters.charts.forEach(function (chart, i) {
+    this.parameters.charts.forEach((chart, i) => {
       minParams.charts.push({})
 
       // add applicable chart options
-      Object.keys(OPTIONS).forEach(function (option) {
+      Object.keys(OPTIONS).forEach((option) => {
         if (chart[option] && chart[option] !==  OPTIONS[option][0]) {
           minParams.charts[i][option] = chart[option]
         }
-      }.bind(this))
+      })
 
       // add applicable title
       if (chart.title !== this.getDefaultTitle(i) && chart.title !== '') {
@@ -598,7 +575,7 @@ export class PageController {
         minParams.charts[i].series = chart.series
       }
 
-    }.bind(this))
+    })
 
     // delete charts if empty
     if (minParams.charts.length === 1 && Object.keys(minParams.charts[0]).length === 0) {

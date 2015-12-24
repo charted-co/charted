@@ -19,7 +19,7 @@ export class PageData {
 
   fetchData(): void {
     var url = 'get/?url=' + encodeURIComponent(this.dataUrl)
-    d3.text(url, function (error, fileString) {
+    d3.text(url, (error, fileString) => {
       if (error) {
         this.callback(error, null)
         return
@@ -62,19 +62,19 @@ export class PageData {
         }
       })
 
-      this._data = fileFieldNames.map(function (label) {
-        return fileData.map(function (fileRow, i) {
+      this._data = fileFieldNames.map((label) => {
+        return fileData.map((fileRow, i) => {
           return {
             x: i,
             xLabel: this._indices[i],
             y: stringToNumber(fileRow[label]),
             yRaw: fileRow[label]
           }
-        }.bind(this))
-      }.bind(this))
+        })
+      })
 
       this.callback(null, this)
-    }.bind(this))
+    })
   }
 
   getSerieses(): Array<Object> {

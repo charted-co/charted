@@ -29,7 +29,7 @@ export class ChartLegend {
     }
 
     var $legend = $('')
-    _.eachRight(this.data.getSerieses(), function (series, i) {
+    _.eachRight(this.data.getSerieses(), (series, i) => {
       var label = this.controller.getSeriesName(this.series[i])
       var thisLabel = {
         label: label,
@@ -39,7 +39,7 @@ export class ChartLegend {
       var $legendEl = $(templates.legendItem(thisLabel))
       $legend = $legend.add($legendEl)
       series.legendEl = $legendEl
-    }.bind(this))
+    })
 
     this.$container.find('.legend').html($legend).removeClass('hidden')
 
@@ -49,10 +49,10 @@ export class ChartLegend {
   }
 
   bindLegendInteractions(): void {
-    this.data.getSerieses().forEach(function (series, i) {
+    this.data.getSerieses().forEach((series, i) => {
       // make series labels editable
       var $legendInput = series.legendEl.find('.legend-input')
-      $legendInput.on('focusout', function () {
+      $legendInput.on('focusout', () => {
         var seriesNames = this.controller.getSeriesNames()
 
         if ($legendInput.text() === series.label || $legendInput.text() === '') {
@@ -62,25 +62,25 @@ export class ChartLegend {
           seriesNames[series.seriesIndex] = $legendInput.text()
         }
         this.controller.updatePageState()
-      }.bind(this))
+      })
 
       // open color input
-      series.legendEl.find('.legend-color').click(function (event) {
+      series.legendEl.find('.legend-color').click((event) => {
         event.stopPropagation()
         this.removePopovers()
         this.openColorInput(series)
-      }.bind(this))
+      })
 
       // open move-chart popover
-      series.legendEl.find('.move-chart').click(function (event) {
+      series.legendEl.find('.move-chart').click((event) => {
         event.stopPropagation()
         this.removePopovers()
         this.openMoveChart(series, i)
-      }.bind(this))
-    }, this)
+      })
+    })
 
     // remove popovers
-    $('html').click(this.removePopovers.bind(this))
+    $('html').click(() => this.removePopovers())
   }
 
   openColorInput(series: Object) : void{
@@ -92,9 +92,9 @@ export class ChartLegend {
       seriesIndex: series.seriesIndex
     }))
 
-    this.data.getSeriesIndices().forEach(function (series) {
+    this.data.getSeriesIndices().forEach((series) => {
       var $thisColorInput = this.$container.find('.change-series-color-' + series)
-      $thisColorInput.on('focusout', function () {
+      $thisColorInput.on('focusout', () => {
 
         var seriesColors = this.controller.getSeriesColors()
         var newColorHex = '#' + $thisColorInput.text().replace(/^#/, '').trim()
@@ -111,12 +111,10 @@ export class ChartLegend {
         this.chart.render()
         this.controller.updatePageState()
 
-      }.bind(this))
-    }.bind(this))
+      })
+    })
 
-    this.$container.find('.change-series-color').click(function (e) {
-      e.stopPropagation()
-    }.bind(this))
+    this.$container.find('.change-series-color').click((e) => e.stopPropagation())
   }
 
   openMoveChart(series: Object, i: number): void {
@@ -138,16 +136,16 @@ export class ChartLegend {
       series.legendEl.addClass('active')
       series.legendEl.append(templates.moveChart({otherCharts: otherCharts, series: this.series}))
 
-      otherCharts.forEach(function (chart) {
-        this.$container.find('.move-to-chart-' + chart.chartIndex).click(function (e) {
+      otherCharts.forEach((chart) => {
+        this.$container.find('.move-to-chart-' + chart.chartIndex).click((e) => {
           e.preventDefault()
           this.controller.moveToChart(this.series[i], this.chartIndex, chart.chartIndex)
-        }.bind(this))
-      }.bind(this))
+        })
+      })
 
-      this.$container.find('.move-to-new-chart').click(function () {
+      this.$container.find('.move-to-new-chart').click(() => {
         this.controller.moveToChart(this.series[i], this.chartIndex, newChartIndex)
-      }.bind(this))
+      })
     }
   }
 

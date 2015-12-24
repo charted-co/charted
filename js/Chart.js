@@ -102,10 +102,11 @@ export class Chart {
     this.$plot.empty()
 
     // Update chart UI
-    EDITABLES.forEach(function (item) {
+    EDITABLES.forEach((item) => {
       this.$container.find('.' + camelToHyphen(item)).text(this.params[item])
       this.updateEditablePlaceholder(item)
-    }.bind(this))
+    })
+
     this.$xBeg.html(this.data.getIndexExtent()[0])
     this.$xEnd.html(this.data.getIndexExtent()[1])
 
@@ -116,29 +117,23 @@ export class Chart {
   setScales(): void {
     // set x- and y-axis scales and position functions
     this.xScale = d3.scale.linear().domain([0, this.data.getIndexCount()])
-    this.xPosition = function (d) {
-      return Math.floor(this.xScale(d.x), 0)
-    }.bind(this)
-    this.xBarWidth = function (d) {
+
+    this.xPosition = (d) => Math.floor(this.xScale(d.x), 0)
+    this.xBarWidth = (d) => {
       // have a pixel space when columns are at least 8px wide
       var space = this.plotWidth / this.data.getIndexCount() >= 8 ? 1 : 0
       var nextXScale = d.x + 1 < this.data.getIndexCount() ? this.xScale(d.x + 1) : this.plotWidth
       return Math.floor(nextXScale, 0) - this.xPosition(d) - space
-    }.bind(this)
-    this.xPositionLine = function (d) {
+    }
+
+    this.xPositionLine = (d) => {
       return this.xPosition(d) + 0.5 * this.xBarWidth(this.data.getDatum(0, d.x))
     }
 
     this.yScale = d3.scale.linear()
-    this.yPosition = function (d) {
-      return this.yScale(d.y)
-    }.bind(this)
-    this.yPositionStacked = function (d) {
-      return this.yScale(d.y1)
-    }.bind(this)
-    this.yHeightStacked = function(d) {
-      return d.y === 0 ? 0 : this.yScale(d.y0) - this.yScale(d.y1) + 1
-    }.bind(this)
+    this.yPosition = (d) => this.yScale(d.y)
+    this.yPositionStacked = (d) => this.yScale(d.y1)
+    this.yHeightStacked = (d) => d.y === 0 ? 0 : this.yScale(d.y0) - this.yScale(d.y1) + 1
 
     // set stacked and unstacked y ranges
     this.yRangeStacked = this.data.getStackedExtent()
@@ -302,13 +297,13 @@ export class Chart {
     var HTML = ''
     var intervals = getNiceIntervals(this.yRange, this.height)
     var maxTop = this.$yAxis.height() - this.$container.height() + 60 // must be 60px below the top
-    intervals.forEach(function (interval) {
+    intervals.forEach((interval) => {
       interval.top = this.yScale(interval.value)
       if (interval.top >= maxTop) {
         interval.display = this.params.rounding === 'on' ? interval.displayString : interval.rawString
         HTML += templates.yAxisLabel(interval)
       }
-    }.bind(this))
+    })
     this.$yAxis.html(HTML)
 
     // update zero line position
@@ -407,20 +402,20 @@ export class Chart {
 
   bindInteractions(): void {
     // chart option toggles
-    Object.keys(OPTIONS).forEach(function (option) {
-      this.$container.find('.toggle-' + option).click(function (event) {
+    Object.keys(OPTIONS).forEach((option) => {
+      this.$container.find('.toggle-' + option).click((event) => {
         event.preventDefault()
         var options = OPTIONS[option]
         this.params[option] = this.params[option] === options[0] ? options[1] : options[0]
         this.render()
         this.pageController.updatePageState()
-      }.bind(this))
-    }.bind(this))
+      })
+    })
 
     // chart editables
-    EDITABLES.forEach(function (item) {
+    EDITABLES.forEach((item) => {
       var $elem = this.$container.find('.' + camelToHyphen(item))
-      $elem.on('focusout', function () {
+      $elem.on('focusout', () => {
         if ($elem.text() === '' && item === 'title') {
           this.params[item] = this.pageController.getDefaultTitle(this.chartIndex)
           $elem.text(this.params[item])
@@ -429,11 +424,11 @@ export class Chart {
           this.updateEditablePlaceholder(item)
         }
         this.pageController.updatePageState()
-      }.bind(this))
-    }.bind(this))
+      })
+    })
 
     // handle mouseover
-    this.$container.mousemove(this.handleMouseover.bind(this))
+    this.$container.mousemove((pixel) => this.handleMouseover(pixel))
   }
 
   handleMouseover(pixel: Object): void {
@@ -446,7 +441,7 @@ export class Chart {
       this.mouseTimer = null
     }
 
-    this.mouseTimer = setTimeout(function () {
+    this.mouseTimer = setTimeout(() => {
       if (this.$optionsElem.length && this.$optionsElem.is(':hover')) {
         return
       }
@@ -462,7 +457,7 @@ export class Chart {
       this.$container.removeClass('active')
       $('body').removeClass('page-active')
       this.$pageSettings.removeClass('open')
-    }.bind(this), 1000)
+    }, 1000)
 
     // don't change the selection if mouseover is below the plot
     if (pixel.pageY - this.$plot.offset().top > this.$plot.height()) return
@@ -484,18 +479,15 @@ export class Chart {
     var currentY = this.focusedSeriesIndex
 
     // determine the closest y series
-    var diffs = d3.range(this.data.getSeriesCount()).map(function (i) {
+    var diffs = d3.range(this.data.getSeriesCount()).map((i) => {
       var thisDatum = this.data.getDatum(i, currentX)
       var indexPixelY = this.params.type === 'line' ? this.yPosition(thisDatum) : this.yPositionStacked(thisDatum)
       var diff = this.params.type === 'line' ? Math.abs(pixelY - indexPixelY) : pixelY - indexPixelY
       var isValid = (this.params.type === 'line' || diff > 0)
       return {diff: diff, series: i, isValid: isValid}
-    }.bind(this))
-
-    var validDiffs = diffs.filter(function (diff) {
-      return diff.isValid
     })
-    currentY = _.min(validDiffs, 'diff').series
+
+    currentY = _.min(diffs.filter((diff) => diff.isValid), 'diff').series
 
     // use the total if it's a column chart and the mouse position it
     if (this.params.type === 'column') {
