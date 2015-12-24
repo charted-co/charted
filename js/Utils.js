@@ -44,9 +44,7 @@ function addCommaSeparator(val: string): string {
   return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-function getRoundedValue(str: string, extent: Array<any>): string {
-  var val = stringToNumber(str)
-
+function getRoundedValue(val: number, extent: Array<any>): string {
   // round to the same decimal if all values are within 2 orders of magnitude (e.g., 10-1,000)
   var maxOrdersDiff = 2
 
