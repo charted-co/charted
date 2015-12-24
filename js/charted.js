@@ -1,4 +1,6 @@
-import {PageController} from "PageController"
+/* @flow */
+
+import {PageController} from "./PageController"
 
 $(function () {
   var $dataInput = $('.data-file-input')
