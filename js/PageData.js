@@ -4,7 +4,7 @@ import {getFileExtension, stringToNumber} from "./Utils"
 
 export class PageData {
   dataUrl: string;
-  callback: Function;
+  callback: (error: ?Object, data: ?PageData) => void;
   _serieses: Array<Object>;
   _indices: Array<string>;
   _data: Array<any>;
@@ -21,7 +21,8 @@ export class PageData {
     var url = 'get/?url=' + encodeURIComponent(this.dataUrl)
     d3.text(url, function (error, fileString) {
       if (error) {
-        return this.callback(error, null)
+        this.callback(error, null)
+        return
       }
 
       var fileExtention = getFileExtension(this.dataUrl)

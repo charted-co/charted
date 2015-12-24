@@ -1,7 +1,7 @@
-import {getUrlParameters} from "Utils"
-import {PageData} from "PageData"
-import {Chart} from "Chart"
-import * as templates from "templates"
+import {getUrlParameters} from "./Utils"
+import {PageData} from "./PageData"
+import {Chart} from "./Chart"
+import * as templates from "./templates"
 
 export function PageController () {
   this.DARK = 'dark'

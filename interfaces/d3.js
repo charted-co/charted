@@ -8,6 +8,7 @@ declare class _D3 {
 
   text(url: string, callback: Function): void;
   range(range: number): Array<number>;
+  extent<T>(list: Array<T>, callback: (item: T) => any): Array<T>;
 }
 
 declare var d3: _D3;
