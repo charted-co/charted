@@ -28,7 +28,6 @@
     "babel-plugin-transform-flow-strip-types": "6.3.x",
     "connect": "^3.3.5",
     "express": "4.10.x",
-    "jshint": "2.5.x",
     "less": "1.7.x",
     "request": "2.47.x",
     "serve-static": "~1.7.2",
