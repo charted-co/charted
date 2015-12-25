@@ -1,7 +1,7 @@
 [ignore]
-pub/lib
-pub/scripts
-node_modules
+.*/pub/lib/.*
+.*/pub/scripts/.*
+.*/node_modules/.*
 [include]
 
 [libs]
