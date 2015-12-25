@@ -2,7 +2,7 @@
 
 import {ChartData} from "./ChartData"
 import {ChartLegend} from "./ChartLegend"
-import {camelToHyphen, getNiceIntervals, getRoundedValue} from "./Utils"
+import {stringToNumber, camelToHyphen, getNiceIntervals, getRoundedValue} from "./Utils"
 import {OPTIONS, EDITABLES, PageController} from "./PageController"
 import {PageData} from "./PageData"
 import * as templates from "./templates"
@@ -369,7 +369,10 @@ export class Chart {
       }
 
       for (var j = 0; j < _this.data.getSeriesCount(); j++) {
-        d3.select(_this.data.getDatum(j, i).columnEl).attr('class', columnClass)
+        let el = _this.data.getDatum(j, i).columnEl
+        if (el) {
+          d3.select(el).attr('class', columnClass)
+        }
       }
     }
 
@@ -383,7 +386,14 @@ export class Chart {
     var thisPoint = this.data.getDatum(chartYSeries, this.selectedX)
 
     var thisYLabel = ''
-    var thisYColor = showTotal ? null : this.getSeriesColor(this.data.getSeries(thisPoint.ySeries).seriesIndex)
+    var thisYColor = null
+
+    if (!showTotal) {
+      if (thisPoint.ySeries != null) {
+        thisYColor = this.getSeriesColor(this.data.getSeries(thisPoint.ySeries).seriesIndex)
+      }
+    }
+
     if (this.data.getSeriesCount() > 1) {
       var pageYSeries = this.getChartSeries()[chartYSeries]
       thisYLabel = showTotal ? 'total' : this.pageController.getSeriesName(pageYSeries)
@@ -391,7 +401,7 @@ export class Chart {
 
     var seriesExtent = this.data.getStackedExtentForIndex(this.selectedX)
     var seriesTotal = seriesExtent[1] + seriesExtent[0]
-    var thisValue = showTotal ? seriesTotal : thisPoint.yRaw
+    var thisValue = showTotal ? seriesTotal : stringToNumber(thisPoint.yRaw)
     var thisValueFormatted = this.params.rounding === 'on' ? getRoundedValue(thisValue, this.yRange) : thisValue
 
     // update selection

@@ -38,10 +38,7 @@ class PageData {
           x: i,
           y: stringToNumber(row[label]),
           xLabel: this.indices[i],
-          yRaw: row[label],
-          y0: null,
-          y1: null,
-          ySeries: null
+          yRaw: row[label]
         }
       })
     })

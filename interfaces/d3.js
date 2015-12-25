@@ -20,7 +20,7 @@ declare class _D3 {
   range(range: number): Array<number>;
   extent<T>(list: Array<T>, callback: (item: T) => any): Array<T>;
   max<T>(list: Array<T>): T;
-  select(selector: string): Object;
+  select(selector: string|Object): Object;
 }
 
 declare var d3: _D3;

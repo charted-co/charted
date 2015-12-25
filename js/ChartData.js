@@ -50,7 +50,7 @@ export class ChartData {
     return this._serieses[i]
   }
 
-  getDatum(seriesIndex: number, index: number): any {
+  getDatum(seriesIndex: number, index: number): t_FIELD {
     return this._data[seriesIndex][index]
   }
 

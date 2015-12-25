@@ -4,7 +4,8 @@ declare type t_FIELD = {
   y: number,
   xLabel: string,
   yRaw: string,
-  ySeries: ?number,
-  y0: ?number,
-  y1: ?number
+  ySeries?: number,
+  y0?: number,
+  y1?: number,
+  columnEl?: Object
 }
