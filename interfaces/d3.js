@@ -1,5 +1,5 @@
 declare class _D3_TSV_CSV {
-  parseRows(file: string): Array<Object>
+  parseRows(file: string): Array<Array<string>>
 }
 
 declare class _D3_SCALE {

@@ -7,10 +7,7 @@ class PageData {
   serieses: Array<t_SERIES>;
   data: Array<Array<t_FIELD>>;
 
-  constructor(url: string, resp: string) {
-    let ext = getFileExtension(url)
-    let rows = ext == 'tsv' ? d3.tsv.parseRows(resp) : d3.csv.parseRows(resp)
-
+  constructor(rows: Array<Array<string>>) {
     // Extract field names and build an array of row objects
     // with field names as keys.
     let fieldNames = rows.shift()
@@ -41,7 +38,10 @@ class PageData {
           x: i,
           y: stringToNumber(row[label]),
           xLabel: this.indices[i],
-          yRaw: row[label]
+          yRaw: row[label],
+          y0: null,
+          y1: null,
+          ySeries: null
         }
       })
     })
@@ -62,7 +62,9 @@ function fetchPageData(url: string, cb: t_CALLBACK): void {
       return
     }
 
-    let data = new PageData(url, resp)
+    let ext = getFileExtension(url)
+    let rows = ext == 'tsv' ? d3.tsv.parseRows(resp) : d3.csv.parseRows(resp)
+    let data = new PageData(rows)
     cb(null, data)
   })
 }
