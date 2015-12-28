@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 
-if ! type "$watchman" &> /dev/null; then
+# If watchman is installed, use it to watch and re-compile files.
+# You can install watchman by running `brew install watchman`.
+# See more: https://facebook.github.io/watchman/
+if hash watchman 2> /dev/null; then
   watchman watch $PWD
   watchman -- trigger $PWD/less lessfiles '*.less' -- npm run-script prestart
   watchman -- trigger $PWD/js jsfiles '*.js' -- npm run-script prestart
