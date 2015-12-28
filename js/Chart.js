@@ -386,7 +386,7 @@ export class Chart {
     var thisPoint = this.data.getDatum(chartYSeries, this.selectedX)
 
     var thisYLabel = ''
-    var thisYColor = null
+    var thisYColor = this.pageController.getPageColor() === 'dark' ? this.colorDark : this.colorLight
 
     if (!showTotal) {
       if (thisPoint.ySeries != null) {
