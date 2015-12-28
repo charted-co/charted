@@ -1,144 +1,157 @@
-/*global $, _ */
+/* @flow */
 
-function ChartLegend(controller, data, chart) {
-  this.chart = chart
-  this.controller = controller
-  this.data = data
-  this.chartIndex = this.chart.getChartIndex()
-  this.$container = this.chart.getChartContainer()
-  this.series = this.chart.getChartSeries()
-}
+import {Chart} from "./Chart"
+import {ChartData} from "./ChartData"
+import {PageController} from "./PageController"
+import * as templates from "./templates"
 
-ChartLegend.prototype.update = function() {
-  if (this.data.getSeriesCount() === 1 && this.controller.getOtherCharts(this.chartIndex).length === 0) {
-    this.$container.find('.legend').html('')
-    return
+export class ChartLegend {
+  chart: Chart;
+  controller: PageController;
+  data: ChartData;
+  chartIndex: number;
+  $container: Object;
+  series: Array<any>;
+
+  constructor(controller: PageController, data: ChartData, chart: Chart) {
+    this.chart = chart
+    this.controller = controller
+    this.data = data
+    this.chartIndex = this.chart.getChartIndex()
+    this.$container = this.chart.getChartContainer()
+    this.series = this.chart.getChartSeries()
   }
 
-  var $legend = $('')
-  _(this.data.getSerieses()).eachRight(function (series, i) {
-    var label = this.controller.getSeriesName(this.series[i])
-    var thisLabel = {
-      label: label,
-      color: this.chart.getSeriesColor(series.seriesIndex),
-      editable: this.controller.getEditability()
+  update(): void {
+    if (this.data.getSeriesCount() === 1 && this.controller.getOtherCharts(this.chartIndex).length === 0) {
+      this.$container.find('.legend').html('')
+      return
     }
-    var $legendEl = $(charted.templates.legendItem(thisLabel))
-    $legend = $legend.add($legendEl)
-    series.legendEl = $legendEl
-  }.bind(this))
-  this.$container.find('.legend').html($legend).removeClass('hidden')
 
-  if (this.controller.getEditability()) {
-    this.bindLegendInteractions()
+    var $legend = $('')
+    _.eachRight(this.data.getSerieses(), (series, i) => {
+      var label = this.controller.getSeriesName(this.series[i])
+      var thisLabel = {
+        label: label,
+        color: this.chart.getSeriesColor(series.seriesIndex),
+        editable: this.controller.getEditability()
+      }
+      var $legendEl = $(templates.legendItem(thisLabel))
+      $legend = $legend.add($legendEl)
+      series.legendEl = $legendEl
+    })
+
+    this.$container.find('.legend').html($legend).removeClass('hidden')
+
+    if (this.controller.getEditability()) {
+      this.bindLegendInteractions()
+    }
   }
-}
 
-ChartLegend.prototype.bindLegendInteractions = function () {
-  this.data.getSerieses().forEach(function (series, i) {
-    // make series labels editable
-    var $legendInput = series.legendEl.find('.legend-input')
-    $legendInput.on('focusout', function () {
-      var seriesNames = this.controller.getSeriesNames()
+  bindLegendInteractions(): void {
+    this.data.getSerieses().forEach((series, i) => {
+      // make series labels editable
+      var $legendInput = series.legendEl.find('.legend-input')
+      $legendInput.on('focusout', () => {
+        var seriesNames = this.controller.getSeriesNames()
 
-      if ($legendInput.text() === series.label || $legendInput.text() === '') {
-        $legendInput.text(series.label)
-        delete seriesNames[series.seriesIndex]
-      } else {
-        seriesNames[series.seriesIndex] = $legendInput.text()
-      }
-      this.controller.updatePageState()
-    }.bind(this))
+        if ($legendInput.text() === series.label || $legendInput.text() === '') {
+          $legendInput.text(series.label)
+          delete seriesNames[series.seriesIndex]
+        } else {
+          seriesNames[series.seriesIndex] = $legendInput.text()
+        }
+        this.controller.updatePageState()
+      })
 
-    // open color input
-    series.legendEl.find('.legend-color').click(function (event) {
-      event.stopPropagation()
-      this.removePopovers()
-      this.openColorInput(series)
-    }.bind(this))
+      // open color input
+      series.legendEl.find('.legend-color').click((event) => {
+        event.stopPropagation()
+        this.removePopovers()
+        this.openColorInput(series)
+      })
 
-    // open move-chart popover
-    series.legendEl.find('.move-chart').click(function (event) {
-      event.stopPropagation()
-      this.removePopovers()
-      this.openMoveChart(series, i)
-    }.bind(this))
-  }, this)
+      // open move-chart popover
+      series.legendEl.find('.move-chart').click((event) => {
+        event.stopPropagation()
+        this.removePopovers()
+        this.openMoveChart(series, i)
+      })
+    })
 
-  // remove popovers
-  $('html').click(this.removePopovers.bind(this))
-}
+    // remove popovers
+    $('html').click(() => this.removePopovers())
+  }
 
-ChartLegend.prototype.openColorInput = function(series) {
-  var colorHex = this.chart.getSeriesColor(series.seriesIndex).replace(/^#/, '')
+  openColorInput(series: Object) : void{
+    var colorHex = this.chart.getSeriesColor(series.seriesIndex).replace(/^#/, '')
 
-  series.legendEl.addClass('active-color-input')
-  series.legendEl.append(charted.templates.changeSeriesColor({
-    colorHex: colorHex,
-    seriesIndex: series.seriesIndex
-  }))
+    series.legendEl.addClass('active-color-input')
+    series.legendEl.append(templates.changeSeriesColor({
+      colorHex: colorHex,
+      seriesIndex: series.seriesIndex
+    }))
 
-  this.data.getSeriesIndices().forEach(function (series) {
-    var $thisColorInput = this.$container.find('.change-series-color-' + series)
-    $thisColorInput.on('focusout', function () {
+    this.data.getSeriesIndices().forEach((series) => {
+      var $thisColorInput = this.$container.find('.change-series-color-' + series)
+      $thisColorInput.on('focusout', () => {
 
-      var seriesColors = this.controller.getSeriesColors()
-      var newColorHex = '#' + $thisColorInput.text().replace(/^#/, '').trim()
+        var seriesColors = this.controller.getSeriesColors()
+        var newColorHex = '#' + $thisColorInput.text().replace(/^#/, '').trim()
 
-      var defaultColorHex = this.chart.getDefaulSeriesColor(series)
-      var isValidHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(newColorHex)
+        var defaultColorHex = this.chart.getDefaulSeriesColor(series)
+        var isValidHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(newColorHex)
 
-      if (newColorHex === defaultColorHex ||!isValidHex ) {
-        $thisColorInput.text(defaultColorHex)
-        delete seriesColors[series]
-      } else {
-        seriesColors[series] = newColorHex
-      }
-      this.chart.render()
-      this.controller.updatePageState()
+        if (newColorHex === defaultColorHex ||!isValidHex ) {
+          $thisColorInput.text(defaultColorHex)
+          delete seriesColors[series]
+        } else {
+          seriesColors[series] = newColorHex
+        }
+        this.chart.render()
+        this.controller.updatePageState()
 
-    }.bind(this))
-  }.bind(this))
+      })
+    })
 
-  this.$container.find('.change-series-color').click(function (e) {
-    e.stopPropagation()
-  }.bind(this))
-}
+    this.$container.find('.change-series-color').click((e) => e.stopPropagation())
+  }
 
-ChartLegend.prototype.openMoveChart = function(series, i) {
-  var otherCharts = this.controller.getOtherCharts(this.chartIndex)
+  openMoveChart(series: Object, i: number): void {
+    var otherCharts = this.controller.getOtherCharts(this.chartIndex)
 
-  // current number of charts = other charts + current chart
-  var newChartIndex = otherCharts.length + 1
+    // current number of charts = other charts + current chart
+    var newChartIndex = otherCharts.length + 1
 
-  if (otherCharts.length === 0) {
-    // if no other charts, move series to a new chart
-    this.controller.moveToChart(this.series[i], this.chartIndex, newChartIndex)
-
-  } else if (otherCharts.length === 1 && this.series.length === 1) {
-    // if only one series and only one other chart, move series back into that chart
-    this.controller.moveToChart(this.series[i], this.chartIndex, otherCharts[0].chartIndex)
-
-  } else {
-    // else, show all the options in a popover
-    series.legendEl.addClass('active')
-    series.legendEl.append(charted.templates.moveChart({otherCharts: otherCharts, series: this.series}))
-
-    otherCharts.forEach(function (chart) {
-      this.$container.find('.move-to-chart-' + chart.chartIndex).click(function (e) {
-        e.preventDefault()
-        this.controller.moveToChart(this.series[i], this.chartIndex, chart.chartIndex)
-      }.bind(this))
-    }.bind(this))
-
-    this.$container.find('.move-to-new-chart').click(function () {
+    if (otherCharts.length === 0) {
+      // if no other charts, move series to a new chart
       this.controller.moveToChart(this.series[i], this.chartIndex, newChartIndex)
-    }.bind(this))
-  }
-}
 
-ChartLegend.prototype.removePopovers = function() {
-  $('html').find('.move-chart-options, .change-series-color').remove()
-  $('html').find('.page-settings').removeClass('open')
-  $('html').find('.legend-item').removeClass('active active-color-input')
+    } else if (otherCharts.length === 1 && this.series.length === 1) {
+      // if only one series and only one other chart, move series back into that chart
+      this.controller.moveToChart(this.series[i], this.chartIndex, otherCharts[0].chartIndex)
+
+    } else {
+      // else, show all the options in a popover
+      series.legendEl.addClass('active')
+      series.legendEl.append(templates.moveChart({otherCharts: otherCharts, series: this.series}))
+
+      otherCharts.forEach((chart) => {
+        this.$container.find('.move-to-chart-' + chart.chartIndex).click((e) => {
+          e.preventDefault()
+          this.controller.moveToChart(this.series[i], this.chartIndex, chart.chartIndex)
+        })
+      })
+
+      this.$container.find('.move-to-new-chart').click(() => {
+        this.controller.moveToChart(this.series[i], this.chartIndex, newChartIndex)
+      })
+    }
+  }
+
+  removePopovers(): void {
+    $('html').find('.move-chart-options, .change-series-color').remove()
+    $('html').find('.page-settings').removeClass('open')
+    $('html').find('.legend-item').removeClass('active active-color-input')
+  }
 }
