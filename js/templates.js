@@ -84,7 +84,7 @@ function gridSettingsSplit(): string {
 
 function yAxisLabel(interval: {top: string, display: string}): string {
   return `
-    <div class="y-axis-label" style="top:${interval.top}">${interval.display}</div>
+    <div class="y-axis-label" style="top:${interval.top}px">${interval.display}</div>
   `
 }
 
