@@ -1,6 +1,8 @@
-/* @flow */
+/* @flow weak */
 
-var url = require('url')
+"use strict"
+
+import url from "url"
 
 function googledocs(uri) {
   // the gid is the specific sheet within the document
@@ -27,7 +29,7 @@ function dropbox(uri) {
   return uri
 }
 
-module.exports = function (uri) {
+export default function(uri) {
   if (typeof uri == 'string') {
     uri = url.parse(uri, true)
   }

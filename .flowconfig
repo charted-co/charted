@@ -1,10 +1,9 @@
 [ignore]
-.*/pub/lib/.*
-.*/pub/scripts/.*
+.*/out/.*
 .*/node_modules/.*
 [include]
 
 [libs]
-interfaces/
+lib/interfaces/
 
 [options]

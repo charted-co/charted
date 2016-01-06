@@ -1,6 +1,4 @@
 node_modules/
-pub/charted.css
-pub/scripts
 npm-debug.log
 .DS_Store
-etc/
+out/

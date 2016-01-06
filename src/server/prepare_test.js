@@ -1,7 +1,11 @@
-var url = require('url')
-var prepare = require('./prepare.js')
+/* @flow weak */
 
-exports.testSupportsStringsAndURIs = function (test){
+"use strict"
+
+import url from "url"
+import prepare from "./prepare.js"
+
+export function testSupportsStringsAndURIs(test) {
   var address = 'http://charted.co/'
   var parsed = url.parse(address)
 
@@ -10,15 +14,15 @@ exports.testSupportsStringsAndURIs = function (test){
   test.done();
 }
 
-exports.testDropbox = function (test) {
+export function testDropbox(test) {
   test.equal(prepare('http://dropbox.com/s/abcdef/my.csv').format(),
     'http://dropbox.com/s/abcdef/my.csv?raw=1')
   test.equal(prepare('http://www.dropbox.com/s/abcdef/my.csv').format(),
     'http://www.dropbox.com/s/abcdef/my.csv?raw=1')
-  test.done() 
+  test.done()
 }
 
-exports.testGoogleSpreadsheets = function (test) {
+export function testGoogleSpreadsheets(test) {
   test.equal(
     prepare('https://docs.google.com/spreadsheets/d/1N9Vpl941bR-yN_ZlMHvlc4soDrCxswsORpvjDTbKaiw/edit#gid=2090366728').format(),
     'https://docs.google.com/spreadsheets/d/1N9Vpl941bR-yN_ZlMHvlc4soDrCxswsORpvjDTbKaiw/export?gid=2090366728&format=csv')
