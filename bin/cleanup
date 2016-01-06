@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 if hash watchman 2> /dev/null; then
-  watchman trigger-del $PWD src
+  watchman trigger-del $PWD build
   watchman watch-del-all
   watchman shutdown-server
 fi

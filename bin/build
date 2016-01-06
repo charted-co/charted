@@ -21,10 +21,35 @@ const BABEL_PRESETS = [
 ]
 
 function main(args) {
-  var cmd = args[2] || ''
+  var cmds = args.slice(2)
 
-  if (cmd) {
-    buildIndividual(cmd)
+  if (cmds.length) {
+    cmds.forEach((cmd) => {
+      if (cmd.endsWith('.less')) {
+        less('src/styles/charted.less', 'out/client/charted.css')
+      }
+
+      if (cmd.endsWith('.js')) {
+        if (cmd.startsWith('client')) {
+          transpile(`src/${cmd}`, 'client')
+        }
+
+        if (cmd.startsWith('server')) {
+          transpile(`src/${cmd}`, 'server')
+        }
+
+        if (cmd.startsWith('shared')) {
+          transpile(`src/${cmd}`, 'client')
+          transpile(`src/${cmd}`, 'server')
+        }
+      }
+
+      if (cmd.startsWith('public')) {
+        let dest = cmd.replace('public/', '')
+        cp('-rf', `src/${cmd}`, `out/client/${dest}`)
+      }
+    })
+
     return
   }
 
