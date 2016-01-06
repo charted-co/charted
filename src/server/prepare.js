@@ -1,4 +1,4 @@
-/* @flow weak */
+/* @flow */
 
 "use strict"
 
@@ -29,11 +29,7 @@ function dropbox(uri) {
   return uri
 }
 
-export default function(uri) {
-  if (typeof uri == 'string') {
-    uri = url.parse(uri, true)
-  }
-
+export default function(uri: any): any {
   if (uri.host == 'docs.google.com' && uri.pathname && uri.pathname.startsWith('/spreadsheets/d/')) {
     return googledocs(uri)
   }

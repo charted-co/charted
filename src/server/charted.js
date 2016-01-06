@@ -1,4 +1,4 @@
-/* @flow weak */
+/* @flow */
 
 "use strict"
 
@@ -57,7 +57,7 @@ function getDataUrl(req) {
 
   var parsed = url.parse(uri, true)
   if (parsed.host) { // url is already absolute
-    return prepare(parsed).format()
+    return url.format(prepare(parsed))
   }
 
   return url.format({
@@ -69,7 +69,7 @@ function getDataUrl(req) {
   })
 }
 
-export default function(app, root) {
+export default function(app: any, root: string) {
   if (!root) {
     root = '/charted/'
   }

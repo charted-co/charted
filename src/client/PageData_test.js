@@ -1,3 +1,5 @@
+/* @flow weak */
+
 import {PageData} from "./PageData"
 
 const DATA = [

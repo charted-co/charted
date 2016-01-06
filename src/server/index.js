@@ -1,3 +1,5 @@
+/* @flow */
+
 "use strict"
 
 import charted from "./charted.js"
