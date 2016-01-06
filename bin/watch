@@ -5,6 +5,5 @@
 # See more: https://facebook.github.io/watchman/
 if hash watchman 2> /dev/null; then
   watchman watch $PWD
-  watchman -- trigger $PWD/less lessfiles '*.less' -- npm run-script prestart
-  watchman -- trigger $PWD/js jsfiles '*.js' -- npm run-script prestart
+  watchman -- trigger $PWD/src src '*.*' -- npm run-script prestart
 fi

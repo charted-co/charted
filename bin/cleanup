@@ -1,9 +1,13 @@
 #!/usr/bin/env sh
 
-watchman trigger-del $PWD/less lessfiles
-watchman trigger-del $PWD/js jsfiles
-watchman watch-del-all
-watchman shutdown-server
+if hash watchman 2> /dev/null; then
+  watchman trigger-del $PWD src
+  watchman watch-del-all
+  watchman shutdown-server
+fi
 
-rm $PWD/pub/scripts/*
-rm $PWD/pub/charted.css
+if hash flow 2> /dev/null; then
+  flow stop
+fi
+
+rm -r $PWD/out

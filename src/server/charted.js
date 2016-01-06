@@ -2,11 +2,11 @@
 
 "use strict"
 
-const url = require('url')
-const path = require('path')
-const request = require('request')
-const serveStatic = require('serve-static')
-const prepare = require('./prepare.js')
+import url from "url"
+import path from "path"
+import request from "request"
+import serveStatic from "serve-static"
+import prepare from "./prepare.js"
 
 function fetchData(req, res) {
   var dataUrl = getDataUrl(req)
@@ -63,17 +63,17 @@ function getDataUrl(req) {
   return url.format({
     protocol: req.protocol || 'http',
     host: req.headers.host,
-    pathname: parsed.pathname,
-    search: parsed.search,
-    hash: parsed.hash
+    pathname: parsed.pathname || '',
+    search: parsed.search || '',
+    hash: parsed.hash || ''
   })
 }
 
-module.exports = function (app, root) {
+export default function(app, root) {
   if (!root) {
     root = '/charted/'
   }
 
   app.use(root + 'get', fetchData)
-  app.use(root, serveStatic(path.join(__dirname, '..', 'pub')))
+  app.use(root, serveStatic(path.join(__dirname, '..', 'client')))
 }

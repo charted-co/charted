@@ -1,30 +1,96 @@
 #!/usr/bin/env node
+"use strict"
 
-var sh = require('shelljs/global')
+const sh = require('shelljs/global')
+const babel = require('babel-core')
+
+const BABEL_PLUGINS = {
+  client: [
+    "babel-plugin-transform-flow-strip-types",
+    "babel-plugin-transform-es2015-modules-amd"
+  ],
+
+  server: [
+    "babel-plugin-transform-flow-strip-types"
+  ]
+}
+
+const BABEL_PRESETS = [
+  "babel-preset-es2015",
+  "babel-preset-stage-0"
+]
 
 function main(args) {
   var cmd = args[2] || ''
 
-  if (cmd.endsWith('.less')) {
-    css()
+  if (cmd) {
+    buildIndividual(cmd)
     return
   }
 
-  if (cmd.endsWith('.js')) {
-    exec('babel js/' + cmd + ' -o pub/scripts/' + cmd)
-    return
+  // We're recompiling the whole project so we need
+  // to delete the existing build.
+  echo('Removing old build')
+  rm('-r', 'out')
+
+  echo('Creating necessary directories')
+  mkdir('-p', 'out/server/shared')
+  mkdir('-p', 'out/client/scripts')
+  mkdir('-p', 'out/client/shared')
+  mkdir('-p', 'out/client/lib')
+
+  // Copy src/public and lib/client without any transformation.
+  echo('Copying src/public and lib/client')
+  cp('-r', 'src/public/*', 'out/client')
+  cp('-r', 'lib/client/*', 'out/client/lib')
+
+  // Compile LESS
+  echo('Compiling LESS')
+  less('src/styles/charted.less', 'out/client/charted.css')
+
+  // Compile client-side JavaScript
+  ls('-R', 'src/client/*.js').forEach((file) => {
+    echo(`Compiling ${file}`)
+    transpile(file, 'client')
+  })
+
+  // Compile server-side JavaScript
+  ls('-R', 'src/server/*.js').forEach((file) => {
+    echo(`Compiling ${file}`)
+    transpile(file, 'server')
+  })
+
+  // Compile shared JavaScript
+  ls('-R', 'src/shared/*.js').forEach((file) => {
+    echo(`Compiling ${file}`)
+    transpile(file, 'client')
+    transpile(file, 'server')
+  })
+}
+
+function less(src, dest) {
+  exec(`lessc ${src} ${dest}`)
+}
+
+function transpile(file, type) {
+  let name = file
+    .replace('src/client/', 'scripts/')
+    .replace('src/server/', '')
+    .replace('src/', '')
+
+  let code = cat(file)
+  let dest = type == 'client' ? 'out/client' : 'out/server'
+  let options = {
+    filename: name,
+    presets: BABEL_PRESETS,
+    plugins: type == 'client' ? BABEL_PLUGINS.client : BABEL_PLUGINS.server
   }
 
-  // compile all javascript and less files
-  exec('babel js/ -d pub/scripts/')
-  css()
+  let res = babel.transform(code, options)
+  res.code.to(`${dest}/${name}`)
 }
 
-function css() {
-  echo('less/charted.less -> pub/charted.css')
-  exec('lessc less/charted.less pub/charted.css')
-}
 
-// get to the root of the project
+// Get to the root of the project
 while (!test('-f', 'package.json')) { cd('..') }
 main(process.argv)
