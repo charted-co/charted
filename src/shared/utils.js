@@ -1,6 +1,7 @@
 /* @flow */
 
 export {
+  getHashCode,
   parseQueryString,
   camelToHyphen,
   stringToNumber,
@@ -8,6 +9,20 @@ export {
   getNiceIntervals,
   getTrimmedExtent,
   getFileExtension
+}
+
+function getHashCode(str: string): number {
+  if (str.length == 0) {
+    return 0
+  }
+
+  var hash = 0
+  for (var i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i)
+    hash = hash & hash // convert to 32 bit integer
+  }
+
+  return hash
 }
 
 function log10Floor(val: number): number {
