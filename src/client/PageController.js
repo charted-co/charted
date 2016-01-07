@@ -4,6 +4,7 @@ import {fetchPageData, PageData} from "./PageData"
 import {Chart} from "./Chart"
 import ChartParameters from "../shared/ChartParameters"
 import * as templates from "./templates"
+import * as utils from "../shared/utils"
 
 export const EDITABLES = ['title', 'note'];
 export const OPTIONS = {
@@ -41,7 +42,7 @@ export class PageController {
   }
 
   setupPage(params: ChartParameters): void {
-    this.params = params
+    this.params = params.withDefaultTitle((i) => this.getDefaultTitle(i))
     this.$body.addClass('loading')
     this.updatePageTitle('Charted (...)')
     this.clearExisting()
@@ -321,7 +322,7 @@ export class PageController {
 
 
   getEmbed(): void {
-    var embedId = this._getHashCode(window.location.href)
+    var embedId = utils.getHashCode(window.location.href)
     var embedUrl = window.location.href + '&embed=' + embedId
 
     this.$body.append(templates.embedOverlay({id: embedId, url: embedUrl}))
@@ -487,21 +488,5 @@ export class PageController {
 
     $('.data-file-input').val(params.url)
     this.setupPage(params)
-  }
-
-
-  /** Converts a string into a hash code. A clone of Java's String.hashCode() */
-  _getHashCode(str: string): number {
-    if (str.length == 0) {
-      return 0
-    }
-
-    var hash = 0
-    for (var i = 0; i < str.length; i++) {
-      hash = ((hash << 5) - hash) + str.charCodeAt(i)
-      hash = hash & hash // convert to 32 bit integer
-    }
-
-    return hash
   }
 }
