@@ -1,6 +1,6 @@
 /* @flow */
 
-import {fetchPageData, PageData} from "./PageData"
+import PageData from "./PageData"
 import {Chart} from "./Chart"
 import ChartParameters from "../shared/ChartParameters"
 import * as templates from "./templates"
@@ -118,15 +118,17 @@ export class PageController {
 
 
   fetchData(dataUrl: string, callback: (data: PageData) => void): void {
-    fetchPageData(dataUrl, (error, data) => {
-      if (error) {
-        this.errorNotify(error)
+    let url = 'get/?url=' + encodeURIComponent(dataUrl)
+
+    d3.text(url, (err, resp) => {
+      if (err) {
+        this.errorNotify(err)
         return
       }
 
-      if (data) {
-        callback(data)
-      }
+      let ext = utils.getFileExtension(url)
+      let rows = ext == 'tsv' ? d3.tsv.parseRows(resp) : d3.csv.parseRows(resp)
+      callback(new PageData(rows))
     })
   }
 

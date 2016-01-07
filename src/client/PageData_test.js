@@ -1,6 +1,6 @@
 /* @flow weak */
 
-import {PageData} from "./PageData"
+import PageData from "./PageData"
 
 const DATA = [
   ["month","example_one","example_two"],

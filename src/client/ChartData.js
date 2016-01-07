@@ -1,7 +1,7 @@
 /* @flow */
 
 import {getTrimmedExtent} from "../shared/utils"
-import {PageData} from "./PageData"
+import PageData from "./PageData"
 
 export class ChartData {
   _data: Array<Array<t_FIELD>>;

@@ -4,7 +4,7 @@ import {ChartData} from "./ChartData"
 import {ChartLegend} from "./ChartLegend"
 import {stringToNumber, camelToHyphen, getNiceIntervals, getRoundedValue} from "../shared/utils"
 import {OPTIONS, EDITABLES, PageController} from "./PageController"
-import {PageData} from "./PageData"
+import PageData from "./PageData"
 import * as templates from "./templates"
 
 export class Chart {
