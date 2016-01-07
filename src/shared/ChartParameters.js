@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as utils from "./utils"
+import sha1 from "./sha1"
 
 // TODO(anton): These should be in shared/constants
 const COLOR_DARK = 'dark'
@@ -68,7 +69,7 @@ export default class ChartParameters {
   /** Returns a unique ID based on chart parameters */
   getId(): string {
     let params = this.compress()
-    return utils.getHashCode(JSON.stringify(params))
+    return sha1(JSON.stringify(params))
   }
 
   withDefaultTitle(fn: (i: number) => string): ChartParameters {
