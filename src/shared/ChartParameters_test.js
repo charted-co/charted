@@ -61,25 +61,25 @@ export function testCompressParams(test) {
   // add bits to it one by one.
   let params = new ChartParameters('http://charted.co')
 
-  test.deepEqual(params.compress((i) => ''), {
+  test.deepEqual(params.compress(), {
     dataUrl: 'http://charted.co'
   })
 
   params.seriesNames[1] = 'test name'
-  test.deepEqual(params.compress((i) => ''), {
+  test.deepEqual(params.compress(), {
     dataUrl: 'http://charted.co',
     seriesNames: {1: 'test name'}
   })
 
   params.seriesColors[1] = '#fff'
-  test.deepEqual(params.compress((i) => ''), {
+  test.deepEqual(params.compress(), {
     dataUrl: 'http://charted.co',
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'}
   })
 
   params.toggleColor()
-  test.deepEqual(params.compress((i) => ''), {
+  test.deepEqual(params.compress(), {
     dataUrl: 'http://charted.co',
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'},
@@ -87,7 +87,7 @@ export function testCompressParams(test) {
   })
 
   params.toggleGrid()
-  test.deepEqual(params.compress((i) => ''), {
+  test.deepEqual(params.compress(), {
     dataUrl: 'http://charted.co',
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'},
@@ -96,17 +96,7 @@ export function testCompressParams(test) {
   })
 
   params.charts = [{title: 'my title', note: 'my note'}]
-  test.deepEqual(params.compress((i) => 'my title'), { // default title
-    dataUrl: 'http://charted.co',
-    seriesNames: {1: 'test name'},
-    seriesColors: {1: '#fff'},
-    color: 'dark',
-    grid: 'split',
-    charts: [{note: 'my note'}]
-  })
-
-  params.charts = [{title: 'my title', note: 'my note'}]
-  test.deepEqual(params.compress((i) => ''), {
+  test.deepEqual(params.compress(), {
     dataUrl: 'http://charted.co',
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'},
@@ -119,7 +109,7 @@ export function testCompressParams(test) {
     {title: 'chart 1', type: 'column', rounding: 'on'},
     {title: 'chart 2', type: 'line', rounding: 'off', series: []}
   ]
-  test.deepEqual(params.compress((i) => ''), {
+  test.deepEqual(params.compress(), {
     dataUrl: 'http://charted.co',
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'},
@@ -130,6 +120,37 @@ export function testCompressParams(test) {
       {title: 'chart 2', type: 'line', rounding: 'off', series: ''}
     ]
   })
+
+  test.done()
+}
+
+export function testDefaultTitle(test) {
+  // We start with a completely empty instance and then gradually
+  // add bits to it one by one.
+  let params = new ChartParameters('http://charted.co')
+  params.withDefaultTitle((i) => `title ${i+1}`)
+  params.charts = [
+    {title: 'title 1'},
+    {title: 'title 2'},
+    {title: 'title X'}
+  ]
+  test.deepEqual(params.compress(), {
+    dataUrl: 'http://charted.co',
+    charts: [{}, {}, {title: 'title X'}]
+  })
+
+  test.done()
+}
+
+export function testGetId(test) {
+  let params = new ChartParameters('http://charted.co')
+  let id = params.getId()
+  test.ok(id, 'Generated ID')
+  test.equal(id, params.getId(), 'IDs the same when params are the same')
+
+  params.toggleColor()
+  test.ok(params.getId(), 'Generated ID')
+  test.notEqual(id, params.getId(), 'IDs differ when params differ')
 
   test.done()
 }

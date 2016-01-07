@@ -1,6 +1,7 @@
 /* @flow */
 
 import * as utils from "./utils"
+import sha1 from "./sha1"
 
 // TODO(anton): These should be in shared/constants
 const COLOR_DARK = 'dark'
@@ -31,6 +32,7 @@ export default class ChartParameters {
 
   _grid: string;
   _color: string;
+  _getDefaultTitle: (i: number) => string;
 
   constructor(url: string) {
     this.url = url
@@ -40,6 +42,7 @@ export default class ChartParameters {
     this.isEmbed = false
     this._color = COLOR_LIGHT
     this._grid = GRID_FULL
+    this._getDefaultTitle = (i) => '' // no-op
   }
 
   static fromQueryString(qs: string): ?ChartParameters {
@@ -61,6 +64,17 @@ export default class ChartParameters {
     if (data.color) params._color = data.color
 
     return params
+  }
+
+  /** Returns a unique ID based on chart parameters */
+  getId(): string {
+    let params = this.compress()
+    return sha1(JSON.stringify(params))
+  }
+
+  withDefaultTitle(fn: (i: number) => string): ChartParameters {
+    this._getDefaultTitle = fn
+    return this
   }
 
   isLight(): boolean {
@@ -87,7 +101,7 @@ export default class ChartParameters {
     return this.seriesNames[index]
   }
 
-  compress(defaultTitleFn: (i: number) => string): ParamObj {
+  compress(): ParamObj {
     let params: ParamObj = {dataUrl: this.url}
 
     // Add seriesNames, if applicable.
@@ -122,7 +136,7 @@ export default class ChartParameters {
       })
 
       // Add applicable title.
-      if (chart.title && chart.title !== defaultTitleFn(i)) {
+      if (chart.title && chart.title !== this._getDefaultTitle(i)) {
         compressed.title = chart.title
       }
 
@@ -132,7 +146,7 @@ export default class ChartParameters {
       }
 
       // Add applicable series.
-      if (i > 0) {
+      if (i > 0 && chart.series) {
         compressed.series = chart.series
       }
 

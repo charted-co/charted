@@ -42,7 +42,7 @@ export class PageController {
   }
 
   setupPage(params: ChartParameters): void {
-    this.params = params
+    this.params = params.withDefaultTitle((i) => this.getDefaultTitle(i))
     this.$body.addClass('loading')
     this.updatePageTitle('Charted (...)')
     this.clearExisting()
