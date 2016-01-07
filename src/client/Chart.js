@@ -2,7 +2,7 @@
 
 import {ChartData} from "./ChartData"
 import {ChartLegend} from "./ChartLegend"
-import {stringToNumber, camelToHyphen, getNiceIntervals, getRoundedValue} from "./Utils"
+import {stringToNumber, camelToHyphen, getNiceIntervals, getRoundedValue} from "../shared/utils"
 import {OPTIONS, EDITABLES, PageController} from "./PageController"
 import {PageData} from "./PageData"
 import * as templates from "./templates"
@@ -221,7 +221,7 @@ export class Chart {
   getDefaulSeriesColor(seriesIndex: number): string {
     var seriesIndicies = this.data.getSeriesIndices()
     if (seriesIndicies.length === 1) {
-      return this.pageController.getPageColor() === 'dark' ? this.colorDark : this.colorLight
+      return this.pageController.params.isLight() ? this.colorLight : this.colorDark
     }
 
     var chartSeriesIndex = seriesIndicies.indexOf(seriesIndex)
@@ -232,7 +232,7 @@ export class Chart {
   }
 
   getSeriesColor(seriesIndex: number): string {
-    return this.pageController.getSeriesColor(seriesIndex) || this.getDefaulSeriesColor(seriesIndex)
+    return this.pageController.params.getSeriesColor(seriesIndex) || this.getDefaulSeriesColor(seriesIndex)
   }
 
   applyChartColors(): void {
@@ -386,7 +386,7 @@ export class Chart {
     var thisPoint = this.data.getDatum(chartYSeries, this.selectedX)
 
     var thisYLabel = ''
-    var thisYColor = this.pageController.getPageColor() === 'dark' ? this.colorDark : this.colorLight
+    var thisYColor = this.pageController.params.isLight() ? this.colorLight : this.colorDark
 
     if (!showTotal) {
       if (thisPoint.ySeries != null) {

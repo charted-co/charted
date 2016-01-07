@@ -1,7 +1,7 @@
 /* @flow */
 
 export {
-  getUrlParameters,
+  parseQueryString,
   camelToHyphen,
   stringToNumber,
   getRoundedValue,
@@ -14,8 +14,8 @@ function log10Floor(val: number): number {
   return Math.floor(Math.log(val) / Math.LN10, 0)
 }
 
-function getUrlParameters(): Object {
-  var string = window.location.search.slice(1)
+function parseQueryString(qs: string): Object {
+  var string = qs.slice(1)
   if (!string) return {}
 
   var queries = string.split("&")

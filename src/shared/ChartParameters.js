@@ -1,0 +1,149 @@
+/* @flow */
+
+import * as utils from "./utils"
+
+// TODO(anton): These should be in shared/constants
+const COLOR_DARK = 'dark'
+const COLOR_LIGHT = 'light'
+const GRID_FULL = 'full'
+const GRID_SPLIT = 'split'
+const OPTIONS = {
+  // Default values are first
+  type: ['column', 'line'],
+  rounding: ['on', 'off']
+}
+
+type ParamObj = {
+  dataUrl: string;
+  charts?: Array<Object>;
+  seriesColors?: {[key: number]: string};
+  seriesNames?: {[key: number]: string};
+  grid?: string;
+  color?: string;
+}
+
+export default class ChartParameters {
+  url: string;
+  isEmbed: boolean;
+  charts: Array<Object>;
+  seriesColors: {[key: number]: string};
+  seriesNames: {[key: number]: string};
+
+  _grid: string;
+  _color: string;
+
+  constructor(url: string) {
+    this.url = url
+    this.charts = [{}]
+    this.seriesColors = {}
+    this.seriesNames = {}
+    this.isEmbed = false
+    this._color = COLOR_LIGHT
+    this._grid = GRID_FULL
+  }
+
+  static fromQueryString(qs: string): ?ChartParameters {
+    let urlParams = utils.parseQueryString(qs)
+    let data = urlParams.data
+    let url = data.csvUrl || data.dataUrl
+
+    if (!url) {
+      return null
+    }
+
+    let params = new ChartParameters(url)
+    params.isEmbed = !!urlParams.embed
+
+    if (data.charts) params.charts = data.charts
+    if (data.seriesNames) params.seriesNames = data.seriesNames
+    if (data.seriesColors) params.seriesColors = data.seriesColors
+    if (data.grid) params._grid = data.grid
+    if (data.color) params._color = data.color
+
+    return params
+  }
+
+  isLight(): boolean {
+    return this._color == COLOR_LIGHT;
+  }
+
+  toggleColor(): void {
+    this._color = this.isLight() ? COLOR_DARK : COLOR_LIGHT;
+  }
+
+  isFull(): boolean {
+    return this._grid == GRID_FULL;
+  }
+
+  toggleGrid(): void {
+    this._grid = this.isFull() ? GRID_SPLIT : GRID_FULL
+  }
+
+  getSeriesColor(index: number): ?string {
+    return this.seriesColors[index]
+  }
+
+  getSeriesName(index: number): ?string {
+    return this.seriesNames[index]
+  }
+
+  compress(defaultTitleFn: (i: number) => string): ParamObj {
+    let params: ParamObj = {dataUrl: this.url}
+
+    // Add seriesNames, if applicable.
+    if (_.size(this.seriesNames)) {
+      params.seriesNames = this.seriesNames
+    }
+
+    // Add seriesColors, if applicable.
+    if (_.size(this.seriesColors)) {
+      params.seriesColors = this.seriesColors
+    }
+
+    // Add color, if applicable.
+    if (!this.isLight()) {
+      params.color = this._color
+    }
+
+    // Add grid, if applicable.
+    if (!this.isFull()) {
+      params.grid = this._grid
+    }
+
+    // Add applicable chart parameters.
+    params.charts = this.charts.map((chart, i) => {
+      let compressed = {}
+
+      // Add applicable chart options.
+      _.forEach(OPTIONS, (val, option) => {
+        if (chart[option] && chart[option] !== OPTIONS[option][0]) {
+          compressed[option] = chart[option]
+        }
+      })
+
+      // Add applicable title.
+      if (chart.title && chart.title !== defaultTitleFn(i)) {
+        compressed.title = chart.title
+      }
+
+      // Add applicable note.
+      if (chart.note) {
+        compressed.note = chart.note
+      }
+
+      // Add applicable series.
+      if (i > 0) {
+        compressed.series = chart.series
+      }
+
+      return compressed
+    })
+
+    // Delete charts if empty.
+    if (params.charts.length === 1 && !_.size(params.charts[0])) {
+      delete params.charts
+    }
+
+    return params
+  }
+}

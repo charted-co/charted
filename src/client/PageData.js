@@ -1,6 +1,6 @@
 /* @flow */
 
-import {getFileExtension, stringToNumber} from "./Utils"
+import {getFileExtension, stringToNumber} from "../shared/utils"
 
 class PageData {
   indices: Array<string>;
