@@ -1,6 +1,7 @@
 /* @flow */
 
 import {PageController} from "./PageController"
+import ChartParameters from "../shared/ChartParameters"
 
 $(function () {
   var $dataInput = $('.data-file-input')
@@ -10,7 +11,8 @@ $(function () {
     e.preventDefault()
 
     if($dataInput.val()) {
-      pageController.setupPage({dataUrl: $dataInput.val()})
+      let params = new ChartParameters($dataInput.val())
+      pageController.setupPage(params)
     } else {
       var emptyInputError = new Error('You’ll need to paste in the URL to a .csv file or Google Spreadsheet first.')
       pageController.errorNotify(emptyInputError)

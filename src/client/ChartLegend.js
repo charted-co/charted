@@ -53,7 +53,7 @@ export class ChartLegend {
       // make series labels editable
       var $legendInput = series.legendEl.find('.legend-input')
       $legendInput.on('focusout', () => {
-        var seriesNames = this.controller.getSeriesNames()
+        var seriesNames = this.controller.params.seriesNames
 
         if ($legendInput.text() === series.label || $legendInput.text() === '') {
           $legendInput.text(series.label)
@@ -96,7 +96,7 @@ export class ChartLegend {
       var $thisColorInput = this.$container.find('.change-series-color-' + series)
       $thisColorInput.on('focusout', () => {
 
-        var seriesColors = this.controller.getSeriesColors()
+        var seriesColors = this.controller.params.seriesColors
         var newColorHex = '#' + $thisColorInput.text().replace(/^#/, '').trim()
 
         var defaultColorHex = this.chart.getDefaulSeriesColor(series)

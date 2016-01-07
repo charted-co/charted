@@ -1,8 +1,8 @@
 /* @flow */
 
-import {getUrlParameters} from "./Utils"
 import {fetchPageData, PageData} from "./PageData"
 import {Chart} from "./Chart"
+import ChartParameters from "../shared/ChartParameters"
 import * as templates from "./templates"
 
 export const EDITABLES = ['title', 'note'];
@@ -11,17 +11,13 @@ export const OPTIONS = {
   type: ['column', 'line'],
   rounding: ['on', 'off']
 }
-const DARK = 'dark';
-const LIGHT = 'light';
-const FULL = 'full';
-const SPLIT = 'split';
 
 export class PageController {
   chartObjects: Array<Chart>;
   $body: Object;
   $charts: Object;
   resizeTimer: number;
-  parameters: Object; // TODO(anton): this should have an explicit type
+  params: ChartParameters;
   data: PageData;
 
   constructor() {
@@ -44,19 +40,17 @@ export class PageController {
     })
   }
 
-  setupPage(parameters: Object): void {
+  setupPage(params: ChartParameters): void {
+    this.params = params
     this.$body.addClass('loading')
     this.updatePageTitle('Charted (...)')
-    this.parameters = parameters
-    this.parameters.charts = this.parameters.charts || [{}]
-    this.parameters.embed = this.parameters.embed || null
     this.clearExisting()
 
     // populate charts and refresh every 30 minutes,
     // unless this is an embed.
     this.resetCharts()
 
-    if (!this.parameters.embed) {
+    if (!this.params.isEmbed) {
       setInterval(() => this.resetCharts(), 1000 * 60 * 30)
     }
   }
@@ -71,13 +65,13 @@ export class PageController {
 
   setupPageSettings(): void {
     // if this is an embed, don't add the page settings
-    if (this.parameters.embed) return
+    if (this.params.isEmbed) return
 
     // populate UI
     this.$body.append(templates.pageSettings())
     var $pageSettings = this.$body.find('.page-settings')
 
-    $('.download-data').attr('href', this.parameters.dataUrl)
+    $('.download-data').attr('href', this.params.url)
 
     // bind intereactions
     $pageSettings.find('.settings').click((event) => {
@@ -95,9 +89,10 @@ export class PageController {
 
 
   resetCharts(): void {
-    this.fetchData(this.parameters.dataUrl, (data) => {
+    this.fetchData(this.params.url, (data) => {
       // set background color
-      this.applyColor()
+      let color = this.params.isLight() ? 'light' : 'dark'
+      this.$body.addClass(color)
 
       // set embed style
       this.applyEmbed()
@@ -106,14 +101,14 @@ export class PageController {
       this.data = data
 
       // set first title
-      if (!this.parameters.charts[0].title) {
-        this.parameters.charts[0].title = data.serieses.length > 1 ? 'Chart' : data.serieses[0].label
+      if (!this.params.charts[0].title) {
+        this.params.charts[0].title = data.serieses.length > 1 ? 'Chart' : data.serieses[0].label
       }
 
       this.$body.removeClass('pre-load loading error')
 
       // update charts
-      this.parameters.charts.forEach((chart, i) => this.updateChart(i))
+      this.params.charts.forEach((chart, i) => this.updateChart(i))
 
       this.setDimensions()
       this.updatePageState()
@@ -156,8 +151,8 @@ export class PageController {
     var otherChartSeries = []
     var firstChartSeries = []
 
-    for (var i = 1; i < this.parameters.charts.length; i++) {
-      otherChartSeries = otherChartSeries.concat(this.parameters.charts[i].series)
+    for (var i = 1; i < this.params.charts.length; i++) {
+      otherChartSeries = otherChartSeries.concat(this.params.charts[i].series)
     }
 
     for (var j = 0; j < this.data.serieses.length; j++) {
@@ -179,19 +174,19 @@ export class PageController {
 
 
   moveToChart(series: Object, fromChartIndex: number, toChartIndex: number) {
-    var fromChart = this.parameters.charts[fromChartIndex]
-    var toChart = this.parameters.charts[toChartIndex]
+    var fromChart = this.params.charts[fromChartIndex]
+    var toChart = this.params.charts[toChartIndex]
 
     // remove default titles
-    this.parameters.charts.forEach((chart, i) => {
+    this.params.charts.forEach((chart, i) => {
       if (chart.title && chart.title == this.getDefaultTitle(i)) {
         delete chart.title
       }
     })
 
     // add series to intended chart
-    if (toChartIndex > this.parameters.charts.length - 1) {
-      this.parameters.charts.push({series: [series]})
+    if (toChartIndex > this.params.charts.length - 1) {
+      this.params.charts.push({series: [series]})
     } else if (toChartIndex > 0) {
       toChart.series.push(series)
       toChart.series.sort(function(a, b) {
@@ -232,14 +227,14 @@ export class PageController {
     }
 
     // remove the parameters, html element, and overall chart object
-    this.parameters.charts.splice(chartIndex, 1)
+    this.params.charts.splice(chartIndex, 1)
     this.chartObjects[chartIndex].$wrapper.remove()
     this.chartObjects.splice(chartIndex, 1)
   }
 
 
   getFullParams(chartIndex: number): Object {
-    var params = this.parameters.charts[chartIndex]
+    var params = this.params.charts[chartIndex]
     Object.keys(OPTIONS).forEach((option) => {
       params[option] = params[option] || OPTIONS[option][0]
     })
@@ -255,58 +250,29 @@ export class PageController {
 
 
   getDefaultTitle(chartIndex: number): string {
-    var series = this.parameters.charts[chartIndex].series
+    var series = this.params.charts[chartIndex].series
     if (!series) {
       return 'Charted'
     } else if (series.length === 1) {
       return this.getSeriesName(series[0])
     }
-    var earlierCharts = this.parameters.charts.filter(function (chart, i) {
+    var earlierCharts = this.params.charts.filter(function (chart, i) {
       return chart.series.length > 0 && i < chartIndex
     })
     return chartIndex === 0 ? 'Chart' : 'Chart ' + (1 + earlierCharts.length)
   }
 
-
-  getSeriesNames(): Object {
-    if (! this.parameters.seriesNames) {
-      this.parameters.seriesNames = {}
-    }
-    return this.parameters.seriesNames
-  }
-
-
   getSeriesName(i: number): string {
-    if (! this.parameters.seriesNames || ! this.parameters.seriesNames[i]) {
-      return this.data.serieses[i].label
-    } else {
-      return this.parameters.seriesNames[i]
-    }
+    return this.params.getSeriesName(i) || this.data.serieses[i].label
   }
-
-
-  getSeriesColors(): Object {
-    if (! this.parameters.seriesColors) {
-      this.parameters.seriesColors = {}
-    }
-    return this.parameters.seriesColors
-  }
-
-
-  getSeriesColor(i: number): ?string {
-    if (this.parameters.seriesColors) {
-      return this.parameters.seriesColors[i]
-    }
-  }
-
 
   getChartCount(): number {
-    return this.parameters.charts.length
+    return this.params.charts.length
   }
 
 
   getOtherCharts(chartIndex: number): Array<{title: string, chartIndex: number}> {
-    return this.parameters.charts.map((chart, i) => {
+    return this.params.charts.map((chart, i) => {
       return {
         title: chart.title || this.getDefaultTitle(i),
         chartIndex: i
@@ -323,8 +289,8 @@ export class PageController {
 
 
   toggleColor(): void {
-    this.parameters.color = this.parameters.color === DARK ? LIGHT : DARK
-    this.applyColor()
+    this.params.toggleColor()
+    this.$body.toggleClass('dark')
     this.chartObjects.forEach(function (chart) {
       chart.render()
     })
@@ -332,17 +298,8 @@ export class PageController {
   }
 
 
-  applyColor(): void {
-    if (this.parameters.color === DARK) {
-      this.$body.addClass(DARK)
-    } else {
-      this.$body.removeClass(DARK)
-    }
-  }
-
-
   toggleGrid(): void {
-    this.parameters.grid = this.parameters.grid === FULL ? SPLIT : FULL
+    this.params.toggleGrid()
     this.applyGrid()
     this.setDimensions()
     this.updatePageState()
@@ -350,25 +307,16 @@ export class PageController {
 
 
   applyGrid(): void {
-    if (this.parameters.grid === FULL) {
-      this.$body.addClass(FULL)
-    } else {
-      this.$body.removeClass(FULL)
-    }
+    this.$body.toggleClass('full')
 
     var template = templates.gridSettingsFull
-    if (this.parameters.grid == FULL) {
+    if (this.params.isFull()) {
       template = templates.gridSettingsSplit
     }
 
     var chartCount = this.chartObjects ? this.chartObjects.length : 0
     $('.grid-option').html(chartCount > 1 ? template() : '')
     $('.toggle-grid').click(() => this.toggleGrid())
-  }
-
-
-  getPageColor(): string {
-    return this.parameters.color
   }
 
 
@@ -390,7 +338,7 @@ export class PageController {
 
 
   applyEmbed(): void {
-    if (this.parameters.embed) {
+    if (this.params.embed) {
       this.$body.addClass('embed')
     } else {
       this.$body.removeClass('embed')
@@ -399,7 +347,7 @@ export class PageController {
 
 
   getEditability(): boolean {
-    return !this.parameters.embed
+    return !this.params.isEmbed
   }
 
 
@@ -414,7 +362,7 @@ export class PageController {
     var chartCount = this.chartObjects ? this.chartObjects.length : 0
 
     // check conditions for adjusting dimensions
-    var useHalfWidth = chartCount >= 2 && windowWidth > minWidthForHalfWidth && this.parameters.grid !== FULL
+    var useHalfWidth = chartCount >= 2 && windowWidth > minWidthForHalfWidth && !this.params.isFull()
     var enoughHeightForHalfHeight = windowHeight > minHeightForHalfHeight && windowWidth > minWidthForFullHeight
     var enoughChartsForHalfHeight = chartCount >= 3 || (chartCount === 2 && !useHalfWidth)
     var useHalfHeight = enoughHeightForHalfHeight && enoughChartsForHalfHeight
@@ -457,11 +405,11 @@ export class PageController {
 
 
   maybeBroadcastDimensions(): void {
-    if (!this.parameters.embed) {
+    if (!this.params.embed) {
       return
     }
 
-    var message = this.parameters.embed + ':' + String(document.body.scrollHeight)
+    var message = this.params.embed + ':' + String(document.body.scrollHeight)
     if (window.parent) {
       window.parent.postMessage(message, '*' /* Any site can embed charted */)
     }
@@ -490,8 +438,8 @@ export class PageController {
     this.updatePageTitle()
 
     // set url
-    var minDataParams = this.getMinDataParams()
-    var embedString = this.parameters.embed ? '&format=embed' : ''
+    var minDataParams = this.params.compress((i) => this.getDefaultTitle(i))
+    var embedString = this.params.embed ? '&format=embed' : ''
     var url = '?' + encodeURIComponent(JSON.stringify(minDataParams)) + embedString
 
     // only push a new state if the new url differs from the current url
@@ -504,8 +452,8 @@ export class PageController {
   updatePageTitle(pageTitleString: ?string): void {
     var pageTitle = 'Charted'
     var charts = []
-    if (this.parameters && this.parameters.charts) {
-      charts = this.parameters.charts
+    if (this.params && this.params.charts) {
+      charts = this.params.charts
     }
 
     if (pageTitleString) {
@@ -523,93 +471,22 @@ export class PageController {
     document.title = pageTitle
   }
 
-
-  getMinDataParams(): Object {
-    var minParams = {}
-    minParams.dataUrl = this.parameters.dataUrl
-
-    // add seriesNames if applicable
-    if (this.parameters.seriesNames && Object.keys(this.parameters.seriesNames).length > 0) {
-      minParams.seriesNames = this.parameters.seriesNames
-    }
-
-    // add seriesColors if applicable
-    if (this.parameters.seriesColors && Object.keys(this.parameters.seriesColors).length > 0) {
-      minParams.seriesColors = this.parameters.seriesColors
-    }
-
-    // add color if applicable
-    if (this.parameters.color && this.parameters.color !== LIGHT) {
-      minParams.color = this.parameters.color
-    }
-
-    // add grid if applicable
-    if (this.parameters.grid && this.parameters.grid !== SPLIT) {
-      minParams.grid = this.parameters.grid
-    }
-
-    // add applicable chart parameters
-    minParams.charts = []
-    this.parameters.charts.forEach((chart, i) => {
-      minParams.charts.push({})
-
-      // add applicable chart options
-      Object.keys(OPTIONS).forEach((option) => {
-        if (chart[option] && chart[option] !==  OPTIONS[option][0]) {
-          minParams.charts[i][option] = chart[option]
-        }
-      })
-
-      // add applicable title
-      if (chart.title !== this.getDefaultTitle(i) && chart.title !== '') {
-        minParams.charts[i].title = chart.title
-      }
-
-      // add applicable note
-      if (chart.note) {
-        minParams.charts[i].note = chart.note
-      }
-
-      // add applicable series
-      if (i > 0) {
-        minParams.charts[i].series = chart.series
-      }
-
-    })
-
-    // delete charts if empty
-    if (minParams.charts.length === 1 && Object.keys(minParams.charts[0]).length === 0) {
-      delete minParams.charts
-    }
-
-    return minParams
-  }
-
-
   useUrl(): void {
-    var urlParameters = getUrlParameters()
-    var parameters = urlParameters.data || {}
+    var params = ChartParameters.fromQueryString(window.location.search)
 
-    // support prior csvUrl parameter and array format
-    parameters = (parameters instanceof Array) ? parameters[0] : parameters
-    parameters.dataUrl = parameters.csvUrl || parameters.dataUrl
-
-    // add embed values
-    if (urlParameters.embed) {
-      parameters.embed = urlParameters.embed
-      this.$body.addClass('is-embed')
-
-    }
-
-    // handle the state change from chart -> pre-load
-    if (!parameters.dataUrl) {
+    // Handle the state change from chart -> pre-load
+    if (!params) {
       this.clearExisting()
       this.$body.addClass('pre-load')
       return
     }
 
-    $('.data-file-input').val(parameters.dataUrl)
-    this.setupPage(parameters)
+    if (params.isEmbed) {
+      this.$body.addClass('is-embed')
+    }
+
+    $('.data-file-input').val(params.url)
+    this.setupPage(params)
   }
 
 

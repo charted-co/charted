@@ -1,6 +1,6 @@
 /* @flow */
 
-import {getTrimmedExtent} from "./Utils"
+import {getTrimmedExtent} from "../shared/utils"
 import {PageData} from "./PageData"
 
 export class ChartData {
