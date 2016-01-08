@@ -1,25 +1,9 @@
 /* @flow */
 
 import {PageController} from "./PageController"
-import ChartParameters from "../shared/ChartParameters"
 
 $(function () {
-  var $dataInput = $('.data-file-input')
   var pageController = new PageController()
-
-  $('.load-data-form').submit(function (e) {
-    e.preventDefault()
-
-    if($dataInput.val()) {
-      let params = new ChartParameters($dataInput.val())
-      pageController.setupPage(params)
-    } else {
-      var emptyInputError = new Error('You’ll need to paste in the URL to a .csv file or Google Spreadsheet first.')
-      pageController.errorNotify(emptyInputError)
-    }
-  })
-
-  // parse the url on page load and every state change
   pageController.useUrl()
 
   $(window).on('popstate', function (ev) {

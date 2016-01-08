@@ -33,11 +33,24 @@ export class PageController {
     })
 
     // setup keystrokes
-    $(document).keyup(function(e) {
-      if (e.keyCode == 27) {
+    $(document).keyup((ev) => {
+      if (ev.keyCode == 27) {
         $('.overlay-container').remove()
         $('.page-settings').removeClass('open')
       }
+    })
+
+    $('.load-data-form').submit((ev) => {
+      ev.preventDefault()
+
+      let url = $('.data-file-input').val()
+      if (!url) {
+        let err = 'You’ll need to paste in the URL to a .csv file or Google Spreadsheet first.'
+        this.errorNotify(new Error(err))
+        return
+      }
+
+      pageController.setupPage(new ChartParameters(url))
     })
   }
 
