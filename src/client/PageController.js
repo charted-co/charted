@@ -50,23 +50,75 @@ export class PageController {
         return
       }
 
-      pageController.setupPage(new ChartParameters(url))
+      this.fetchPageData(url, /* id */ null)
     })
   }
 
-  setupPage(params: ChartParameters): void {
-    this.params = params.withDefaultTitle((i) => this.getDefaultTitle(i))
+  activate(): void {
+    let path = /\/c\/([a-z\d]{7})\/?$/.exec(window.location.pathname)
+    let chartId = path && path[1]
+
+    if (!chartId) {
+      this.clearExisting()
+      this.$body.addClass('pre-load')
+      return
+    }
+
+    this.fetchPageData(/* url */ null, chartId)
+    // TODO(anton): If it's not an embed, refresh every 30 minutes (1000 * 60 * 30)
+  }
+
+
+  /**
+   * Fetches chart data and parameters either by URL or by ID.
+   */
+  fetchPageData(dataUrl: ?string, id: ?string): void {
     this.$body.addClass('loading')
     this.updatePageTitle('Charted (...)')
     this.clearExisting()
 
-    // populate charts and refresh every 30 minutes,
-    // unless this is an embed.
-    this.resetCharts()
+    let url = `/load/?url=${encodeURIComponent(dataUrl || '')}&id=${encodeURIComponent(id || '')}`
+    d3.json(url, (err, resp) => {
+      if (err) {
+        this.errorNotify(err)
+        return
+      }
 
-    if (!this.params.isEmbed) {
-      setInterval(() => this.resetCharts(), 1000 * 60 * 30)
+      this.params = new ChartParameters.fromJSON(resp.params)
+        .withDefaultTitle((i) => this.getDefaultTitle(i))
+      this.data = new PageData.fromJSON(this.params.url, resp.data)
+      this.render()
+    })
+  }
+
+
+  /**
+   * Renders charts
+   */
+  render(): void {
+    // Set background color
+    let color = this.params.isLight() ? 'light' : 'dark'
+    this.$body.addClass(color)
+
+    // Set embed style
+    this.applyEmbed()
+
+    this.setupPageSettings()
+
+    // set first title
+    if (!this.params.charts[0].title) {
+      this.params.charts[0].title =
+        this.data.serieses.length > 1 ? 'Chart' : this.data.serieses[0].label
     }
+
+    this.$body.removeClass('pre-load loading error')
+
+    // update charts
+    this.params.charts.forEach((chart, i) => this.updateChart(i))
+
+    this.setDimensions()
+    this.updateURL()
+    $('.data-file-input').val(this.params.url)
   }
 
 
@@ -99,50 +151,6 @@ export class PageController {
 
     $pageSettings.find('.toggle-color').click(() => this.toggleColor())
     $pageSettings.find('.get-embed').click(() => this.getEmbed())
-  }
-
-
-  resetCharts(): void {
-    this.fetchData(this.params.url, (data) => {
-      // set background color
-      let color = this.params.isLight() ? 'light' : 'dark'
-      this.$body.addClass(color)
-
-      // set embed style
-      this.applyEmbed()
-
-      this.setupPageSettings()
-      this.data = data
-
-      // set first title
-      if (!this.params.charts[0].title) {
-        this.params.charts[0].title = data.serieses.length > 1 ? 'Chart' : data.serieses[0].label
-      }
-
-      this.$body.removeClass('pre-load loading error')
-
-      // update charts
-      this.params.charts.forEach((chart, i) => this.updateChart(i))
-
-      this.setDimensions()
-      this.updatePageState()
-    })
-  }
-
-
-  fetchData(dataUrl: string, callback: (data: PageData) => void): void {
-    let url = 'get/?url=' + encodeURIComponent(dataUrl)
-
-    d3.text(url, (err, resp) => {
-      if (err) {
-        this.errorNotify(err)
-        return
-      }
-
-      let ext = utils.getFileExtension(url)
-      let rows = ext == 'tsv' ? d3.tsv.parseRows(resp) : d3.csv.parseRows(resp)
-      callback(new PageData(rows))
-    })
   }
 
 
@@ -232,7 +240,7 @@ export class PageController {
     }
 
     this.setDimensions()
-    this.updatePageState()
+    this.updateURL()
   }
 
 
@@ -310,7 +318,7 @@ export class PageController {
     this.chartObjects.forEach(function (chart) {
       chart.render()
     })
-    this.updatePageState()
+    this.updateURL()
   }
 
 
@@ -318,7 +326,7 @@ export class PageController {
     this.params.toggleGrid()
     this.applyGrid()
     this.setDimensions()
-    this.updatePageState()
+    this.updateURL()
   }
 
 
@@ -449,18 +457,16 @@ export class PageController {
   }
 
 
-  updatePageState(): void {
-    //update page title
+  updateURL(withoutServerUpdate: boolean = false): void {
     this.updatePageTitle()
+    let path = `/c/${this.params.getId()}`
+    window.history.pushState({}, null, path)
 
-    // set url
-    var minDataParams = this.params.compress((i) => this.getDefaultTitle(i))
-    var embedString = this.params.embed ? '&format=embed' : ''
-    var url = '?' + encodeURIComponent(JSON.stringify(minDataParams)) + embedString
-
-    // only push a new state if the new url differs from the current url
-    if (window.location.search !== url) {
-      window.history.pushState({isChartUpdate: true}, null, url)
+    if (!withoutServerUpdate) {
+      d3.xhr(path)
+        .header('Content-Type', 'application/json')
+        .post(JSON.stringify(this.params.compress()))
+      // TODO (anton): Show an error if save failed
     }
   }
 
@@ -485,23 +491,5 @@ export class PageController {
     }
 
     document.title = pageTitle
-  }
-
-  useUrl(): void {
-    var params = ChartParameters.fromQueryString(window.location.search)
-
-    // Handle the state change from chart -> pre-load
-    if (!params) {
-      this.clearExisting()
-      this.$body.addClass('pre-load')
-      return
-    }
-
-    if (params.isEmbed) {
-      this.$body.addClass('is-embed')
-    }
-
-    $('.data-file-input').val(params.url)
-    this.setupPage(params)
   }
 }

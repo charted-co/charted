@@ -45,11 +45,26 @@ export default class ChartParameters {
     this._getDefaultTitle = (i) => '' // no-op
   }
 
+  static fromJSON(data: Object): ChartParameters {
+    let params = new ChartParameters(data.dataUrl)
+    if (data.charts) params.charts = data.charts
+    if (data.seriesNames) params.seriesNames = data.seriesNames
+    if (data.seriesColors) params.seriesColors = data.seriesColors
+    if (data.grid) params._grid = data.grid
+    if (data.color) params._color = data.color
+
+    return params
+  }
+
   static fromQueryString(qs: string): ?ChartParameters {
+    // TODO(anton): When implementing redirect, don't forget about data.csvUrl || data.dataUrl
     let urlParams = utils.parseQueryString(qs)
     let data = urlParams.data
-    let url = data.csvUrl || data.dataUrl
+    if (!data) {
+      return null
+    }
 
+    let url = data.csvUrl || data.dataUrl
     if (!url) {
       return null
     }
@@ -69,7 +84,7 @@ export default class ChartParameters {
   /** Returns a unique ID based on chart parameters */
   getId(): string {
     let params = this.compress()
-    return sha1(JSON.stringify(params))
+    return sha1(JSON.stringify(params), /* short */ true)
   }
 
   withDefaultTitle(fn: (i: number) => string): ChartParameters {
@@ -105,12 +120,12 @@ export default class ChartParameters {
     let params: ParamObj = {dataUrl: this.url}
 
     // Add seriesNames, if applicable.
-    if (_.size(this.seriesNames)) {
+    if (Object.keys(this.seriesNames).length) {
       params.seriesNames = this.seriesNames
     }
 
     // Add seriesColors, if applicable.
-    if (_.size(this.seriesColors)) {
+    if (Object.keys(this.seriesColors).length) {
       params.seriesColors = this.seriesColors
     }
 
@@ -129,7 +144,7 @@ export default class ChartParameters {
       let compressed = {}
 
       // Add applicable chart options.
-      _.forEach(OPTIONS, (val, option) => {
+      Object.keys(OPTIONS).forEach((option) => {
         if (chart[option] && chart[option] !== OPTIONS[option][0]) {
           compressed[option] = chart[option]
         }
@@ -154,7 +169,7 @@ export default class ChartParameters {
     })
 
     // Delete charts if empty.
-    if (params.charts.length === 1 && !_.size(params.charts[0])) {
+    if (params.charts.length === 1 && !Object.keys(params.charts[0]).length) {
       delete params.charts
     }
 

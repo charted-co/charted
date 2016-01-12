@@ -1,11 +1,17 @@
 /* @flow */
 
-import {stringToNumber} from "../shared/utils"
+import * as utils from "../shared/utils"
 
 export default class PageData {
   indices: Array<string>;
   serieses: Array<t_SERIES>;
   data: Array<Array<t_FIELD>>;
+
+  static fromJSON(url: string, data: string) {
+    let ext = utils.getFileExtension(url)
+    let rows = ext == 'tsv' ? d3.tsv.parseRows(data) : d3.csv.parseRows(data)
+    return new PageData(rows)
+  }
 
   constructor(rows: Array<Array<string>>) {
     // Extract field names and build an array of row objects
@@ -36,7 +42,7 @@ export default class PageData {
       return fields.map((row, i) => {
         return {
           x: i,
-          y: stringToNumber(row[label]),
+          y: utils.stringToNumber(row[label]),
           xLabel: this.indices[i],
           yRaw: row[label]
         }
