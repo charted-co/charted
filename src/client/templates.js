@@ -36,7 +36,7 @@ function pageSettings(): string {
           </button>
         </div>
 
-        <a href="." class="page-option-item go-home">
+        <a href="/" class="page-option-item">
           <span class="icon icon-back"></span>Charted home
         </a>
       </div>

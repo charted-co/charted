@@ -59,7 +59,8 @@ function main(args) {
   rm('-r', 'out')
 
   echo('Creating necessary directories')
-  mkdir('-p', 'out/server/shared')
+  mkdir('-p', 'out/server')
+  mkdir('-p', 'out/shared')
   mkdir('-p', 'out/client/scripts')
   mkdir('-p', 'out/client/shared')
   mkdir('-p', 'out/client/lib')
@@ -89,7 +90,7 @@ function main(args) {
   ls('-R', 'src/shared/*.js').forEach((file) => {
     echo(`Compiling ${file}`)
     transpile(file, 'client')
-    transpile(file, 'server')
+    transpile(file, 'server', true)
   })
 }
 
@@ -97,14 +98,14 @@ function less(src, dest) {
   exec(`lessc ${src} ${dest}`)
 }
 
-function transpile(file, type) {
+function transpile(file, type, isShared) {
   let name = file
     .replace('src/client/', 'scripts/')
     .replace('src/server/', '')
     .replace('src/', '')
 
   let code = cat(file)
-  let dest = type == 'client' ? 'out/client' : 'out/server'
+  let dest = type == 'client' ? 'out/client' : isShared ? 'out' : 'out/server'
   let options = {
     filename: name,
     presets: BABEL_PRESETS,

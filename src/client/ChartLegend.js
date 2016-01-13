@@ -61,7 +61,7 @@ export class ChartLegend {
         } else {
           seriesNames[series.seriesIndex] = $legendInput.text()
         }
-        this.controller.updatePageState()
+        this.controller.updateURL()
       })
 
       // open color input
@@ -109,7 +109,7 @@ export class ChartLegend {
           seriesColors[series] = newColorHex
         }
         this.chart.render()
-        this.controller.updatePageState()
+        this.controller.updateURL()
 
       })
     })

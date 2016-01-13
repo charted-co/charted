@@ -418,7 +418,7 @@ export class Chart {
         var options = OPTIONS[option]
         this.params[option] = this.params[option] === options[0] ? options[1] : options[0]
         this.render()
-        this.pageController.updatePageState()
+        this.pageController.updateURL()
       })
     })
 
@@ -433,7 +433,7 @@ export class Chart {
           this.params[item] = $elem.text()
           this.updateEditablePlaceholder(item)
         }
-        this.pageController.updatePageState()
+        this.pageController.updateURL()
       })
     })
 
