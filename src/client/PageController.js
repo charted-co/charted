@@ -2,7 +2,7 @@
 
 import PageData from "./PageData"
 import {Chart} from "./Chart"
-import ChartParameters from "../shared/ChartParameters"
+import ChartParameters from "./ChartParameters"
 import * as templates from "./templates"
 import * as utils from "../shared/utils"
 

@@ -1,7 +1,7 @@
 /* @flow */
 
-import * as utils from "./utils"
-import sha1 from "./sha1"
+import * as utils from "../shared/utils"
+import sha1 from "../shared/sha1"
 
 // TODO(anton): These should be in shared/constants
 const COLOR_DARK = 'dark'
