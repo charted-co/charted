@@ -7,8 +7,9 @@ import path from "path"
 import request from "request"
 import express from "express"
 import bodyParser from "body-parser"
-import prepare from "./prepare.js"
-import ChartParameters from "../shared/ChartParameters.js"
+import prepare from "./prepare"
+import sha1 from "../shared/sha1"
+import * as utils from "../shared/utils"
 
 export default class ChartedServer {
   staticRoot: string;
@@ -48,7 +49,10 @@ export default class ChartedServer {
     if (req.query.url) {
       let parsed = url.parse(req.query.url, true)
       let chartUrl = url.format(prepare(parsed))
-      this.respondWithChart(res, new ChartParameters(chartUrl))
+      let params = {dataUrl: chartUrl}
+      // Save in the “database”
+      this.store[utils.getChartId(params)] = params
+      this.respondWithChart(res, params)
       return
     }
 
@@ -57,7 +61,7 @@ export default class ChartedServer {
       if (!params) {
         this.notFound(res, `chart ${req.query.id} was not found.`)
       }
-      this.respondWithChart(res, ChartParameters.fromJSON(params))
+      this.respondWithChart(res, params)
       return
     }
 
@@ -68,14 +72,12 @@ export default class ChartedServer {
 
   saveChart(req: any, res: any) {
     let id = req.params.id
-    let params = ChartParameters.fromJSON(req.body)
-
-    if (params.getId() != id) {
+    if (utils.getChartId(req.body) != id) {
       this.badRequest(res, 'id and params are out of sync.')
       return
     }
 
-    this.store[id] = params.compress()
+    this.store[id] = req.body
   }
 
   respondWithHTML(res: any, template: string) {
@@ -83,20 +85,18 @@ export default class ChartedServer {
     res.sendFile(path.join(this.staticRoot, template))
   }
 
-  respondWithChart(res: any, params: ChartParameters) {
+  respondWithChart(res: any, params: t_CHART_PARAM) {
     // TODO(anton): getDefaultTitle doesn't work here so maybe we should move PageData into
     // shared/ as well.
-    request(params.url, (err, resp, body) => {
+    request(params.dataUrl, (err, resp, body) => {
       if (err) {
         this.badRequest(res, err)
         return
       }
 
-      // Save in the “database”
-      this.store[params.getId()] = params.compress()
       res.setHeader('Content-Type', 'application/json')
       res.statusCode = 200
-      res.end(JSON.stringify({params: params.compress(), data: body}))
+      res.end(JSON.stringify({params: params, data: body}))
     })
   }
 

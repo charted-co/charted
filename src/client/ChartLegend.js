@@ -1,11 +1,11 @@
 /* @flow */
 
-import {Chart} from "./Chart"
-import {ChartData} from "./ChartData"
+import Chart from "./Chart"
+import ChartData from "./ChartData"
 import {PageController} from "./PageController"
 import * as templates from "./templates"
 
-export class ChartLegend {
+export default class ChartLegend {
   chart: Chart;
   controller: PageController;
   data: ChartData;

@@ -1,7 +1,7 @@
 /* @flow */
 
-import * as utils from "./utils"
-import sha1 from "./sha1"
+import * as utils from "../shared/utils"
+import sha1 from "../shared/sha1"
 
 // TODO(anton): These should be in shared/constants
 const COLOR_DARK = 'dark'
@@ -12,15 +12,6 @@ const OPTIONS = {
   // Default values are first
   type: ['column', 'line'],
   rounding: ['on', 'off']
-}
-
-type ParamObj = {
-  dataUrl: string;
-  charts?: Array<Object>;
-  seriesColors?: {[key: number]: string};
-  seriesNames?: {[key: number]: string};
-  grid?: string;
-  color?: string;
 }
 
 export default class ChartParameters {
@@ -81,12 +72,6 @@ export default class ChartParameters {
     return params
   }
 
-  /** Returns a unique ID based on chart parameters */
-  getId(): string {
-    let params = this.compress()
-    return sha1(JSON.stringify(params), /* short */ true)
-  }
-
   withDefaultTitle(fn: (i: number) => string): ChartParameters {
     this._getDefaultTitle = fn
     return this
@@ -116,8 +101,8 @@ export default class ChartParameters {
     return this.seriesNames[index]
   }
 
-  compress(): ParamObj {
-    let params: ParamObj = {dataUrl: this.url}
+  compress(): t_CHART_PARAM {
+    let params: t_CHART_PARAM = {dataUrl: this.url}
 
     // Add seriesNames, if applicable.
     if (Object.keys(this.seriesNames).length) {

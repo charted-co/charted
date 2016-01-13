@@ -1,6 +1,9 @@
 /* @flow */
 
+import sha1 from "./sha1"
+
 export {
+  getChartId,
   getHashCode,
   parseQueryString,
   camelToHyphen,
@@ -9,6 +12,10 @@ export {
   getNiceIntervals,
   getTrimmedExtent,
   getFileExtension
+}
+
+function getChartId(params: t_CHART_PARAM): string {
+  return sha1(JSON.stringify(params), /* short */ true)
 }
 
 function getHashCode(str: string): number {
