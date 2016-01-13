@@ -140,16 +140,3 @@ export function testDefaultTitle(test) {
 
   test.done()
 }
-
-export function testGetId(test) {
-  let params = new ChartParameters('http://charted.co')
-  let id = params.getId()
-  test.ok(id, 'Generated ID')
-  test.equal(id, params.getId(), 'IDs the same when params are the same')
-
-  params.toggleColor()
-  test.ok(params.getId(), 'Generated ID')
-  test.notEqual(id, params.getId(), 'IDs differ when params differ')
-
-  test.done()
-}
