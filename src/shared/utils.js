@@ -4,7 +4,6 @@ import sha1 from "./sha1"
 
 export {
   getChartId,
-  getHashCode,
   parseQueryString,
   camelToHyphen,
   stringToNumber,
@@ -16,20 +15,6 @@ export {
 
 function getChartId(params: t_CHART_PARAM): string {
   return sha1(JSON.stringify(params), /* short */ true)
-}
-
-function getHashCode(str: string): number {
-  if (str.length == 0) {
-    return 0
-  }
-
-  var hash = 0
-  for (var i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i)
-    hash = hash & hash // convert to 32 bit integer
-  }
-
-  return hash
 }
 
 function log10Floor(val: number): number {

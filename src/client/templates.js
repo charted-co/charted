@@ -44,10 +44,9 @@ function pageSettings(): string {
   `
 }
 
-function embedOverlay(params: Object): string {
+function embedOverlay(chartId: string): string {
   // TODO(anton): This should be just one script, without iframe.
-  var script = `<script src="${window.location.origin}/embed.js"></script>`
-  var iframe = `<iframe id="charted:${params.id}" src="${params.url}" height="600px" width="100%" scrolling="yes" style="border: solid 1px #ccc"></iframe>`
+  var script = `<script src="${window.location.origin}/embed.js" data-charted="${chartId}"></script>`
 
   return `
     <div class="overlay-container">
@@ -57,9 +56,8 @@ function embedOverlay(params: Object): string {
           You can add this embed to your website by copying and pasting the HTML code below.
         </p>
 
-        <textarea class="embed-link">${iframe}\n${script}</textarea>
-
-        <div class="iframe-container">${iframe}</div>
+        <textarea class="embed-link">${script}</textarea>
+        <div class="iframe-container">${script}</div>
       </div>
       <div class="overlay-close"><span class="icon icon-x"></span></div>
     </div>

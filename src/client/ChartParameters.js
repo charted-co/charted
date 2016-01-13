@@ -16,7 +16,6 @@ const OPTIONS = {
 
 export default class ChartParameters {
   url: string;
-  isEmbed: boolean;
   charts: Array<Object>;
   seriesColors: {[key: number]: string};
   seriesNames: {[key: number]: string};
@@ -30,7 +29,6 @@ export default class ChartParameters {
     this.charts = [{}]
     this.seriesColors = {}
     this.seriesNames = {}
-    this.isEmbed = false
     this._color = COLOR_LIGHT
     this._grid = GRID_FULL
     this._getDefaultTitle = (i) => '' // no-op
@@ -61,8 +59,6 @@ export default class ChartParameters {
     }
 
     let params = new ChartParameters(url)
-    params.isEmbed = !!urlParams.embed
-
     if (data.charts) params.charts = data.charts
     if (data.seriesNames) params.seriesNames = data.seriesNames
     if (data.seriesColors) params.seriesColors = data.seriesColors
