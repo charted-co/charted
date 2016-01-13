@@ -3,7 +3,7 @@
 import {getTrimmedExtent} from "../shared/utils"
 import PageData from "./PageData"
 
-export class ChartData {
+export default class ChartData {
   _data: Array<Array<t_FIELD>>;
   _serieses: Array<t_SERIES>;
   _indices: Array<string>;
