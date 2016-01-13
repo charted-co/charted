@@ -5,7 +5,6 @@ export function testDefaultParameters(test) {
   test.equal(params.url, 'http://charted.co/data.csv')
   test.ok(params.isLight())
   test.ok(params.isFull())
-  test.ok(!params.isEmbed)
   test.equal(1, params.charts.length)
   test.done()
 }

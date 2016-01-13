@@ -23,6 +23,7 @@ export default class ChartedServer {
       app.use(bodyParser.json())
       app.use(express.static(staticRoot))
       app.get('/c/:id', (req, res) => charted.getChart(req, res))
+      app.get('/embed/:id', (req, res) => charted.getChart(req, res))
       app.post('/c/:id', (req, res) => charted.saveChart(req, res))
       app.get('/load', (req, res) => charted.loadChart(req, res))
 

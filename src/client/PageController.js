@@ -20,8 +20,10 @@ export class PageController {
   resizeTimer: number;
   params: ChartParameters;
   data: PageData;
+  isEmbed: boolean;
 
   constructor() {
+    this.isEmbed = false
     this.chartObjects = []
     this.$body = $('body')
     this.$charts = $('.charts')
@@ -55,8 +57,8 @@ export class PageController {
   }
 
   activate(): void {
-    let path = /\/c\/([a-z\d]{7})\/?$/.exec(window.location.pathname)
-    let chartId = path && path[1]
+    let path = /\/(c|embed)\/([a-z\d]{7})\/?$/.exec(window.location.pathname)
+    let chartId = path && path[2]
 
     if (!chartId) {
       this.clearExisting()
@@ -64,6 +66,7 @@ export class PageController {
       return
     }
 
+    this.isEmbed = path[1] == 'embed'
     this.fetchPageData(/* url */ null, chartId)
     // TODO(anton): If it's not an embed, refresh every 30 minutes (1000 * 60 * 30)
   }
@@ -131,7 +134,7 @@ export class PageController {
 
   setupPageSettings(): void {
     // if this is an embed, don't add the page settings
-    if (this.params.isEmbed) return
+    if (this.isEmbed) return
 
     // populate UI
     this.$body.append(templates.pageSettings())
@@ -345,18 +348,12 @@ export class PageController {
 
 
   getEmbed(): void {
-    var embedId = utils.getHashCode(window.location.href)
-    var embedUrl = window.location.href + '&embed=' + embedId
+    let params = this.params.compress()
+    let chartId = utils.getChartId(params)
 
-    this.$body.append(templates.embedOverlay({id: embedId, url: embedUrl}))
-
-    this.$body.find('.overlay-content').click(function (event) {
-      event.stopPropagation()
-    })
-
-    this.$body.click(function () {
-      $('.overlay-container').remove()
-    })
+    this.$body.append(templates.embedOverlay(chartId))
+    this.$body.find('.overlay-content').click((ev) => ev.stopPropagation())
+    this.$body.click(() => $('.overlay-container').remove())
 
   }
 
@@ -371,7 +368,7 @@ export class PageController {
 
 
   getEditability(): boolean {
-    return !this.params.isEmbed
+    return !this.isEmbed
   }
 
 
@@ -429,11 +426,12 @@ export class PageController {
 
 
   maybeBroadcastDimensions(): void {
-    if (!this.params.embed) {
+    if (!this.isEmbed) {
       return
     }
 
-    var message = this.params.embed + ':' + String(document.body.scrollHeight)
+    var chartId = utils.getChartId(this.params.compress())
+    var message = chartId + ':' + String(document.body.scrollHeight)
     if (window.parent) {
       window.parent.postMessage(message, '*' /* Any site can embed charted */)
     }
