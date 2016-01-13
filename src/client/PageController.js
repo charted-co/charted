@@ -6,6 +6,7 @@ import ChartParameters from "./ChartParameters"
 import * as templates from "./templates"
 import * as utils from "../shared/utils"
 
+const MIN_30 = 1000 * 60 * 30
 export const EDITABLES = ['title', 'note'];
 export const OPTIONS = {
   // Default values are first
@@ -68,7 +69,11 @@ export class PageController {
 
     this.isEmbed = path[1] == 'embed'
     this.fetchPageData(/* url */ null, chartId)
-    // TODO(anton): If it's not an embed, refresh every 30 minutes (1000 * 60 * 30)
+
+    // If it's not an embed, refresh every 30 minutes (1000 * 60 * 30)
+    if (!this.isEmbed) {
+      setInterval(() => this.fetchPageData(/* url */ null, chartId), MIN_30)
+    }
   }
 
 
