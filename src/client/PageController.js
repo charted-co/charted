@@ -444,8 +444,6 @@ export class PageController {
 
 
   errorNotify(error: Object): void {
-    /*jshint devel:true */
-
     this.$body.addClass('error').removeClass('loading')
     this.updatePageTitle()
     var displayMessage = error.message || 'There’s been an error. Please check that '+

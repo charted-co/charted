@@ -45,7 +45,6 @@ function pageSettings(): string {
 }
 
 function embedOverlay(chartId: string): string {
-  // TODO(anton): This should be just one script, without iframe.
   var script = `<script src="${window.location.origin}/embed.js" data-charted="${chartId}"></script>`
 
   return `
