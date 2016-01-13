@@ -86,8 +86,6 @@ export default class ChartedServer {
   }
 
   respondWithChart(res: any, params: t_CHART_PARAM) {
-    // TODO(anton): getDefaultTitle doesn't work here so maybe we should move PageData into
-    // shared/ as well.
     request(params.dataUrl, (err, resp, body) => {
       if (err) {
         this.badRequest(res, err)
