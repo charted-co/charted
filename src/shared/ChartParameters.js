@@ -14,15 +14,6 @@ const OPTIONS = {
   rounding: ['on', 'off']
 }
 
-type ParamObj = {
-  dataUrl: string;
-  charts?: Array<Object>;
-  seriesColors?: {[key: number]: string};
-  seriesNames?: {[key: number]: string};
-  grid?: string;
-  color?: string;
-}
-
 export default class ChartParameters {
   url: string;
   isEmbed: boolean;
@@ -81,12 +72,6 @@ export default class ChartParameters {
     return params
   }
 
-  /** Returns a unique ID based on chart parameters */
-  getId(): string {
-    let params = this.compress()
-    return sha1(JSON.stringify(params), /* short */ true)
-  }
-
   withDefaultTitle(fn: (i: number) => string): ChartParameters {
     this._getDefaultTitle = fn
     return this
@@ -116,8 +101,8 @@ export default class ChartParameters {
     return this.seriesNames[index]
   }
 
-  compress(): ParamObj {
-    let params: ParamObj = {dataUrl: this.url}
+  compress(): t_CHART_PARAM {
+    let params: t_CHART_PARAM = {dataUrl: this.url}
 
     // Add seriesNames, if applicable.
     if (Object.keys(this.seriesNames).length) {

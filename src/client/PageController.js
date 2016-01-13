@@ -459,13 +459,15 @@ export class PageController {
 
   updateURL(withoutServerUpdate: boolean = false): void {
     this.updatePageTitle()
-    let path = `/c/${this.params.getId()}`
+    let params = this.params.compress()
+    let chartId = utils.getChartId(params)
+    let path = `/c/${chartId}`
     window.history.pushState({}, null, path)
 
     if (!withoutServerUpdate) {
       d3.xhr(path)
         .header('Content-Type', 'application/json')
-        .post(JSON.stringify(this.params.compress()))
+        .post(JSON.stringify(params))
       // TODO (anton): Show an error if save failed
     }
   }
