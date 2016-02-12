@@ -9,15 +9,27 @@
 
     <link rel="stylesheet" href="/charted.css">
     <script src="//use.edgefonts.net/source-sans-pro:n2,n4,n9.js"></script>
-    <script src="/lib/jquery.js"></script>
-    <script src="/lib/d3.js"></script>
-    <script src="/lib/lodash.compat.js"></script>
 
-    <script async src="/lib/require.js" data-main="/scripts/charted"></script>
+    {{#if ENV.dev}}
+      <script src="/lib/jquery.js"></script>
+      <script src="/lib/d3.js"></script>
+      <script src="/lib/lodash.compat.js"></script>
+
+      <script async src="/lib/require.js" data-main="/scripts/charted"></script>
+    {{else}}
+      <script src="/lib.js"></script>
+      <script src="/charted.js" data-main="/scripts/charted"></script>
+    {{/if}}
   </head>
 
   <body class="pre-load">
-    <h1 class="page-title">Charted</h1>
+    <h1 class="page-title">
+      {{#if ENV.dev}}
+        Charted Dev
+      {{else}}
+        Charted
+      {{/if}}
+    </h1>
     <h2 class="page-subtitle">Beautiful, automatic charts</h2>
 
     <div class="loading-embed-spinner">
