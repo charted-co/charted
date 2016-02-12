@@ -8,17 +8,18 @@ import request from "request"
 import express from "express"
 import bodyParser from "body-parser"
 import prepare from "./prepare"
+import FileDb from "./db.js"
 import sha1 from "../shared/sha1"
 import * as utils from "../shared/utils"
 
 export default class ChartedServer {
   staticRoot: string;
-  store: any;
+  store: FileDb;
 
-  static start(port: number, staticRoot: string) {
+  static start(port: number, staticRoot: string, db: FileDb) {
     return new Promise((resolve) => {
       let app = express()
-      let charted = new ChartedServer({}, staticRoot)
+      let charted = new ChartedServer(db, staticRoot)
 
       app.use(bodyParser.json())
       app.use(express.static(staticRoot))
@@ -31,19 +32,20 @@ export default class ChartedServer {
     })
   }
 
-  constructor(store: any, staticRoot: string) {
+  constructor(store: FileDb, staticRoot: string) {
     this.store = store
     this.staticRoot = staticRoot
   }
 
   getChart(req: any, res: any) {
-    let params = this.store[req.params.id]
-    if (!params) {
-      this.notFound(res, `chart ${req.params.id} was not found.`)
-      return
-    }
+    this.store.get(req.params.id).then((params) => {
+      if (!params) {
+        this.notFound(res, `chart ${req.params.id} was not found.`)
+        return
+      }
 
-    this.respondWithHTML(res, 'index.html')
+      this.respondWithHTML(res, 'index.html')
+    })
   }
 
   loadChart(req: any, res: any) {
@@ -51,21 +53,26 @@ export default class ChartedServer {
       let parsed = url.parse(req.query.url, true)
       let chartUrl = url.format(prepare(parsed))
       let params = {dataUrl: chartUrl}
-      // Save in the “database”
-      this.store[utils.getChartId(params)] = params
-      this.respondWithChart(res, params)
+
+      this.store.set(utils.getChartId(params), params)
+        .then(() => this.respondWithChart(res, params))
+
       return
     }
 
     if (req.query.id) {
-      let params = this.store[req.query.id]
-      if (!params) {
-        this.notFound(res, `chart ${req.query.id} was not found.`)
-      }
-      this.respondWithChart(res, params)
+      this.store.get(req.query.id)
+        .then((params) => {
+          if (!params) {
+            this.notFound(res, `chart ${req.query.id} was not found.`)
+            return
+          }
+
+          this.respondWithChart(res, params)
+        })
+
       return
     }
-
 
     this.badRequest(res, 'either url or id is required')
     return
@@ -78,7 +85,7 @@ export default class ChartedServer {
       return
     }
 
-    this.store[id] = req.body
+    this.store.set(id, req.body)
   }
 
   respondWithHTML(res: any, template: string) {
