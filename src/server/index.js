@@ -4,6 +4,8 @@
 
 import path from "path"
 import ChartedServer from './charted'
+import FileDb from "./db"
 
-ChartedServer.start(process.env.PORT || 3000, path.join(__dirname, '..', 'client'))
+let db = new FileDb(path.join(__dirname, '..', '..', '.charted_db'))
+ChartedServer.start(Number(process.env.PORT) || 3000, path.join(__dirname, '..', 'client'), db)
   .then((address: any) => console.log(`Running at ${address.address}:${address.port}`))
