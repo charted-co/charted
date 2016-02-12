@@ -9,11 +9,17 @@
 
     <link rel="stylesheet" href="/charted.css">
     <script src="//use.edgefonts.net/source-sans-pro:n2,n4,n9.js"></script>
-    <script src="/lib/jquery.js"></script>
-    <script src="/lib/d3.js"></script>
-    <script src="/lib/lodash.compat.js"></script>
 
-    <script async src="/lib/require.js" data-main="/scripts/charted"></script>
+    {{#if ENV.dev}}
+      <script src="/lib/jquery.js"></script>
+      <script src="/lib/d3.js"></script>
+      <script src="/lib/lodash.compat.js"></script>
+
+      <script async src="/lib/require.js" data-main="/scripts/charted"></script>
+    {{else}}
+      <script src="/lib.js"></script>
+      <script src="/charted.js" data-main="/scripts/charted"></script>
+    {{/if}}
   </head>
 
   <body class="pre-load">

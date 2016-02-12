@@ -4,6 +4,8 @@
 const sh = require('shelljs/global')
 const babel = require('babel-core')
 const handlebars = require('handlebars')
+const requirejs = require('requirejs')
+const uglify = require('uglify-js')
 
 const BABEL_PLUGINS = {
   client: [
@@ -114,6 +116,26 @@ function main(args) {
     transpile(file, 'client')
     transpile(file, 'server', true)
   })
+
+  // Compile JavaScript for production (if needed)
+  if (!ENV.dev) {
+    echo(`Optimizing JavaScript`)
+    uglify.minify([
+      'out/client/lib/d3.js',
+      'out/client/lib/jquery.js',
+      'out/client/lib/lodash.compat.js'
+    ]).code.to('out/client/lib.js')
+
+    requirejs.optimize({
+      baseUrl: 'out/client',
+      name: 'scripts/charted',
+      out: 'out/client/charted.js',
+      include: 'requireLib',
+      paths: {
+        requireLib: 'lib/require'
+      }
+    })
+  }
 }
 
 function less(src, dest) {

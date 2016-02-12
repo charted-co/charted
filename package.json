@@ -9,7 +9,8 @@
     "start": "bin/watch && node out/server/index.js",
     "pretest": "bin/build",
     "test": "nodeunit out/server/*_test.js",
-    "build-prod": "bin/build --prod"
+    "build-prod": "bin/build --prod",
+    "start-prod": "bin/build --prod && node out/server/index.js"
   },
   "repository": {
     "type": "git",
@@ -38,7 +39,9 @@
     "less": "1.7.x",
     "nodeunit": "0.9.x",
     "request": "2.47.x",
-    "shelljs": "0.5.x"
+    "requirejs": "^2.1.22",
+    "shelljs": "0.5.x",
+    "uglify-js": "^2.6.1"
   },
   "engines": {
     "node": ">=4.1.1"
