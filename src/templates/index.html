@@ -17,7 +17,13 @@
   </head>
 
   <body class="pre-load">
-    <h1 class="page-title">Charted</h1>
+    <h1 class="page-title">
+      {{#if ENV.dev}}
+        Charted Dev
+      {{else}}
+        Charted
+      {{/if}}
+    </h1>
     <h2 class="page-subtitle">Beautiful, automatic charts</h2>
 
     <div class="loading-embed-spinner">

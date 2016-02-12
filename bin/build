@@ -3,6 +3,7 @@
 
 const sh = require('shelljs/global')
 const babel = require('babel-core')
+const handlebars = require('handlebars')
 
 const BABEL_PLUGINS = {
   client: [
@@ -20,8 +21,19 @@ const BABEL_PRESETS = [
   "babel-preset-stage-0"
 ]
 
+const ENV = {
+  dev: true
+}
+
 function main(args) {
-  var cmds = args.slice(2)
+  let cmds = args.slice(2).filter((cmd) => {
+    if (cmd == '--prod') {
+      ENV.dev = false
+      return false
+    }
+
+    return true
+  })
 
   if (cmds.length) {
     cmds.forEach((cmd) => {
@@ -48,6 +60,10 @@ function main(args) {
         let dest = cmd.replace('public/', '')
         cp('-rf', `src/${cmd}`, `out/client/${dest}`)
       }
+
+      if (cmd.startsWith('templates') && cmd.endsWith('.html')) {
+        template(`src/${cmd}`)
+      }
     })
 
     return
@@ -73,6 +89,12 @@ function main(args) {
   // Compile LESS
   echo('Compiling LESS')
   less('src/styles/charted.less', 'out/client/charted.css')
+
+  // Compile templates
+  ls('-R', 'src/templates/*.html').forEach((file) => {
+    echo(`Compiling ${file}`)
+    template(file)
+  })
 
   // Compile client-side JavaScript
   ls('-R', 'src/client/*.js').forEach((file) => {
@@ -114,6 +136,13 @@ function transpile(file, type, isShared) {
 
   let res = babel.transform(code, options)
   res.code.to(`${dest}/${name}`)
+}
+
+function template(file) {
+  let name = file.replace('src/templates/', '')
+  let code = cat(file)
+  let res = handlebars.compile(code)({ENV: ENV})
+  res.to(`out/client/${name}`)
 }
 
 
