@@ -24,7 +24,7 @@ const BABEL_PRESETS = [
   "babel-preset-stage-0"
 ]
 
-const ENV = { dev: true }
+const ENV = {dev: true}
 
 function main(args) {
   let cmds = args.slice(2).filter((cmd) => {
@@ -33,8 +33,8 @@ function main(args) {
       return false
     }
 
-    if (cmd.startsWith('--partials=')) {
-      registerPartials(cmd.replace('--partials=', ''))
+    if (cmd.startsWith('--plugins=')) {
+      registerPlugins(cmd.replace('--plugins=', ''))
       return false
     }
 
@@ -171,7 +171,7 @@ function template(file) {
   res.to(`out/client/${name}`)
 }
 
-function registerPartials(dir) {
+function registerPlugins(dir) {
   ls('-R', `${dir}/*.html`).forEach((file) => {
     let name = path.basename(file, '.html')
     handlebars.registerPartial(name, cat(file))
