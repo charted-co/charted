@@ -6,6 +6,7 @@ const babel = require('babel-core')
 const handlebars = require('handlebars')
 const requirejs = require('requirejs')
 const uglify = require('uglify-js')
+const path = require('path')
 
 const BABEL_PLUGINS = {
   client: [
@@ -23,14 +24,17 @@ const BABEL_PRESETS = [
   "babel-preset-stage-0"
 ]
 
-const ENV = {
-  dev: true
-}
+const ENV = { dev: true }
 
 function main(args) {
   let cmds = args.slice(2).filter((cmd) => {
     if (cmd == '--prod') {
       ENV.dev = false
+      return false
+    }
+
+    if (cmd.startsWith('--partials=')) {
+      registerPartials(cmd.replace('--partials=', ''))
       return false
     }
 
@@ -165,6 +169,13 @@ function template(file) {
   let code = cat(file)
   let res = handlebars.compile(code)({ENV: ENV})
   res.to(`out/client/${name}`)
+}
+
+function registerPartials(dir) {
+  ls('-R', `${dir}/*.html`).forEach((file) => {
+    let name = path.basename(file, '.html')
+    handlebars.registerPartial(name, cat(file))
+  })
 }
 
 
