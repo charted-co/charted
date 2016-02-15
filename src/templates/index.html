@@ -17,7 +17,15 @@
       <script async src="/lib/require.js" data-main="/scripts/charted"></script>
     {{else}}
       <script src="/lib.js"></script>
-      <script src="/charted.js" data-main="/scripts/charted"></script>
+      <script src="/charted.js"></script>
+      <script>
+        requirejs(['scripts/PageController'], function (module) {
+          $(function () {
+            var pageController = new module.PageController()
+            pageController.activate()
+          })
+        })
+      </script>
     {{/if}}
 
     {{!-- Render partial `head` if it's registered or fail silently --}}
