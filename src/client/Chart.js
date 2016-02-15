@@ -497,7 +497,9 @@ export default class Chart {
       return {diff: diff, series: i, isValid: isValid}
     })
 
-    currentY = _.min(diffs.filter((diff) => diff.isValid), 'diff').series
+    diffs = diffs.filter((diff) => diff.isValid)
+    diffs.sort((a, b) => d3.ascending(a.diff, b.diff))
+    currentY = diffs.length ? diffs[0].series : 0
 
     // use the total if it's a column chart and the mouse position it
     if (this.params.type === 'column') {

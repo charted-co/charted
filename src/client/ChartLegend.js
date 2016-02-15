@@ -28,18 +28,21 @@ export default class ChartLegend {
       return
     }
 
-    var $legend = $('')
-    _.eachRight(this.data.getSerieses(), (series, i) => {
-      var label = this.controller.getSeriesName(this.series[i])
-      var thisLabel = {
+    let $legend = $('')
+    let serieses = this.data.getSerieses()
+
+    for (let i = serieses.length - 1; i >= 0; i--) {
+      let series = serieses[i]
+      let label = this.controller.getSeriesName(this.series[i])
+      let $legendEl = $(templates.legendItem({
         label: label,
         color: this.chart.getSeriesColor(series.seriesIndex),
         editable: this.controller.getEditability()
-      }
-      var $legendEl = $(templates.legendItem(thisLabel))
+      }))
+
       $legend = $legend.add($legendEl)
       series.legendEl = $legendEl
-    })
+    }
 
     this.$container.find('.legend').html($legend).removeClass('hidden')
 

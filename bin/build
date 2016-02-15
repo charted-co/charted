@@ -126,8 +126,7 @@ function main(args) {
     echo(`Optimizing JavaScript`)
     uglify.minify([
       'out/client/lib/d3.js',
-      'out/client/lib/jquery.js',
-      'out/client/lib/lodash.compat.js'
+      'out/client/lib/jquery.js'
     ]).code.to('out/client/lib.js')
 
     requirejs.optimize({

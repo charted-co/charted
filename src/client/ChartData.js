@@ -39,7 +39,7 @@ export default class ChartData {
   }
 
   getFlattenedData(): Array<any> {
-    return _.flatten(this._data)
+    return this._data.reduce((a, b) => a.concat(b))
   }
 
   getSerieses(): Array<Object> {
@@ -88,7 +88,7 @@ export default class ChartData {
   }
 
   getSeriesExtent(seriesIndex: number): Array<number> {
-    var yRawValues = _.pluck(this._data[seriesIndex], 'yRaw')
+    let yRawValues = this._data[seriesIndex].map((item) => item.yRaw)
     return getTrimmedExtent(yRawValues)
   }
 
