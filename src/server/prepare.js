@@ -20,6 +20,10 @@ function googledocs(uri) {
   uri.query.format = 'csv'
   uri.hash = ''
 
+  // url.format ignores 'query' if 'search' is present
+  // (see https://nodejs.org/api/url.html)
+  delete uri.search
+
   return uri
 }
 

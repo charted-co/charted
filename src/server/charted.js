@@ -50,7 +50,7 @@ export default class ChartedServer {
 
   loadChart(req: any, res: any) {
     if (req.query.url) {
-      let parsed = url.parse(req.query.url, true)
+      let parsed = url.parse(req.query.url, /* parse query string */ true)
       let chartUrl = url.format(prepare(parsed))
       let params = {dataUrl: chartUrl}
 
