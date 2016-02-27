@@ -60,19 +60,31 @@ export class PageController {
   activate(): void {
     let path = /\/(c|embed)\/([a-z\d]{7})\/?$/.exec(window.location.pathname)
     let chartId = path && path[2]
+    let legacyParams = ChartParameters.fromQueryString(window.location.search || '')
 
-    if (!chartId) {
+    if (!chartId && !legacyParams) {
       this.clearExisting()
       this.$body.addClass('pre-load')
       return
     }
 
-    this.isEmbed = path[1] == 'embed'
-    this.fetchPageData(/* url */ null, chartId)
+    this.isEmbed = path && path[1] == 'embed'
 
     // If it's not an embed, refresh every 30 minutes (1000 * 60 * 30)
     if (!this.isEmbed) {
-      setInterval(() => this.fetchPageData(/* url */ null, chartId), MIN_30)
+      setInterval(() => this.fetchPageData(), MIN_30)
+    }
+
+    if (chartId) {
+      this.fetchPageData(/* url */ null, chartId)
+      return
+    }
+
+    // We need to convert legacy params by saving them into the database and
+    // then fetch data.
+    if (legacyParams) {
+      this.params = legacyParams.withDefaultTitle((i) => this.getDefaultTitle(i))
+      this.updateURL(/* withoutServerUpdate */ false, () => this.fetchPageData())
     }
   }
 
@@ -81,6 +93,16 @@ export class PageController {
    * Fetches chart data and parameters either by URL or by ID.
    */
   fetchPageData(dataUrl: ?string, id: ?string): void {
+    if (!dataUrl && !id) {
+      if (!this.params) {
+        return
+      }
+
+      // If neither dataUrl nor id is provided but there is an
+      // active chart, we simply refetch that chart.
+      id = utils.getChartId(this.params.compress())
+    }
+
     this.$body.addClass('loading')
     this.updatePageTitle('Charted (...)')
     this.clearExisting()
@@ -92,7 +114,7 @@ export class PageController {
         return
       }
 
-      this.params = new ChartParameters.fromJSON(resp.params)
+      this.params = ChartParameters.fromJSON(resp.params)
         .withDefaultTitle((i) => this.getDefaultTitle(i))
       this.data = new PageData.fromJSON(this.params.url, resp.data)
       this.render()
@@ -342,7 +364,7 @@ export class PageController {
     this.$body.toggleClass('full')
 
     var template = templates.gridSettingsFull
-    if (this.params.isFull()) {
+    if (this.params && this.params.isFull()) {
       template = templates.gridSettingsSplit
     }
 
@@ -458,7 +480,7 @@ export class PageController {
   }
 
 
-  updateURL(withoutServerUpdate: boolean = false): void {
+  updateURL(withoutServerUpdate: boolean = false, cb: ?Function): void {
     this.updatePageTitle()
     let params = this.params.compress()
     let chartId = utils.getChartId(params)
@@ -468,7 +490,9 @@ export class PageController {
     if (!withoutServerUpdate) {
       d3.xhr(path)
         .header('Content-Type', 'application/json')
-        .post(JSON.stringify(params))
+        .post(JSON.stringify(params), () => {
+          if (cb) cb()
+        })
       // TODO (anton): Show an error if save failed
     }
   }
