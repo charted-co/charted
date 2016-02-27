@@ -46,7 +46,6 @@ export default class ChartParameters {
   }
 
   static fromQueryString(qs: string): ?ChartParameters {
-    // TODO(anton): When implementing redirect, don't forget about data.csvUrl || data.dataUrl
     let urlParams = utils.parseQueryString(qs)
     let data = urlParams.data
     if (!data) {

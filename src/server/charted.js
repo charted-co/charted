@@ -86,6 +86,9 @@ export default class ChartedServer {
     }
 
     this.store.set(id, req.body)
+    res.setHeader('Content-Type', 'application/json')
+    res.statusCode = 200
+    res.end(JSON.stringify({status: 'ok'}))
   }
 
   respondWithHTML(res: any, template: string) {
