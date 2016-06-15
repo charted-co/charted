@@ -53,7 +53,53 @@
 .page-option-item:hover .icon{
   opacity: 0.8;
 }
-.dark .page-option-item{
+.page-data-source{
+  border-top: 1px solid @gray-lightest;
+  margin: 10px 0 0;
+  padding: 16px 0 0;
+}
+.page-data-source label{
+  color: @gray;
+  font-size: @fontSize-smallest;
+  display: block;
+  padding: 0 0 3px 5px;
+}
+.page-data-source-form{
+  width: 100%;
+  padding: 0 40px 0 0;
+  position: relative;
+}
+.page-data-source-form input{
+  .border-radius(3px 0 0 3px);
+  .m-fontSans400();
+  .transition(all 0.2s ease);
+  border: 1px solid @gray-lighter;
+  color: @gray-dark;
+  display: block;
+  font-size: @fontSize-small;
+  height: 36px;
+  padding: 5px 0 5px 5px;
+  width: 100%;
+}
+.page-data-source-form button{
+  .border-radius(0 3px 3px 0);
+  .m-fontSans900();
+  background-color: white;
+  border: 1px solid @gray-lighter;
+  border-width: 1px 1px 1px 0;
+  font-size: @fontSize-smaller;
+  height: 36px;
+  letter-spacing: @letterSpacing-wide;
+  position: absolute;
+  right: 0;
+  text-transform: uppercase;
+  top: 0;
+  width: 40px;
+}
+.page-data-source-form button:hover{
+  border: 1px solid @gray-darkest;
+  background-color: @gray-darkest;
+  color: white;
 }
 .dark .page-option-item:hover{
   color: @gray-lightest;
@@ -63,6 +109,9 @@
 }
 .dark .page-option-item:hover .icon{
   opacity: 1;
+}
+.dark .page-data-source{
+  border-top: 1px solid @gray-dark;
 }
 
 

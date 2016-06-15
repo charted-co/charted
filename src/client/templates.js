@@ -34,6 +34,14 @@ function pageSettings(): string {
           <button class="page-option-item get-embed" title="Get embed code">
             <span class="icon icon-embed"></span>Get embed code
           </button>
+
+          <div class="page-data-source">
+            <label>Update data source</label>
+            <div class="page-data-source-form">
+              <input class="data-source-url">
+              <button class="update-data-source">Go</button>
+            </div>
+          </div>
         </div>
 
         <a href="/" class="page-option-item">

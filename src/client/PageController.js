@@ -53,7 +53,7 @@ export class PageController {
         return
       }
 
-      this.fetchPageData(url, /* id */ null)
+      this.fetchPageData(url, /* id */ null, /* params */ null)
     })
   }
 
@@ -76,7 +76,7 @@ export class PageController {
     }
 
     if (chartId) {
-      this.fetchPageData(/* url */ null, chartId)
+      this.fetchPageData(/* url */ null, chartId, /* params */ null)
       return
     }
 
@@ -92,7 +92,7 @@ export class PageController {
   /**
    * Fetches chart data and parameters either by URL or by ID.
    */
-  fetchPageData(dataUrl: ?string, id: ?string): void {
+  fetchPageData(dataUrl: ?string, id: ?string, params: ?object): void {
     if (!dataUrl && !id) {
       if (!this.params) {
         return
@@ -114,7 +114,9 @@ export class PageController {
         return
       }
 
-      this.params = ChartParameters.fromJSON(resp.params)
+      var paramsToUse = params ? params : resp.params
+      paramsToUse.dataUrl = resp.params.dataUrl
+      this.params = ChartParameters.fromJSON(paramsToUse)
         .withDefaultTitle((i) => this.getDefaultTitle(i))
       this.data = new PageData.fromJSON(this.params.url, resp.data)
       this.render()
@@ -148,7 +150,7 @@ export class PageController {
 
     this.setDimensions()
     this.updateURL()
-    $('.data-file-input').val(this.params.url)
+    $('.data-source-url').val(this.params.url)
   }
 
 
@@ -168,6 +170,7 @@ export class PageController {
     var $pageSettings = this.$body.find('.page-settings')
 
     $('.download-data').attr('href', this.params.url)
+    $('.data-source-url').val(this.params.url)
 
     // bind intereactions
     $pageSettings.find('.settings').click((event) => {
@@ -181,6 +184,7 @@ export class PageController {
 
     $pageSettings.find('.toggle-color').click(() => this.toggleColor())
     $pageSettings.find('.get-embed').click(() => this.getEmbed())
+    $pageSettings.find('.update-data-source').click(() => this.fetchPageData($('.data-source-url').val(), /* id */ null, this.params))
   }
 
 
