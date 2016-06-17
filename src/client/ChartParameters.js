@@ -30,7 +30,7 @@ export default class ChartParameters {
     this.seriesColors = {}
     this.seriesNames = {}
     this._color = COLOR_LIGHT
-    this._grid = GRID_FULL
+    this._grid = GRID_SPLIT
     this._getDefaultTitle = (i) => '' // no-op
   }
 
@@ -115,7 +115,7 @@ export default class ChartParameters {
     }
 
     // Add grid, if applicable.
-    if (!this.isFull()) {
+    if (this.isFull()) {
       params.grid = this._grid
     }
 

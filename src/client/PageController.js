@@ -84,7 +84,9 @@ export class PageController {
     // then fetch data.
     if (legacyParams) {
       this.params = legacyParams.withDefaultTitle((i) => this.getDefaultTitle(i))
-      this.updateURL(/* withoutServerUpdate */ false, () => this.fetchPageData())
+      let legacyParamsCompressed = this.params.compress()
+      let legacyDataUrl = legacyParamsCompressed.dataUrl || null
+      this.updateURL(/* withoutServerUpdate */ false, () => this.fetchPageData(legacyDataUrl, /* id */ null, legacyParamsCompressed))
     }
   }
 
@@ -309,7 +311,7 @@ export class PageController {
 
   getDefaultTitle(chartIndex: number): string {
     var series = this.params.charts[chartIndex].series
-    if (!series) {
+    if (!series || !this.data) {
       return 'Charted'
     } else if (series.length === 1) {
       return this.getSeriesName(series[0])
