@@ -463,10 +463,24 @@ export class PageController {
       return
     }
 
-    var chartId = utils.getChartId(this.params.compress())
-    var message = chartId + ':' + String(document.body.scrollHeight)
+    // Charted does a redirect away from the /embed/:id url, so we need to recreate the embed URL.
+    let src = window.location.toString().replace('/c/', '/embed/')
+
+    // scrollHeight is not great as the embed can never get shorter. This is a short term
+    // fix to deal with this fact.
+    let height = document.body.scrollHeight
+    height = height > 600 && document.body.offsetWidth >= 800 ? 600 : height
+
+    // Going to send a modified version of the standard resize context.
+    var message = {
+      chartId: utils.getChartId(this.params.compress()),
+      src: src,
+      context: "iframe.resize",
+      height: height
+    }
+
     if (window.parent) {
-      window.parent.postMessage(message, '*' /* Any site can embed charted */)
+      window.parent.postMessage(JSON.stringify(message), '*' /* Any site can embed charted */)
     }
   }
 

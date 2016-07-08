@@ -27,6 +27,7 @@ export default class ChartedServer {
       app.get('/embed/:id', (req, res) => charted.getChart(req, res))
       app.post('/c/:id', (req, res) => charted.saveChart(req, res))
       app.get('/load', (req, res) => charted.loadChart(req, res))
+      app.get('/oembed', (req, res) => charted.getOembed(req, res))
 
       let server = app.listen(port, () => resolve(server.address()))
     })
@@ -89,6 +90,43 @@ export default class ChartedServer {
     res.setHeader('Content-Type', 'application/json')
     res.statusCode = 200
     res.end(JSON.stringify({status: 'ok'}))
+  }
+
+  getOembed(req: any, res: any) {
+    // oEmbed requires a URL.
+    if (!req.query.url) {
+      this.badRequest(res, 'URL Required.')
+      return
+    }
+
+    // Grab the id from the url.
+    const id = utils.parseChartId(req.query.url)
+
+    if (!id){
+      this.badRequest(res, 'Could not parse ID from url')
+      return
+    }
+
+    // get the chart.
+    this.store.get(id)
+      .then((params) => {
+        if (!params) {
+          this.notFound(res, `chart ${id} was not found.`)
+          return
+        }
+
+        res.setHeader('Content-Type', 'application/json')
+        res.statusCode = 200
+
+        res.end(JSON.stringify({
+          type: 'rich',
+          version: '1.0',
+          width: 1280,
+          height: 600,
+          title: "Charted",
+          html: `<iframe src="https://www.charted.co/embed/${id}" width="1280" height="600" scrolling="no" frameborder="0"></iframe>`
+        }))
+      })
   }
 
   respondWithHTML(res: any, template: string) {

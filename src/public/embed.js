@@ -40,19 +40,29 @@ var CHARTED
     },
 
     onMessage: function (ev) {
-      var message = ev.data.split(':')
-      var iframe = document.getElementById('charted-' + message[0])
-      var link = document.createElement('a')
-      link.setAttribute('href', iframe.getAttribute('src'))
 
-      if (ev.origin !== link.origin) {
+      // Use the standardized version of postMessage iframe.resize.
+      var data
+      try {
+        data = JSON.parse(ev.data)
+      } catch (e) {
+        return
+      }
+
+      if (data.context !== 'iframe.resize') {
+        return
+      }
+
+      var iframe = document.querySelector('#charted-' + data.chartId)
+
+      if (!iframe) {
         return
       }
 
       iframe.style.transition = 'height 200ms'
       iframe.style.MozTransition = 'height 200ms'
       iframe.style.WebkitTransition = 'height 200ms'
-      iframe.style.height = message[1] + 'px'
+      iframe.style.height = data.height + 'px'
     }
   }
 
