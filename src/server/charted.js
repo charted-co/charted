@@ -141,6 +141,11 @@ export default class ChartedServer {
         return
       }
 
+      if (resp.statusCode != 200) {
+        this.badRequest(res, new Error('Received HTTP-' + resp.statusCode + ' status code from ' + params.dataUrl))
+        return
+      }
+
       res.setHeader('Content-Type', 'application/json')
       res.statusCode = 200
       res.end(JSON.stringify({params: params, data: body}))
