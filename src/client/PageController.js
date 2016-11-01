@@ -496,15 +496,11 @@ export class PageController {
   errorNotify(error: Object): void {
     this.$body.addClass('error').removeClass('loading')
     this.updatePageTitle()
-    var displayMessage = error.message || 'There’s been an error. Please check that '+
+    var displayMessage = error.message || error.responseText || 'There’s been an error. Please check that '+
       'you are using a valid .csv file. If you are using a Google Spreadsheet or Dropbox '+
       'link, the privacy setting must be set to shareable.'
 
     $('.error-message').html(displayMessage)
-
-    if(error && error.responseText) {
-      console.error(error.responseText)
-    }
   }
 
 
