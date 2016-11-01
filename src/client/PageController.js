@@ -109,10 +109,18 @@ export class PageController {
     this.updatePageTitle('Charted (...)')
     this.clearExisting()
 
+    if (dataUrl) {
+      $('.data-file-input').val(dataUrl)
+    }
     let url = `/load/?url=${encodeURIComponent(dataUrl || '')}&id=${encodeURIComponent(id || '')}`
     d3.json(url, (err, resp) => {
       if (err) {
         this.errorNotify(err)
+        return
+      }
+
+      if (!resp.data || !resp.data.length) {
+        this.errorNotify(new Error('Missing data from source: ' + resp.params.dataUrl))
         return
       }
 
@@ -494,7 +502,7 @@ export class PageController {
 
     $('.error-message').html(displayMessage)
 
-    if(error && error.reponseText) {
+    if(error && error.responseText) {
       console.error(error.responseText)
     }
   }
