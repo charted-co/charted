@@ -102,7 +102,7 @@ export default class ChartedServer {
     // Grab the id from the url.
     const id = utils.parseChartId(req.query.url)
 
-    if (!id){
+    if (!id) {
       this.badRequest(res, 'Could not parse ID from url')
       return
     }

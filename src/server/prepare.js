@@ -29,7 +29,19 @@ function googledocs(uri) {
 
 function dropbox(uri) {
   uri.query = uri.query || {}
-  uri.query.raw = 1
+
+  if (uri.query.dl === '0') {
+    uri.query.dl = '1'
+  }
+
+  if (!uri.query.dl) {
+    uri.query.raw = 1
+  }
+
+  // url.format ignores 'query' if 'search' is present
+  // (see https://nodejs.org/api/url.html)
+  delete uri.search
+
   return uri
 }
 
