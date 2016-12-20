@@ -94,7 +94,7 @@ export class PageController {
   /**
    * Fetches chart data and parameters either by URL or by ID.
    */
-  fetchPageData(dataUrl: ?string, id: ?string, params: ?object): void {
+  fetchPageData(dataUrl: ?string, id: ?string, params: ?Object): void {
     if (!dataUrl && !id) {
       if (!this.params) {
         return

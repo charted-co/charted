@@ -142,7 +142,7 @@ export default class ChartedServer {
       }
 
       if (resp.statusCode != 200) {
-        this.badRequest(res, new Error('Received HTTP-' + resp.statusCode + ' status code from ' + params.dataUrl))
+        this.badRequest(res, `Received HTTP-${resp.statusCode} status code from ${params.dataUrl}`)
         return
       }
 

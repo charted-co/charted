@@ -18,10 +18,8 @@ function getChartId(params: t_CHART_PARAM): string {
   return sha1(JSON.stringify(params), /* short */ true)
 }
 
-/*
-* Returns the Chart ID from a given URL.
-*/
-function parseChartId(url:string): string {
+/* Returns the Chart ID from a given URL */
+function parseChartId(url: string): ?string {
   const match = (/\/(?:c|embed)\/(\w+)(?:|\?.*)?/).exec(url)
   return match ? match[1] : null
 }
