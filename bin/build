@@ -144,7 +144,8 @@ function main(args) {
 }
 
 function less(src, dest) {
-  exec(`lessc ${src} ${dest}`)
+  let lessc = path.join(__dirname, '..', 'node_modules', '.bin', 'lessc')
+  exec(`${lessc} ${src} ${dest}`)
 }
 
 function transpile(file, type, isShared) {
