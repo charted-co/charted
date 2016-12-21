@@ -3,3 +3,4 @@ npm-debug.log
 .DS_Store
 out/
 .charted_db
+dump.rdb
