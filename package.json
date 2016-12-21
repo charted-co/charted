@@ -10,7 +10,8 @@
     "pretest": "bin/build",
     "test": "nodeunit out/server/*_test.js",
     "build-prod": "bin/build --prod",
-    "start-prod": "bin/build --prod && node out/server/index.js"
+    "start-prod": "bin/build --prod && node out/server/index.js",
+    "flow": "flow"
   },
   "repository": {
     "type": "git",
@@ -46,5 +47,8 @@
   "engines": {
     "node": ">=4.1.1"
   },
-  "homepage": "http://www.charted.co/"
+  "homepage": "http://www.charted.co/",
+  "devDependencies": {
+    "flow-bin": "^0.37.4"
+  }
 }

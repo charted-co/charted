@@ -7,3 +7,4 @@
 lib/interfaces/
 
 [options]
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe

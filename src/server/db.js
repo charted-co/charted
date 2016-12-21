@@ -21,7 +21,7 @@ export default class FileDb {
     this.path = path
   }
 
-  getAll(): Promise {
+  getAll(): Promise<Object> {
     return new Promise((resolve, reject) => {
       fs.readFile(this.path, 'utf8', (err, data) => {
         if (err) reject(err)
@@ -30,11 +30,11 @@ export default class FileDb {
     })
   }
 
-  get(key: string): Promise {
+  get(key: string): Promise<Object> {
     return this.getAll().then((data) => data[key])
   }
 
-  set(key: string, value: Object): Promise {
+  set(key: string, value: any): Promise<void> {
     return this.getAll().then((data) => {
       data[key] = value
 

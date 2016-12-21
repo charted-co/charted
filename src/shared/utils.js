@@ -14,7 +14,7 @@ export {
   getFileExtension
 }
 
-function getChartId(params: t_CHART_PARAM): string {
+function getChartId(params: any): string {
   return sha1(JSON.stringify(params), /* short */ true)
 }
 

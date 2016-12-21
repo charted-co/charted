@@ -27,11 +27,11 @@ export default class ChartedServer {
 
       app.use(bodyParser.json())
       app.use(express.static(staticRoot))
-      app.get('/c/:id', (req, res) => charted.getChart(req, res))
-      app.get('/embed/:id', (req, res) => charted.getChart(req, res))
-      app.post('/c/:id', (req, res) => charted.saveChart(req, res))
-      app.get('/load', (req, res) => charted.loadChart(req, res))
-      app.get('/oembed', (req, res) => charted.getOembed(req, res))
+      app.get('/c/:id', charted.getChart.bind(charted))
+      app.get('/embed/:id', charted.getChart.bind(charted))
+      app.post('/c/:id', charted.saveChart.bind(charted))
+      app.get('/load', charted.loadChart.bind(charted))
+      app.get('/oembed', charted.getOembed.bind(charted))
 
       let server = app.listen(port, () => {
         charted.address = server.address()
@@ -46,7 +46,7 @@ export default class ChartedServer {
     this.env = {dev: false}
   }
 
-  getChart(req: any, res: any) {
+  getChart(req: express$Request, res: express$Response) {
     this.store.get(req.params.id).then((params) => {
       if (!params) {
         this.notFound(res, `chart ${req.params.id} was not found.`)
@@ -63,7 +63,7 @@ export default class ChartedServer {
     })
   }
 
-  loadChart(req: any, res: any) {
+  loadChart(req: express$Request, res: express$Response) {
     if (req.query.url) {
       let parsed = url.parse(req.query.url, /* parse query string */ true)
       let chartUrl = url.format(prepare(parsed))
@@ -93,7 +93,7 @@ export default class ChartedServer {
     return
   }
 
-  saveChart(req: any, res: any) {
+  saveChart(req: express$Request, res: express$Response) {
     let id = req.params.id
     if (utils.getChartId(req.body) != id) {
       this.badRequest(res, 'id and params are out of sync.')
@@ -102,11 +102,11 @@ export default class ChartedServer {
 
     this.store.set(id, req.body)
     res.setHeader('Content-Type', 'application/json')
-    res.statusCode = 200
+    res.status(200)
     res.end(JSON.stringify({status: 'ok'}))
   }
 
-  getOembed(req: any, res: any) {
+  getOembed(req: express$Request, res: express$Response) {
     // oEmbed requires a URL.
     if (!req.query.url) {
       this.badRequest(res, 'URL Required.')
@@ -130,7 +130,7 @@ export default class ChartedServer {
         }
 
         res.setHeader('Content-Type', 'application/json')
-        res.statusCode = 200
+        res.status(200)
 
         res.end(JSON.stringify({
           type: 'rich',
@@ -143,7 +143,7 @@ export default class ChartedServer {
       })
   }
 
-  respondWithChart(res: any, params: t_CHART_PARAM) {
+  respondWithChart(res: express$Response, params: t_CHART_PARAM) {
     request(params.dataUrl, (err, resp, body) => {
       if (err) {
         this.badRequest(res, err)
@@ -156,18 +156,18 @@ export default class ChartedServer {
       }
 
       res.setHeader('Content-Type', 'application/json')
-      res.statusCode = 200
+      res.status(200)
       res.end(JSON.stringify({params: params, data: body}))
     })
   }
 
-  notFound(res: any, message: string) {
-    res.statusCode = 404
+  notFound(res: express$Response, message: string) {
+    res.status(404)
     res.end(`Not Found: ${message}`)
   }
 
-  badRequest(res: any, message: string) {
-    res.statusCode = 400
+  badRequest(res: express$Response, message: string) {
+    res.status(400)
     res.end(`Bad Request: ${message}`)
   }
 }
