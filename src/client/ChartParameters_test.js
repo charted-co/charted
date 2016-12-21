@@ -4,7 +4,7 @@ export function testDefaultParameters(test) {
   let params = new ChartParameters('http://charted.co/data.csv')
   test.equal(params.url, 'http://charted.co/data.csv')
   test.ok(params.isLight())
-  test.ok(params.isFull())
+  test.ok(!params.isFull())
   test.equal(1, params.charts.length)
   test.done()
 }
@@ -35,9 +35,9 @@ export function testToggleColor(test) {
 
 export function testToggleGrid(test) {
   let params = new ChartParameters('http://charted.co')
-  test.ok(params.isFull())
-  params.toggleGrid()
   test.ok(!params.isFull())
+  params.toggleGrid()
+  test.ok(params.isFull())
   test.done()
 }
 
@@ -91,7 +91,7 @@ export function testCompressParams(test) {
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'},
     color: 'dark',
-    grid: 'split'
+    grid: 'full'
   })
 
   params.charts = [{title: 'my title', note: 'my note'}]
@@ -100,7 +100,7 @@ export function testCompressParams(test) {
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'},
     color: 'dark',
-    grid: 'split',
+    grid: 'full',
     charts: [{title: 'my title', note: 'my note'}]
   })
 
@@ -113,7 +113,7 @@ export function testCompressParams(test) {
     seriesNames: {1: 'test name'},
     seriesColors: {1: '#fff'},
     color: 'dark',
-    grid: 'split',
+    grid: 'full',
     charts: [
       {title: 'chart 1'},
       {title: 'chart 2', type: 'line', rounding: 'off', series: ''}
