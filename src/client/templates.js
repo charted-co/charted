@@ -117,8 +117,8 @@ function chart(params: {editable: boolean}): string {
   return `
     <div class="chart show-columns">
       <div class="chart-description">
-        <h1 class="title info-input" ${editableAttribute}></h1>
-        <div class="note info-input" ${editableAttribute}></div>
+        <h1 class="js-chartTitle title info-input" ${editableAttribute}></h1>
+        <div class="js-chartNote note info-input" ${editableAttribute}></div>
       </div>
 
       <div class="chart-plot-outer-container">

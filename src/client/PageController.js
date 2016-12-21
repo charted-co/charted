@@ -7,7 +7,6 @@ import * as templates from "./templates"
 import * as utils from "../shared/utils"
 
 const MIN_30 = 1000 * 60 * 30
-export const EDITABLES = ['title', 'note'];
 export const OPTIONS = {
   // Default values are first
   type: ['column', 'line'],

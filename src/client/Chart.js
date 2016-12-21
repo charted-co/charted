@@ -3,12 +3,16 @@
 import ChartData from "./ChartData"
 import ChartLegend from "./ChartLegend"
 import {stringToNumber, camelToHyphen, getNiceIntervals, getRoundedValue} from "../shared/utils"
-import {OPTIONS, EDITABLES, PageController} from "./PageController"
+import {OPTIONS, PageController} from "./PageController"
 import PageData from "./PageData"
+import Editor from "./Editor"
 import * as templates from "./templates"
 
 export default class Chart {
   pageController: PageController;
+  titleEditor: Editor;
+  noteEditor: Editor;
+
   $wrapper: Object;
   $container: Object;
   $plot: Object;
@@ -82,6 +86,24 @@ export default class Chart {
     this.$pageSettings = $('.page-settings')
     this.$chartDescription = this.$container.find('.chart-description')
 
+    this.titleEditor = new Editor(this.$container.find('.js-chartTitle').get(0))
+    this.titleEditor.onChange((content) => {
+      if (!content) {
+        this.params.title = this.pageController.getDefaultTitle(this.chartIndex)
+        this.titleEditor.setContent(this.params.title)
+        return
+      }
+
+      this.params.title = content
+      this.pageController.updateURL()
+    })
+
+    this.noteEditor = new Editor(this.$container.find('.js-chartNote').get(0))
+    this.noteEditor.onChange((content) => {
+      this.params.note = content
+      this.pageController.updateURL()
+    })
+
     // refresh chart and bind interactions
     this.refresh(chartIndex, params, data)
     this.bindInteractions()
@@ -102,10 +124,8 @@ export default class Chart {
     this.$plot.empty()
 
     // Update chart UI
-    EDITABLES.forEach((item) => {
-      this.$container.find('.' + camelToHyphen(item)).text(this.params[item])
-      this.updateEditablePlaceholder(item)
-    })
+    this.titleEditor.setContent(this.params.title)
+    this.noteEditor.setContent(this.params.note)
 
     this.$xBeg.html(this.data.getIndexExtent()[0])
     this.$xEnd.html(this.data.getIndexExtent()[1])
@@ -422,21 +442,6 @@ export default class Chart {
       })
     })
 
-    // chart editables
-    EDITABLES.forEach((item) => {
-      var $elem = this.$container.find('.' + camelToHyphen(item))
-      $elem.on('focusout', () => {
-        if ($elem.text() === '' && item === 'title') {
-          this.params[item] = this.pageController.getDefaultTitle(this.chartIndex)
-          $elem.text(this.params[item])
-        } else {
-          this.params[item] = $elem.text()
-          this.updateEditablePlaceholder(item)
-        }
-        this.pageController.updateURL()
-      })
-    })
-
     // handle mouseover
     this.$container.mousemove((pixel) => this.handleMouseover(pixel))
   }
@@ -525,15 +530,7 @@ export default class Chart {
     }
   }
 
-  updateEditablePlaceholder(item: string): void {
-    if (!this.params[item] || this.params[item] === '') {
-      this.$container.find('.' + camelToHyphen(item)).addClass('empty')
-    } else {
-      this.$container.find('.' + camelToHyphen(item)).removeClass('empty')
-    }
-  }
-
-  getChartIndex(): number {
+  getChartIndex() {
     return this.chartIndex
   }
 
