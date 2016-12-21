@@ -86,11 +86,13 @@ function main(args) {
   mkdir('-p', 'out/client/scripts')
   mkdir('-p', 'out/client/shared')
   mkdir('-p', 'out/client/lib')
+  mkdir('-p', 'out/templates')
 
-  // Copy src/public and lib/client without any transformation.
+  // Copy src/public, lib/client, and src/templates without any transformation.
   echo('Copying src/public and lib/client')
   cp('-r', 'src/public/*', 'out/client')
   cp('-r', 'lib/client/*', 'out/client/lib')
+  cp('-r', 'src/templates/*', 'out/templates')
 
   // Compile LESS
   echo('Compiling LESS')

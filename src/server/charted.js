@@ -6,6 +6,8 @@ import url from "url"
 import path from "path"
 import request from "request"
 import express from "express"
+import sh from "shelljs"
+import handlebars from "handlebars"
 import bodyParser from "body-parser"
 import prepare from "./prepare"
 import FileDb from "./db.js"
@@ -13,6 +15,8 @@ import sha1 from "../shared/sha1"
 import * as utils from "../shared/utils"
 
 export default class ChartedServer {
+  address: any;
+  env: t_ENV;
   staticRoot: string;
   store: FileDb;
 
@@ -29,13 +33,17 @@ export default class ChartedServer {
       app.get('/load', (req, res) => charted.loadChart(req, res))
       app.get('/oembed', (req, res) => charted.getOembed(req, res))
 
-      let server = app.listen(port, () => resolve(server.address()))
+      let server = app.listen(port, () => {
+        charted.address = server.address()
+        resolve(charted)
+      })
     })
   }
 
   constructor(store: FileDb, staticRoot: string) {
     this.store = store
     this.staticRoot = staticRoot
+    this.env = {dev: false}
   }
 
   getChart(req: any, res: any) {
@@ -45,7 +53,13 @@ export default class ChartedServer {
         return
       }
 
-      this.respondWithHTML(res, 'index.html')
+      let code = sh.cat(path.join(__dirname, '..', 'templates', 'index.html'))
+      let html = handlebars.compile(code)({
+        ENV: this.env,
+        dataUrl: params.dataUrl
+      })
+
+      res.status(200).send(html)
     })
   }
 
@@ -127,11 +141,6 @@ export default class ChartedServer {
           html: `<iframe src="https://www.charted.co/embed/${id}" width="1280" height="600" scrolling="no" frameborder="0"></iframe>`
         }))
       })
-  }
-
-  respondWithHTML(res: any, template: string) {
-    res.statusCode = 200
-    res.sendFile(path.join(this.staticRoot, template))
   }
 
   respondWithChart(res: any, params: t_CHART_PARAM) {

@@ -47,7 +47,10 @@
     </div>
 
     <form class="load-data-form">
-      <input type="text" class="data-file-input" name="dataUrl" placeholder="Paste the link to a .csv file or Google Spreadsheet">
+      <input type="text" class="data-file-input" name="dataUrl"
+        value="{{dataUrl}}""
+        placeholder="Paste the link to a .csv file or Google Spreadsheet">
+
       <button type="submit" class="submit">Go</button>
       <div class="loading-spinner"><img class="loading-spinner-img" src="/images/spinner.svg"></div>
       <div class="error-message"></div>
