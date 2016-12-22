@@ -171,7 +171,7 @@ function legendItem(label: {editable: boolean, label: string, color: string}): s
   return `
     <li class="legend-item">
       <div class="legend-label info-input">
-        <span class="legend-input" ${editableAttribute}>${label.label}</span>
+        <span class="legend-input js-legendLabel" ${editableAttribute}>${label.label}</span>
       </div>
       <button class="legend-color">
         <span style="background-color:${label.color};" class="legend-dot"></span>

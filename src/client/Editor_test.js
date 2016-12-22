@@ -21,3 +21,4 @@ export function testEditor(test) {
   document.body.removeChild(sandbox)
   test.done()
 }
+

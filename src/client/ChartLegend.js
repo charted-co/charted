@@ -3,6 +3,7 @@
 import Chart from "./Chart"
 import ChartData from "./ChartData"
 import {PageController} from "./PageController"
+import Editor from "./Editor"
 import * as templates from "./templates"
 
 export default class ChartLegend {
@@ -46,27 +47,29 @@ export default class ChartLegend {
 
     this.$container.find('.legend').html($legend).removeClass('hidden')
 
+    let seriesNames = this.controller.params.seriesNames
     if (this.controller.getEditability()) {
+      this.data.getSerieses().forEach((series) => {
+        let el = series.legendEl.find('.js-legendLabel').get(0)
+        let ed = new Editor(el)
+        ed.onChange((content) => {
+          if (!content === '' || content === series.label) {
+            ed.setContent(series.label)
+            delete seriesNames[series.seriesIndex]
+          } else {
+            seriesNames[series.seriesIndex] = content
+          }
+
+          this.controller.updateURL()
+        })
+      })
+
       this.bindLegendInteractions()
     }
   }
 
   bindLegendInteractions(): void {
     this.data.getSerieses().forEach((series, i) => {
-      // make series labels editable
-      var $legendInput = series.legendEl.find('.legend-input')
-      $legendInput.on('focusout', () => {
-        var seriesNames = this.controller.params.seriesNames
-
-        if ($legendInput.text() === series.label || $legendInput.text() === '') {
-          $legendInput.text(series.label)
-          delete seriesNames[series.seriesIndex]
-        } else {
-          seriesNames[series.seriesIndex] = $legendInput.text()
-        }
-        this.controller.updateURL()
-      })
-
       // open color input
       series.legendEl.find('.legend-color').click((event) => {
         event.stopPropagation()
