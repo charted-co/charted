@@ -85,7 +85,7 @@ export class PageController {
       this.params = legacyParams.withDefaultTitle((i) => this.getDefaultTitle(i))
       let legacyParamsCompressed = this.params.compress()
       let legacyDataUrl = legacyParamsCompressed.dataUrl || null
-      this.updateURL(/* withoutServerUpdate */ false, () => this.fetchPageData(legacyDataUrl, /* id */ null, legacyParamsCompressed))
+      this.updateURL(() => this.fetchPageData(legacyDataUrl, /* id */ null, legacyParamsCompressed))
     }
   }
 
@@ -503,21 +503,19 @@ export class PageController {
   }
 
 
-  updateURL(withoutServerUpdate: boolean = false, cb: ?Function): void {
+  updateURL(cb: ?Function): void {
     this.updatePageTitle()
     let params = this.params.compress()
     let chartId = utils.getChartId(params)
     let path = `/c/${chartId}`
     window.history.pushState({}, null, path)
 
-    if (!withoutServerUpdate) {
-      d3.xhr(path)
-        .header('Content-Type', 'application/json')
-        .post(JSON.stringify(params), () => {
-          if (cb) cb()
-        })
-      // TODO (anton): Show an error if save failed
-    }
+    // TODO (anton): Show an error if save failed
+    d3.xhr(path)
+      .header('Content-Type', 'application/json')
+      .post(JSON.stringify(params), () => {
+        if (cb) cb()
+      })
   }
 
 
