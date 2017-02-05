@@ -50,7 +50,8 @@ export class PageController {
     $('.load-data-form').submit((ev) => {
       ev.preventDefault()
 
-      let url = $('.data-file-input').val()
+      let input = dom.get('js-dataFileInput')
+      let url = input && input instanceof HTMLInputElement ? input.value : null
       if (!url) {
         let err = 'You’ll need to paste in the URL to a .csv file or Google Spreadsheet first.'
         this.errorNotify(new Error(err))
@@ -124,8 +125,12 @@ export class PageController {
     this.clearExisting()
 
     if (dataUrl) {
-      $('.data-file-input').val(dataUrl)
+      let input = dom.get('js-dataFileInput')
+      if (input && input instanceof HTMLInputElement) {
+        input.value = dataUrl
+      }
     }
+
     let url = `/load/?url=${encodeURIComponent(dataUrl || '')}&id=${encodeURIComponent(id || '')}`
     d3.json(url, (err, resp) => {
       if (err) {
