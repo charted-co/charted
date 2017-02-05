@@ -21,7 +21,7 @@ function pageSettings(): string {
 
       <div class="settings-popover popover">
         <div class="page-options">
-          <a class="page-option-item download-data" title="Download data">
+          <a class="page-option-item js-downloadDataLink" title="Download data">
             <span class="icon icon-download"></span>Download data
           </a>
 

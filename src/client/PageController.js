@@ -191,8 +191,13 @@ export class PageController {
     this.$body.append(templates.pageSettings())
     var $pageSettings = this.$body.find('.page-settings')
 
-    $('.download-data').attr('href', this.params.url)
-    this.setDataSourceUrl(this.params.url)
+    let url = this.params.url
+    let link = dom.get('js-downloadDataLink')
+    if (link) {
+      link.setAttribute('href', url)
+    }
+
+    this.setDataSourceUrl(url)
   }
 
   updateChart(chartIndex: number): void {
