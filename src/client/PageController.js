@@ -180,8 +180,6 @@ export class PageController {
   clearExisting(): void {
     $('.chart-wrapper, .page-settings').remove()
     this.chartObjects = []
-    // TK
-    $('body, .settings, .settings-popover, .toggle-color').unbind()
   }
 
   setupPageSettings(): void {
