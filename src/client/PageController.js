@@ -386,13 +386,16 @@ export class PageController {
   applyGrid(): void {
     dom.classlist.toggle(document.body, 'full')
 
-    var template = templates.gridSettingsFull
+    let template = templates.gridSettingsFull
     if (this.params && this.params.isFull()) {
       template = templates.gridSettingsSplit
     }
 
-    var chartCount = this.chartObjects ? this.chartObjects.length : 0
-    $('.grid-option').html(chartCount > 1 ? template() : '')
+    let chartCount = this.chartObjects ? this.chartObjects.length : 0
+    let container = dom.get('js-gridOption')
+    if (container && chartCount > 1) {
+      container.appendChild(dom.renderFragment(template()))
+    }
   }
 
   getEmbed(): void {
@@ -533,7 +536,10 @@ export class PageController {
       'you are using a valid .csv file. If you are using a Google Spreadsheet or Dropbox '+
       'link, the privacy setting must be set to shareable.'
 
-    $('.error-message').html(displayMessage)
+    let container = dom.get('js-errorMessage')
+    if (container) {
+      container.appendChild(dom.renderFragment(displayMessage))
+    }
   }
 
 

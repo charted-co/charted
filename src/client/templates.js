@@ -29,7 +29,7 @@ function pageSettings(): string {
             <span class="icon icon-color"></span>Switch background
           </button>
 
-          <div class="grid-option"></div>
+          <div class="js-gridOption"></div>
 
           <button class="page-option-item" data-click="get-embed" title="Get embed code">
             <span class="icon icon-embed"></span>Get embed code
