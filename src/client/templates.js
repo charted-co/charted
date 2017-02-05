@@ -138,7 +138,7 @@ function chart(params: {editable: boolean}): string {
       </div>
 
       <aside class="chart-info">
-        <ul class="legend hidden"></ul>
+        <ul class="legend js-legend hidden"></ul>
         ${editableButtons}
       </aside>
     </div>

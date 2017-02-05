@@ -5,6 +5,7 @@ import ChartData from "./ChartData"
 import {PageController} from "./PageController"
 import Editor from "./Editor"
 import * as templates from "./templates"
+import dom from "./dom.js"
 
 export default class ChartLegend {
   chart: Chart;
@@ -29,23 +30,27 @@ export default class ChartLegend {
       return
     }
 
-    let $legend = $('')
+    let legend = document.createDocumentFragment()
     let serieses = this.data.getSerieses()
 
     for (let i = serieses.length - 1; i >= 0; i--) {
       let series = serieses[i]
       let label = this.controller.getSeriesName(this.series[i])
-      let $legendEl = $(templates.legendItem({
+      let fragment = dom.renderFragment(templates.legendItem({
         label: label,
         color: this.chart.getSeriesColor(series.seriesIndex),
         editable: this.controller.getEditability()
       }))
 
-      $legend = $legend.add($legendEl)
-      series.legendEl = $legendEl
+      series.legendEl = legend.appendChild(fragment)
     }
 
-    this.$container.find('.legend').html($legend).removeClass('hidden')
+    let container = dom.get('js-legend')
+    if (container) {
+      container.innerHTML = ''
+      container.appendChild(legend)
+      dom.classlist.remove(container, 'hidden')
+    }
 
     let seriesNames = this.controller.params.seriesNames
     if (this.controller.getEditability()) {
