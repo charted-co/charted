@@ -1,5 +1,6 @@
 /* @flow */
 
+import Actions from "./Actions"
 import PageData from "./PageData"
 import Chart from "./Chart"
 import ChartParameters from "./ChartParameters"
@@ -15,6 +16,7 @@ export const OPTIONS = {
 
 export class PageController {
   chartObjects: Array<Chart>;
+  actions: Actions;
   $body: Object;
   $charts: Object;
   resizeTimer: number;
@@ -23,6 +25,7 @@ export class PageController {
   isEmbed: boolean;
 
   constructor() {
+    this.actions = new Actions(document.body)
     this.isEmbed = false
     this.chartObjects = []
     this.$body = $('body')
@@ -60,6 +63,16 @@ export class PageController {
     let path = /\/(c|embed)\/([a-z\d]{7})\/?$/.exec(window.location.pathname)
     let chartId = path && path[2]
     let legacyParams = ChartParameters.fromQueryString(window.location.search || '')
+
+    this.actions
+      .add('toggle-color', this.toggleColor, this)
+      .add('toggle-grid', this.toggleGrid, this)
+      .add('open-settings', this.openSettings, this)
+      .add('get-embed', this.getEmbed, this)
+      .add('close-embed', this.closeEmbed, this)
+      .add('update-data-source', this.updateDataSource, this)
+      .add('remove-popovers', this.removePopovers, this)
+      .activate()
 
     if (!chartId && !legacyParams) {
       this.clearExisting()
@@ -132,7 +145,6 @@ export class PageController {
     })
   }
 
-
   /**
    * Renders charts
    */
@@ -159,43 +171,28 @@ export class PageController {
 
     this.setDimensions()
     this.updateURL()
-    $('.data-source-url').val(this.params.url)
-  }
 
+    this.setDataSourceUrl(this.params.url)
+  }
 
   clearExisting(): void {
     $('.chart-wrapper, .page-settings').remove()
     this.chartObjects = []
+    // TK
     $('body, .settings, .settings-popover, .toggle-color').unbind()
   }
 
-
   setupPageSettings(): void {
-    // if this is an embed, don't add the page settings
+    // If this is an embed, don't add the page settings
     if (this.isEmbed) return
 
-    // populate UI
+    // Populate UI
     this.$body.append(templates.pageSettings())
     var $pageSettings = this.$body.find('.page-settings')
 
     $('.download-data').attr('href', this.params.url)
-    $('.data-source-url').val(this.params.url)
-
-    // bind intereactions
-    $pageSettings.find('.settings').click((event) => {
-      event.stopPropagation()
-      $pageSettings.addClass('open')
-    })
-
-    $pageSettings.find('.settings-popover').click((event) => event.stopPropagation())
-
-    this.$body.click(() => $pageSettings.removeClass('open'))
-
-    $pageSettings.find('.toggle-color').click(() => this.toggleColor())
-    $pageSettings.find('.get-embed').click(() => this.getEmbed())
-    $pageSettings.find('.update-data-source').click(() => this.fetchPageData($('.data-source-url').val(), /* id */ null, this.params))
+    this.setDataSourceUrl(this.params.url)
   }
-
 
   updateChart(chartIndex: number): void {
     var chartParams = this.getFullParams(chartIndex)
@@ -212,7 +209,6 @@ export class PageController {
       this.createNewChart(chartIndex, this.getFullParams(chartIndex))
     }
   }
-
 
   getFirstChartSeries(): Array<number> {
     var otherChartSeries = []
@@ -364,6 +360,10 @@ export class PageController {
     this.updateURL()
   }
 
+  openSettings(): void {
+    let el = document.querySelector('.js-settings')
+    if (el) el.classList.add('open')
+  }
 
   toggleGrid(): void {
     this.params.toggleGrid()
@@ -371,7 +371,6 @@ export class PageController {
     this.setDimensions()
     this.updateURL()
   }
-
 
   applyGrid(): void {
     this.$body.toggleClass('full')
@@ -383,20 +382,34 @@ export class PageController {
 
     var chartCount = this.chartObjects ? this.chartObjects.length : 0
     $('.grid-option').html(chartCount > 1 ? template() : '')
-    $('.toggle-grid').click(() => this.toggleGrid())
   }
-
 
   getEmbed(): void {
     let params = this.params.compress()
     let chartId = utils.getChartId(params)
 
     this.$body.append(templates.embedOverlay(chartId))
-    this.$body.find('.overlay-content').click((ev) => ev.stopPropagation())
-    this.$body.click(() => $('.overlay-container').remove())
-
   }
 
+  closeEmbed(): void {
+    let el = document.querySelector('.js-embedPopup')
+    if (el && el.parentNode) el.parentNode.removeChild(el)
+  }
+
+  updateDataSource(): void {
+    let el = document.querySelector('.js-dataSourceUrl')
+
+    if (el && el instanceof HTMLInputElement) {
+      this.fetchPageData(el.value, /* id */ null, this.params)
+    }
+  }
+
+  setDataSourceUrl(url: string): void {
+    let el = document.querySelector('.js-dataSourceUrl')
+    if (el && el instanceof HTMLInputElement) {
+      el.value = url
+    }
+  }
 
   applyEmbed(): void {
     if (this.params.embed) {
@@ -406,6 +419,13 @@ export class PageController {
     }
   }
 
+  removePopovers(): void {
+    // TODO: This probably shouldn't close the popover when
+    // the user clicks in empty space within the popover itself.
+    $('html').find('.page-settings').removeClass('open')
+    $('html').find('.move-chart-options, .change-series-color').remove()
+    $('html').find('.legend-item').removeClass('active active-color-input')
+  }
 
   getEditability(): boolean {
     return !this.isEmbed

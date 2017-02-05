@@ -14,8 +14,8 @@ export {
 
 function pageSettings(): string {
   return `
-    <div class="page-settings">
-      <button class="option-item settings" title="Settings">
+    <div class="page-settings js-settings">
+      <button class="option-item settings" data-click="open-settings" title="Settings">
         <span class="icon icon-settings"></span>
       </button>
 
@@ -25,21 +25,21 @@ function pageSettings(): string {
             <span class="icon icon-download"></span>Download data
           </a>
 
-          <button class="page-option-item toggle-color" title="Switch background color">
+          <button class="page-option-item toggle-color" data-click="toggle-color" title="Switch background color">
             <span class="icon icon-color"></span>Switch background
           </button>
 
           <div class="grid-option"></div>
 
-          <button class="page-option-item get-embed" title="Get embed code">
+          <button class="page-option-item" data-click="get-embed" title="Get embed code">
             <span class="icon icon-embed"></span>Get embed code
           </button>
 
           <div class="page-data-source">
             <label>Update data source</label>
             <div class="page-data-source-form">
-              <input class="data-source-url">
-              <button class="update-data-source">Go</button>
+              <input class="js-dataSourceUrl">
+              <button data-click="update-data-source">Go</button>
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@ function embedOverlay(chartId: string): string {
   var script = `<script src="${window.location.origin}/embed.js" data-charted="${chartId}"></script>`
 
   return `
-    <div class="overlay-container">
+    <div class="overlay-container js-embedPopup">
       <div class="overlay-content">
         <h1 class="overlay-title">Embed this Charted page</h1>
         <p class="overlay-description">
@@ -66,14 +66,14 @@ function embedOverlay(chartId: string): string {
         <textarea class="embed-link">${script}</textarea>
         <div class="iframe-container">${script}</div>
       </div>
-      <div class="overlay-close"><span class="icon icon-x"></span></div>
+      <div class="overlay-close" data-click="close-embed"><span class="icon icon-x"></span></div>
     </div>
   `
 }
 
 function gridSettingsFull(): string {
   return `
-    <button class="page-option-item toggle-grid" title="Show full width charts">
+    <button class="page-option-item" data-click="toggle-grid" title="Show full width charts">
       <span class="icon icon-full-screen"></span>Show full width charts
     </button>
   `
@@ -81,7 +81,7 @@ function gridSettingsFull(): string {
 
 function gridSettingsSplit(): string {
   return `
-    <button class="page-option-item toggle-grid" title="Show split-screen charts">
+    <button class="page-option-item" data-click="toggle-grid" title="Show split-screen charts">
       <span class="icon icon-split-screen"></span>Show split-screen charts
     </button>
   `

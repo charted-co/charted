@@ -73,20 +73,17 @@ export default class ChartLegend {
       // open color input
       series.legendEl.find('.legend-color').click((event) => {
         event.stopPropagation()
-        this.removePopovers()
+        this.controller.removePopovers()
         this.openColorInput(series)
       })
 
       // open move-chart popover
       series.legendEl.find('.move-chart').click((event) => {
         event.stopPropagation()
-        this.removePopovers()
+        this.controller.removePopovers()
         this.openMoveChart(series, i)
       })
     })
-
-    // remove popovers
-    $('html').click(() => this.removePopovers())
   }
 
   openColorInput(series: Object) : void{
@@ -153,11 +150,5 @@ export default class ChartLegend {
         this.controller.moveToChart(this.series[i], this.chartIndex, newChartIndex)
       })
     }
-  }
-
-  removePopovers(): void {
-    $('html').find('.move-chart-options, .change-series-color').remove()
-    $('html').find('.page-settings').removeClass('open')
-    $('html').find('.legend-item').removeClass('active active-color-input')
   }
 }
