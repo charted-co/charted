@@ -50,6 +50,24 @@ export default class ChartData {
     return this._serieses[i]
   }
 
+  getSeriesByIndex(index: number): ?t_SERIES {
+    for (let i = 0; i < this._serieses.length; i++) {
+      if (this._serieses[i].seriesIndex == index) {
+        return this._serieses[i]
+      }
+    }
+  }
+
+  getSeriesPositionByIndex(index: number): number {
+    for (let i = 0; i < this._serieses.length; i++) {
+      if (this._serieses[i].seriesIndex == index) {
+        return i
+      }
+    }
+
+    return -1
+  }
+
   getDatum(seriesIndex: number, index: number): t_FIELD {
     return this._data[seriesIndex][index]
   }

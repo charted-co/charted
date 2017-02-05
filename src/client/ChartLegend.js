@@ -138,7 +138,12 @@ export default class ChartLegend {
   openMoveChart(target: Element) {
     this.controller.removePopovers()
     let index = Number(target.getAttribute('data-series-index'))
-    let series = this.data.getSeries(index)
+    let series = this.data.getSeriesByIndex(index)
+    if (!series) throw `Series ${index} not found`
+
+    let position = this.data.getSeriesPositionByIndex(index)
+    if (position < 0) throw `Series ${index} not found`
+
     let otherCharts = this.controller.getOtherCharts(this.chartIndex)
 
     // current number of charts = other charts + current chart
@@ -146,11 +151,11 @@ export default class ChartLegend {
 
     if (otherCharts.length === 0) {
       // if no other charts, move series to a new chart
-      this.controller.moveToChart(this.series[index], this.chartIndex, newChartIndex)
+      this.controller.moveToChart(this.series[position], this.chartIndex, newChartIndex)
 
     } else if (otherCharts.length === 1 && this.series.length === 1) {
       // if only one series and only one other chart, move series back into that chart
-      this.controller.moveToChart(this.series[index], this.chartIndex, otherCharts[0].chartIndex)
+      this.controller.moveToChart(this.series[position], this.chartIndex, otherCharts[0].chartIndex)
 
     } else {
       // else, show all the options in a popover
@@ -162,12 +167,12 @@ export default class ChartLegend {
       otherCharts.forEach((chart) => {
         this.$container.find('.move-to-chart-' + chart.chartIndex).click((e) => {
           e.preventDefault()
-          this.controller.moveToChart(this.series[index], this.chartIndex, chart.chartIndex)
+          this.controller.moveToChart(this.series[position], this.chartIndex, chart.chartIndex)
         })
       })
 
       this.$container.find('.move-to-new-chart').click(() => {
-        this.controller.moveToChart(this.series[index], this.chartIndex, newChartIndex)
+        this.controller.moveToChart(this.series[position], this.chartIndex, newChartIndex)
       })
     }
   }
