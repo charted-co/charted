@@ -177,7 +177,9 @@ export class PageController {
   }
 
   clearExisting(): void {
-    $('.chart-wrapper, .page-settings').remove()
+    let charts = dom.getAll('js-chart')
+    charts.forEach((chart) => dom.remove(chart))
+    dom.remove(dom.get('js-settings'))
     this.chartObjects = []
   }
 
@@ -227,7 +229,7 @@ export class PageController {
 
 
   createNewChart(thisChartIndex: number, initialChartParams: Object): void {
-    var $el = $('<div class="chart-wrapper"></div>')
+    var $el = $('<div class="chart-wrapper js-chart"></div>')
     var dimensions = this.getChartDimensions()
     $el.outerHeight(dimensions.height).outerWidth(dimensions.width)
     this.$charts.append($el)
