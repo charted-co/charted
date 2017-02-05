@@ -4,7 +4,7 @@ import Actions from "./Actions"
 import PageData from "./PageData"
 import Chart from "./Chart"
 import ChartParameters from "./ChartParameters"
-import dom from "./dom.js"
+import dom from "./dom"
 import * as templates from "./templates"
 import * as utils from "../shared/utils"
 
@@ -293,7 +293,6 @@ export class PageController {
     this.setDimensions()
     this.updateURL()
   }
-
 
   removeChart(chartIndex: number): void {
     // need to increment down the chartIndex for every chart that comes after

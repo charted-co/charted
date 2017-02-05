@@ -150,30 +150,31 @@ function changeSeriesColor(params: {seriesIndex: number, colorHex: string}): str
     <div class="change-series-color popover js-changeSeriesColor">
       <p>Change color:</p>
       <p>
-        <span contenteditable="true" class="color-hex-input change-series-color-${params.seriesIndex}">
-          ${params.colorHex}
-        </span>
+        <span contenteditable="true" class="color-hex-input change-series-color-${params.seriesIndex}">${params.colorHex}</span>
       </p>
       <span class="arrow-bottom-left"></span>
     </div>
   `
 }
 
-function legendItem(label: {editable: boolean, label: string, color: string}): string {
+function legendItem(label: {editable: boolean, label: string, color: string, seriesIndex: number}): string {
   var editableAttribute = ''
   var editableButtons = ''
 
   if (label.editable) {
     editableAttribute = 'contenteditable="true"'
-    editableButtons = `<button class="move-chart"><span class="icon icon-move"></span></button>`
+    editableButtons = `
+      <button class="move-chart" data-click="open-move-chart" data-series-index="${label.seriesIndex}">
+        <span class="icon icon-move"></span>
+      </button>`
   }
 
   return `
-    <li class="legend-item js-legendItem">
+    <li class="legend-item js-legendItem" data-series-index="${label.seriesIndex}">
       <div class="legend-label info-input">
         <span class="legend-input js-legendLabel" ${editableAttribute}>${label.label}</span>
       </div>
-      <button class="legend-color">
+      <button class="legend-color" data-click="open-color-input" data-series-index="${label.seriesIndex}">
         <span style="background-color:${label.color};" class="legend-dot"></span>
       </button>
       ${editableButtons}

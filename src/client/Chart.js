@@ -7,7 +7,7 @@ import {OPTIONS, PageController} from "./PageController"
 import PageData from "./PageData"
 import Editor from "./Editor"
 import * as templates from "./templates"
-import dom from "./dom.js"
+import dom from "./dom"
 
 export default class Chart {
   pageController: PageController;

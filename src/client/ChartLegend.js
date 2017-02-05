@@ -1,18 +1,21 @@
 /* @flow */
 
+import Actions from "./Actions"
 import Chart from "./Chart"
 import ChartData from "./ChartData"
 import {PageController} from "./PageController"
 import Editor from "./Editor"
 import * as templates from "./templates"
-import dom from "./dom.js"
+import dom from "./dom"
 
 export default class ChartLegend {
+  actions: Actions;
   chart: Chart;
   controller: PageController;
   data: ChartData;
   chartIndex: number;
   $container: Object;
+  container: Element;
   series: Array<any>;
 
   constructor(controller: PageController, data: ChartData, chart: Chart) {
@@ -21,7 +24,20 @@ export default class ChartLegend {
     this.data = data
     this.chartIndex = this.chart.getChartIndex()
     this.$container = this.chart.getChartContainer()
+    this.container = this.$container.get(0)
     this.series = this.chart.getChartSeries()
+    this.actions = new Actions(this.container)
+
+    this.actions
+      .add('open-color-input', this.openColorInput, this)
+      .add('open-move-chart', this.openMoveChart, this)
+      .activate()
+  }
+
+  getLegendElement(index: number): Element {
+    let legend = dom.get(`js-legendItem[data-series-index="${index}"]`)
+    if (legend) return legend
+    throw `Legend item with index ${index} not found`
   }
 
   update(): void {
@@ -39,13 +55,14 @@ export default class ChartLegend {
       let fragment = dom.renderFragment(templates.legendItem({
         label: label,
         color: this.chart.getSeriesColor(series.seriesIndex),
-        editable: this.controller.getEditability()
+        editable: this.controller.getEditability(),
+        seriesIndex: series.seriesIndex
       }))
 
-      series.legendEl = legend.appendChild(fragment)
+      legend.appendChild(fragment)
     }
 
-    let container = dom.get('js-legend')
+    let container = dom.get('js-legend', this.container)
     if (container) {
       container.innerHTML = ''
       container.appendChild(legend)
@@ -55,8 +72,10 @@ export default class ChartLegend {
     let seriesNames = this.controller.params.seriesNames
     if (this.controller.getEditability()) {
       this.data.getSerieses().forEach((series) => {
-        let el = series.legendEl.find('.js-legendLabel').get(0)
-        let ed = new Editor(el)
+        let label = dom.get('js-legendLabel', this.getLegendElement(series.seriesIndex))
+        if (!label) throw `Legend label for legen ${index} not found`
+
+        let ed = new Editor(label)
         ed.onChange((content) => {
           if (!content === '' || content === series.label) {
             ed.setContent(series.label)
@@ -68,37 +87,21 @@ export default class ChartLegend {
           this.controller.updateURL()
         })
       })
-
-      this.bindLegendInteractions()
     }
   }
 
-  bindLegendInteractions(): void {
-    this.data.getSerieses().forEach((series, i) => {
-      // open color input
-      series.legendEl.find('.legend-color').click((event) => {
-        event.stopPropagation()
-        this.controller.removePopovers()
-        this.openColorInput(series)
-      })
+  openColorInput(target: Element) {
+    this.controller.removePopovers()
+    let index = Number(target.getAttribute('data-series-index'))
+    let el = this.getLegendElement(index)
+    let colorHex = this.chart.getSeriesColor(index).replace(/^#/, '')
 
-      // open move-chart popover
-      series.legendEl.find('.move-chart').click((event) => {
-        event.stopPropagation()
-        this.controller.removePopovers()
-        this.openMoveChart(series, i)
-      })
-    })
-  }
-
-  openColorInput(series: Object) : void{
-    var colorHex = this.chart.getSeriesColor(series.seriesIndex).replace(/^#/, '')
-
-    series.legendEl.addClass('active-color-input')
-    series.legendEl.append(templates.changeSeriesColor({
+    dom.classlist.add(el, 'active-color-input')
+    let fragment = dom.renderFragment(templates.changeSeriesColor({
       colorHex: colorHex,
-      seriesIndex: series.seriesIndex
+      seriesIndex: index
     }))
+    el.appendChild(fragment)
 
     this.data.getSeriesIndices().forEach((series) => {
       var $thisColorInput = this.$container.find('.change-series-color-' + series)
@@ -125,34 +128,39 @@ export default class ChartLegend {
     this.$container.find('.change-series-color').click((e) => e.stopPropagation())
   }
 
-  openMoveChart(series: Object, i: number): void {
-    var otherCharts = this.controller.getOtherCharts(this.chartIndex)
+  openMoveChart(target: Element) {
+    this.controller.removePopovers()
+    let index = Number(target.getAttribute('data-series-index'))
+    let series = this.data.getSeries(index)
+    let otherCharts = this.controller.getOtherCharts(this.chartIndex)
 
     // current number of charts = other charts + current chart
     var newChartIndex = otherCharts.length + 1
 
     if (otherCharts.length === 0) {
       // if no other charts, move series to a new chart
-      this.controller.moveToChart(this.series[i], this.chartIndex, newChartIndex)
+      this.controller.moveToChart(this.series[index], this.chartIndex, newChartIndex)
 
     } else if (otherCharts.length === 1 && this.series.length === 1) {
       // if only one series and only one other chart, move series back into that chart
-      this.controller.moveToChart(this.series[i], this.chartIndex, otherCharts[0].chartIndex)
+      this.controller.moveToChart(this.series[index], this.chartIndex, otherCharts[0].chartIndex)
 
     } else {
       // else, show all the options in a popover
-      series.legendEl.addClass('active')
-      series.legendEl.append(templates.moveChart({otherCharts: otherCharts, series: this.series}))
+      let el = this.getLegendElement(series.seriesIndex)
+      dom.classlist.add(el, 'active')
+      let fragment = dom.renderFragment(templates.moveChart({otherCharts: otherCharts, series: this.series}))
+      el.appendChild(fragment)
 
       otherCharts.forEach((chart) => {
         this.$container.find('.move-to-chart-' + chart.chartIndex).click((e) => {
           e.preventDefault()
-          this.controller.moveToChart(this.series[i], this.chartIndex, chart.chartIndex)
+          this.controller.moveToChart(this.series[index], this.chartIndex, chart.chartIndex)
         })
       })
 
       this.$container.find('.move-to-new-chart').click(() => {
-        this.controller.moveToChart(this.series[i], this.chartIndex, newChartIndex)
+        this.controller.moveToChart(this.series[index], this.chartIndex, newChartIndex)
       })
     }
   }
