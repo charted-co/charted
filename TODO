@@ -13,3 +13,4 @@ Planned/ongoing projects:
  - Add support for dashboards where you can display multiple
    charts.
  - Replace templates.js with Handlebars
+ - Introduce u-classes
