@@ -457,8 +457,8 @@ export class PageController {
     var minHeightForHalfHeight = 600
     var minWidthForHalfWidth = 1200
     var minWidthForFullHeight = 800
-    var windowWidth = $(window).innerWidth()
-    var windowHeight = 'innerHeight' in window ? window.innerHeight: document.documentElement.offsetHeight
+    var windowWidth = window.innerWidth
+    var windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.offsetHeight
     var defaultHeight = windowWidth > minWidthForFullHeight ? windowHeight : 'auto'
     var chartCount = this.chartObjects ? this.chartObjects.length : 0
 
