@@ -18,8 +18,6 @@ export const OPTIONS = {
 export class PageController {
   chartObjects: Array<Chart>;
   actions: Actions;
-  $body: Object;
-  $charts: Object;
   resizeTimer: number;
   params: ChartParameters;
   data: PageData;
@@ -29,8 +27,6 @@ export class PageController {
     this.actions = new Actions(document.body)
     this.isEmbed = false
     this.chartObjects = []
-    this.$body = $('body')
-    this.$charts = $('.charts')
 
     // Re-render charts on window resize
     window.addEventListener('resize', () => {
@@ -73,7 +69,7 @@ export class PageController {
 
     if (!chartId && !legacyParams) {
       this.clearExisting()
-      this.$body.addClass('pre-load')
+      dom.classlist.add(document.body, 'pre-load')
       return
     }
 
@@ -114,7 +110,7 @@ export class PageController {
       id = utils.getChartId(this.params.compress())
     }
 
-    this.$body.addClass('loading')
+    dom.classlist.add(document.body, 'loading')
     this.updatePageTitle('Charted (...)')
     this.clearExisting()
 
@@ -152,7 +148,7 @@ export class PageController {
   render(): void {
     // Set background color
     let color = this.params.isLight() ? 'light' : 'dark'
-    this.$body.addClass(color)
+    dom.classlist.add(document.body, color)
 
     // Set embed style
     this.applyEmbed()
@@ -165,7 +161,8 @@ export class PageController {
         this.data.serieses.length > 1 ? 'Chart' : this.data.serieses[0].label
     }
 
-    this.$body.removeClass('pre-load loading error')
+    let classes = ['pre-load', 'loading', 'error']
+    classes.forEach((c) => dom.classlist.remove(document.body, c))
 
     // update charts
     this.params.charts.forEach((chart, i) => this.updateChart(i))
@@ -188,8 +185,8 @@ export class PageController {
     if (this.isEmbed) return
 
     // Populate UI
-    this.$body.append(templates.pageSettings())
-    var $pageSettings = this.$body.find('.page-settings')
+    let fragment = dom.renderFragment(templates.pageSettings())
+    document.body.appendChild(fragment)
 
     let url = this.params.url
     let link = dom.get('js-downloadDataLink')
@@ -234,11 +231,20 @@ export class PageController {
 
 
   createNewChart(thisChartIndex: number, initialChartParams: Object): void {
-    var $el = $('<div class="chart-wrapper js-chart"></div>')
-    var dimensions = this.getChartDimensions()
+    let dimensions = this.getChartDimensions()
+    let chart = document.createElement('div')
+    dom.classlist.add(chart, 'chart-wrapper')
+    dom.classlist.add(chart, 'js-chart')
+
+    // TK
+    let $el = $(chart)
     $el.outerHeight(dimensions.height).outerWidth(dimensions.width)
-    this.$charts.append($el)
-    this.chartObjects.push(new Chart(this, thisChartIndex, $el, initialChartParams, this.data))
+
+    let charts = dom.get('js-charts')
+    if (charts) {
+      charts.appendChild(chart)
+      this.chartObjects.push(new Chart(this, thisChartIndex, $el, initialChartParams, this.data))
+    }
   }
 
 
@@ -359,7 +365,7 @@ export class PageController {
 
   toggleColor(): void {
     this.params.toggleColor()
-    this.$body.toggleClass('dark')
+    dom.classlist.toggle(document.body, 'dark')
     this.chartObjects.forEach(function (chart) {
       chart.render()
     })
@@ -378,7 +384,7 @@ export class PageController {
   }
 
   applyGrid(): void {
-    this.$body.toggleClass('full')
+    dom.classlist.toggle(document.body, 'full')
 
     var template = templates.gridSettingsFull
     if (this.params && this.params.isFull()) {
@@ -393,7 +399,8 @@ export class PageController {
     let params = this.params.compress()
     let chartId = utils.getChartId(params)
 
-    this.$body.append(templates.embedOverlay(chartId))
+    let fragment = dom.renderFragment(templates.embedOverlay(chartId))
+    document.body.appendChild(fragment)
   }
 
   closeEmbed(): void {
@@ -469,15 +476,10 @@ export class PageController {
 
   setDimensions(): void {
     var dimensions = this.getChartDimensions()
-    if (dimensions.isGrid) {
-      this.$body.addClass('chart-grid')
-      this.$body.removeClass('half-height')
-    } else if (dimensions.isHalfHeight) {
-      this.$body.removeClass('chart-grid')
-      this.$body.addClass('half-height')
-    } else {
-      this.$body.removeClass('chart-grid half-height')
-    }
+
+    dom.classlist.enable(document.body, 'chart-grid', dimensions.isGrid)
+    dom.classlist.enable(document.body, 'half-height', dimensions.isHalfHeight)
+
     $('.chart-wrapper').outerHeight(dimensions.height).outerWidth(dimensions.width)
 
     var bottomRowIndex = Math.floor((this.chartObjects.length - 1) / 2) * 2
@@ -523,7 +525,9 @@ export class PageController {
 
 
   errorNotify(error: Object): void {
-    this.$body.addClass('error').removeClass('loading')
+    dom.classlist.add(document.body, 'error')
+    dom.classlist.remove(document.body, 'loading')
+
     this.updatePageTitle()
     var displayMessage = error.message || error.responseText || 'There’s been an error. Please check that '+
       'you are using a valid .csv file. If you are using a Google Spreadsheet or Dropbox '+

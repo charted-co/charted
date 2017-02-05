@@ -14,11 +14,29 @@ class Classlist {
   enable(el: ?Element, name: string, cond: bool) {
     cond ? this.add(el, name) : this.remove(el, name)
   }
+
+  toggle(el: ?Element, name: string) {
+    if (el) {
+      el.classList.contains(name) ? this.remove(el, name) : this.add(el, name)
+    }
+  }
 }
 
 function remove(el: ?Element) {
   if (!el || !el.parentNode) return
   el.parentNode.removeChild(el)
+}
+
+function renderFragment(html: string): DocumentFragment {
+  let fragment = document.createDocumentFragment()
+  let temp = document.createElement('div')
+  temp.innerHTML = html
+
+  while (temp.firstChild) {
+    fragment.appendChild(temp.removeChild(temp.firstChild))
+  }
+
+  return fragment
 }
 
 // Like querySelector and querySelectorAll but only for
@@ -48,6 +66,7 @@ function getAll(selector: string, root: ?Element): Element[] {
 export default {
   get: get,
   getAll: getAll,
+  renderFragment: renderFragment,
   remove: remove,
   classlist: new Classlist()
 }
