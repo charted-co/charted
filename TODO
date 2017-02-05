@@ -1,0 +1,14 @@
+A list of known issues in no particular order:
+
+ - Code that compiles templates is duplicated in two places
+ - We re-compile templates on every request without caching
+   results. Seems wasteful.
+ - Handlebars plugins are registered for the homepage only.
+
+Ongoing projects:
+
+ - Get rid of jQuery to reduce size and make Charted more
+   embeddable. We don't really use jQuery for anything that
+   cannot be easily replaced with DOM or D3 APIs.
+ - Add support for dashboards where you can display multiple
+   charts.
