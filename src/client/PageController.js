@@ -277,11 +277,6 @@ export class PageController {
     }
 
     this.updateChart(toChartIndex)
-
-    $('html, body').animate({
-        scrollTop: this.chartObjects[toChartIndex].$wrapper.offset().top
-    }, 300)
-
     this.updateChart(fromChartIndex)
 
     // update all charts that come after, since default titles may have changed

@@ -73,7 +73,7 @@ export default class ChartLegend {
     if (this.controller.getEditability()) {
       this.data.getSerieses().forEach((series) => {
         let label = dom.get('js-legendLabel', this.getLegendElement(series.seriesIndex))
-        if (!label) throw `Legend label for legen ${index} not found`
+        if (!label) throw `Legend label for legend ${series.seriesIndex} not found`
 
         let ed = new Editor(label)
         ed.onChange((content) => {
