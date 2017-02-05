@@ -114,7 +114,13 @@ export default class Chart {
     this.chartIndex = chartIndex
     this.params = params
     this.data = new ChartData(data, this.params.series)
+
+    if (this.legend) {
+      this.legend.deactivate()
+    }
+
     this.legend = new ChartLegend(this.pageController, this.data, this)
+    this.legend.activate()
 
     this.setupChart()
     this.render()

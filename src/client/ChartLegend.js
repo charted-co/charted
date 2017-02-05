@@ -27,11 +27,18 @@ export default class ChartLegend {
     this.container = this.$container.get(0)
     this.series = this.chart.getChartSeries()
     this.actions = new Actions(this.container)
+  }
 
+  activate() {
     this.actions
       .add('open-color-input', this.openColorInput, this)
       .add('open-move-chart', this.openMoveChart, this)
       .activate()
+  }
+
+  deactivate() {
+    this.actions.deactivate()
+    this.actions = null
   }
 
   getLegendElement(index: number): Element {

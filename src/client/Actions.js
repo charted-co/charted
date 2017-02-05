@@ -6,6 +6,7 @@ type Listeners = {[name: string]: ListenerFunction[]}
 export default class Actions {
   rootElement: Element;
   listeners: Listeners;
+  boundListener: Function;
 
   constructor(el: Element) {
     this.rootElement = el
@@ -13,7 +14,15 @@ export default class Actions {
   }
 
   activate() {
-    this.rootElement.addEventListener('click', this.handleClick.bind(this))
+    this.boundListener = this.handleClick.bind(this)
+    this.rootElement.addEventListener('click', this.boundListener)
+  }
+
+  deactivate() {
+    this.rootElement.removeEventListener('click', this.boundListener)
+    this.boundListener = null
+    this.rootElement = null
+    this.listeners.length = 0
   }
 
   add<T>(name: string, listener: ListenerFunction, thisObj: T): Actions {
