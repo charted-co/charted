@@ -32,22 +32,16 @@ export class PageController {
     this.$body = $('body')
     this.$charts = $('.charts')
 
-    // re-render charts on window resize
-    $(window).resize(() => {
+    // Re-render charts on window resize
+    window.addEventListener('resize', () => {
       clearTimeout(this.resizeTimer)
       this.resizeTimer = setTimeout(() => this.setDimensions(), 30)
     })
 
-    // setup keystrokes
-    $(document).keyup((ev) => {
-      if (ev.keyCode == 27) {
-        $('.overlay-container').remove()
-        let el = document.querySelector('.js-settings')
-        dom.classlist.remove(el, 'open')
-      }
-    })
+    let form = dom.get('js-loadDataForm')
+    if (!form) return
 
-    $('.load-data-form').submit((ev) => {
+    form.addEventListener('submit', (ev: Event) => {
       ev.preventDefault()
 
       let input = dom.get('js-dataFileInput')
