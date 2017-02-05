@@ -16,6 +16,11 @@ class Classlist {
   }
 }
 
+function remove(el: ?Element) {
+  if (!el || !el.parentNode) return
+  el.parentNode.removeChild(el)
+}
+
 // Like querySelector and querySelectorAll but only for
 // js classes. Eventually we shouldn't use any other way
 // of getting elements.
@@ -43,5 +48,6 @@ function getAll(selector: string, root: ?Element): Element[] {
 export default {
   get: get,
   getAll: getAll,
+  remove: remove,
   classlist: new Classlist()
 }

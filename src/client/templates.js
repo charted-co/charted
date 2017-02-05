@@ -147,7 +147,7 @@ function chart(params: {editable: boolean}): string {
 
 function changeSeriesColor(params: {seriesIndex: number, colorHex: string}): string {
   return `
-    <div class="change-series-color popover">
+    <div class="change-series-color popover js-changeSeriesColor">
       <p>Change color:</p>
       <p>
         <span contenteditable="true" class="color-hex-input change-series-color-${params.seriesIndex}">
@@ -200,7 +200,7 @@ function moveChart(params: {otherCharts: Array<any>, series: Array<any>}): strin
   }
 
   return `
-    <div class="move-chart-options popover">
+    <div class="move-chart-options popover js-moveChartOptions">
       <p>Move to:</p>
       ${chartList}
       ${newChartButton}

@@ -424,7 +424,10 @@ export class PageController {
       dom.classlist.remove(el, 'active-color-input')
     })
 
-    $('html').find('.move-chart-options, .change-series-color').remove()
+    let selectors = ['js-moveChartOptions', 'js-changeSeriesColor']
+    selectors.forEach((name: string) => {
+      dom.remove(dom.get(name))
+    })
   }
 
   getEditability(): boolean {
