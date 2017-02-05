@@ -4,6 +4,7 @@ import Actions from "./Actions"
 import PageData from "./PageData"
 import Chart from "./Chart"
 import ChartParameters from "./ChartParameters"
+import dom from "./dom.js"
 import * as templates from "./templates"
 import * as utils from "../shared/utils"
 
@@ -41,7 +42,8 @@ export class PageController {
     $(document).keyup((ev) => {
       if (ev.keyCode == 27) {
         $('.overlay-container').remove()
-        $('.page-settings').removeClass('open')
+        let el = document.querySelector('.js-settings')
+        dom.classlist.remove(el, 'open')
       }
     })
 
@@ -361,8 +363,7 @@ export class PageController {
   }
 
   openSettings(): void {
-    let el = document.querySelector('.js-settings')
-    if (el) el.classList.add('open')
+    dom.classlist.add(dom.get('js-settings'), 'open')
   }
 
   toggleGrid(): void {
@@ -412,19 +413,21 @@ export class PageController {
   }
 
   applyEmbed(): void {
-    if (this.params.embed) {
-      this.$body.addClass('embed')
-    } else {
-      this.$body.removeClass('embed')
-    }
+    dom.classlist.enable(document.body, 'embed', this.isEmbed)
   }
 
   removePopovers(): void {
     // TODO: This probably shouldn't close the popover when
     // the user clicks in empty space within the popover itself.
-    $('html').find('.page-settings').removeClass('open')
+    dom.classlist.remove(dom.get('js-settings'), 'open')
+
+    let legends = dom.getAll('js-legendItem')
+    legends.forEach((el) => {
+      dom.classlist.remove(el, 'active')
+      dom.classlist.remove(el, 'active-color-input')
+    })
+
     $('html').find('.move-chart-options, .change-series-color').remove()
-    $('html').find('.legend-item').removeClass('active active-color-input')
   }
 
   getEditability(): boolean {

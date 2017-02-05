@@ -7,6 +7,7 @@ import {OPTIONS, PageController} from "./PageController"
 import PageData from "./PageData"
 import Editor from "./Editor"
 import * as templates from "./templates"
+import dom from "./dom.js"
 
 export default class Chart {
   pageController: PageController;
@@ -449,7 +450,7 @@ export default class Chart {
   handleMouseover(pixel: Object): void {
     // show the options
     this.$container.addClass('active')
-    $('body').addClass('page-active')
+    dom.classlist.add(document.body, 'page-active')
 
     if (this.mouseTimer) {
       clearTimeout(this.mouseTimer)
@@ -470,7 +471,7 @@ export default class Chart {
       }
 
       this.$container.removeClass('active')
-      $('body').removeClass('page-active')
+      dom.classlist.remove(document.body, 'page-active')
       this.$pageSettings.removeClass('open')
     }, 1000)
 
