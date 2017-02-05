@@ -3,6 +3,6 @@
 import {PageController} from "./PageController"
 
 $(function () {
-  var pageController = new PageController()
-  pageController.activate()
+  window.__charted = new PageController()
+  window.__charted.activate()
 })
