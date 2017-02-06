@@ -38,7 +38,7 @@ export default class ChartLegend {
 
   deactivate() {
     this.actions.deactivate()
-    this.actions = null
+    delete this.actions
   }
 
   getLegendElement(index: number): Element {

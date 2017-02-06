@@ -233,17 +233,17 @@ export class PageController {
   createNewChart(thisChartIndex: number, initialChartParams: Object): void {
     let dimensions = this.getChartDimensions()
     let chart = document.createElement('div')
+
+    chart.style.height = `${dimensions.height}px`
+    chart.style.width = `${dimensions.width}px`
+
     dom.classlist.add(chart, 'chart-wrapper')
     dom.classlist.add(chart, 'js-chart')
-
-    // TK
-    let $el = $(chart)
-    $el.outerHeight(dimensions.height).outerWidth(dimensions.width)
 
     let charts = dom.get('js-charts')
     if (charts) {
       charts.appendChild(chart)
-      this.chartObjects.push(new Chart(this, thisChartIndex, $el, initialChartParams, this.data))
+      this.chartObjects.push(new Chart(this, thisChartIndex, $(chart), initialChartParams, this.data))
     }
   }
 
@@ -477,7 +477,12 @@ export class PageController {
     dom.classlist.enable(document.body, 'chart-grid', dimensions.isGrid)
     dom.classlist.enable(document.body, 'half-height', dimensions.isHalfHeight)
 
-    $('.chart-wrapper').outerHeight(dimensions.height).outerWidth(dimensions.width)
+    dom.getAll('js-chart').forEach((wrapper) => {
+      if (wrapper instanceof HTMLElement) {
+        wrapper.style.height = `${dimensions.height}px`
+        wrapper.style.width = `${dimensions.width}px`
+      }
+    })
 
     var bottomRowIndex = Math.floor((this.chartObjects.length - 1) / 2) * 2
     this.chartObjects.forEach(function (chart, i) {

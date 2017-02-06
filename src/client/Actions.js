@@ -19,10 +19,13 @@ export default class Actions {
   }
 
   deactivate() {
-    this.rootElement.removeEventListener('click', this.boundListener)
-    this.boundListener = null
-    this.rootElement = null
-    this.listeners.length = 0
+    if (this.boundListener) {
+      this.rootElement.removeEventListener('click', this.boundListener)
+    }
+
+    delete this.boundListener
+    delete this.rootElement
+    this.listeners = {}
   }
 
   add<T>(name: string, listener: ListenerFunction, thisObj: T): Actions {
