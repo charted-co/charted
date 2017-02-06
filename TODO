@@ -16,3 +16,9 @@ Planned/ongoing projects:
    charts.
  - Replace templates.js with Handlebars
  - Introduce u-classes
+
+Blockers for this branch (jQuery removal):
+
+ - Popover fading logic is commented out in Chart.js
+ - When you click to edit a color popover disappears
+ - Whatever TKs are still in the code
