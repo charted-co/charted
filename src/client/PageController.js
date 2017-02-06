@@ -174,7 +174,7 @@ export class PageController {
   }
 
   clearExisting(): void {
-    let charts = dom.getAll('js-chart')
+    let charts = dom.getAll('js-chartWrapper')
     charts.forEach((chart) => dom.remove(chart))
     dom.remove(dom.get('js-settings'))
     this.chartObjects = []
@@ -238,12 +238,14 @@ export class PageController {
     chart.style.width = `${dimensions.width}px`
 
     dom.classlist.add(chart, 'chart-wrapper')
-    dom.classlist.add(chart, 'js-chart')
+    dom.classlist.add(chart, 'js-chartWrapper')
 
     let charts = dom.get('js-charts')
     if (charts) {
       charts.appendChild(chart)
-      this.chartObjects.push(new Chart(this, thisChartIndex, $(chart), initialChartParams, this.data))
+      let chartObject = new Chart(this, thisChartIndex, chart, initialChartParams, this.data)
+      chartObject.activate()
+      this.chartObjects.push(chartObject)
     }
   }
 
@@ -297,7 +299,8 @@ export class PageController {
 
     // remove the parameters, html element, and overall chart object
     this.params.charts.splice(chartIndex, 1)
-    this.chartObjects[chartIndex].$wrapper.remove()
+    dom.remove(this.chartObjects[chartIndex].wrapper)
+    this.chartObjects[chartIndex].deactivate()
     this.chartObjects.splice(chartIndex, 1)
   }
 
@@ -477,7 +480,7 @@ export class PageController {
     dom.classlist.enable(document.body, 'chart-grid', dimensions.isGrid)
     dom.classlist.enable(document.body, 'half-height', dimensions.isHalfHeight)
 
-    dom.getAll('js-chart').forEach((wrapper) => {
+    dom.getAll('js-chartWrapper').forEach((wrapper) => {
       if (wrapper instanceof HTMLElement) {
         wrapper.style.height = `${dimensions.height}px`
         wrapper.style.width = `${dimensions.width}px`
@@ -486,11 +489,7 @@ export class PageController {
 
     var bottomRowIndex = Math.floor((this.chartObjects.length - 1) / 2) * 2
     this.chartObjects.forEach(function (chart, i) {
-      if (dimensions.isGrid && i >= bottomRowIndex) {
-        chart.$wrapper.addClass('bottom-row')
-      } else {
-        chart.$wrapper.removeClass('bottom-row')
-      }
+      dom.classlist.enable(chart.wrapper, 'bottom-row', dimensions.isGrid && i >= bottomRowIndex)
       chart.render()
     })
 

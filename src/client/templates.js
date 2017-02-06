@@ -100,13 +100,13 @@ function chart(params: {editable: boolean}): string {
   if (params.editable) {
     editableAttribute = 'contenteditable="true"'
     editableButtons = `
-      <div class="chart-options">
-        <a class="option-item toggle-type" href="#" title="Switch chart type">
+      <div class="chart-options js-chartOptions">
+        <a class="option-item toggle-type" data-click="toggle-type" href="#" title="Switch chart type">
           <span class="icon icon-line"></span>
           <span class="icon icon-column"></span>
         </a>
 
-        <a class="option-item toggle-rounding" href="#" title="Turn rounding on/off">
+        <a class="option-item toggle-rounding" data-click="toggle-rounding" href="#" title="Turn rounding on/off">
           <span class="icon icon-round-off"></span>
           <span class="icon icon-round-on"></span>
         </a>
@@ -115,25 +115,25 @@ function chart(params: {editable: boolean}): string {
   }
 
   return `
-    <div class="chart show-columns">
-      <div class="chart-description">
+    <div class="chart js-chart show-columns">
+      <div class="chart-description js-chartDescription">
         <h1 class="js-chartTitle title info-input" ${editableAttribute}></h1>
         <div class="js-chartNote note info-input" ${editableAttribute}></div>
       </div>
 
       <div class="chart-plot-outer-container">
         <div class="chart-plot-inner-container">
-          <div class="y-axis-container"><div class="y-axis chart-height"></div></div>
-          <div class="zero-line-container chart-height"><div class="zero-line"></div></div>
-          <div class="x-axis"><span class="x-beginning"></span><span class="x-end"></span></div>
-          <div class="selection">
+          <div class="y-axis-container"><div class="y-axis js-yAxis chart-height"></div></div>
+          <div class="zero-line-container chart-height"><div class="zero-line js-zeroLine"></div></div>
+          <div class="x-axis"><span class="js-xBeg x-beginning"></span><span class="js-xEnd x-end"></span></div>
+          <div class="selection js-selection">
             <div class="selection-info">
-              <div class="selection-value"></div>
-              <div class="selection-xlabel"></div>
-              <div class="selection-ylabel"></div>
+              <div class="selection-value js-selectionValue"></div>
+              <div class="selection-xlabel js-selectionXLabel"></div>
+              <div class="selection-ylabel js-selectionYLabel"></div>
             </div>
           </div>
-          <figure class="chart-plot chart-height"></figure>
+          <figure class="chart-plot chart-height js-chartPlot"></figure>
         </div>
       </div>
 
@@ -150,7 +150,7 @@ function changeSeriesColor(params: {seriesIndex: number, colorHex: string}): str
     <div class="change-series-color popover js-changeSeriesColor">
       <p>Change color:</p>
       <p>
-        <span contenteditable="true" class="color-hex-input change-series-color-${params.seriesIndex}">${params.colorHex}</span>
+        <span contenteditable="true" class="color-hex-input js-colorEditor">${params.colorHex}</span>
       </p>
       <span class="arrow-bottom-left"></span>
     </div>
@@ -182,10 +182,10 @@ function legendItem(label: {editable: boolean, label: string, color: string, ser
   `
 }
 
-function moveChart(params: {otherCharts: Array<any>, series: Array<any>}): string {
+function moveChart(params: {otherCharts: Array<any>, series: Array<any>, newChartIndex: number, position: number}): string {
   var chartList = params.otherCharts.map(function (chart) {
     return `
-      <a href= "#" class="move-chart-option move-to-chart-${chart.chartIndex}">
+      <a href= "#" class="move-chart-option" data-click="move-to-chart" data-dest="${chart.chartIndex}" data-position="${params.position}">
         ${chart.title}
       </a>
     `
@@ -194,7 +194,7 @@ function moveChart(params: {otherCharts: Array<any>, series: Array<any>}): strin
   var newChartButton = ''
   if (params.series.length > 1) {
     newChartButton = `
-      <a href= "#" class="move-chart-option move-to-new-chart">
+      <a href= "#" class="move-chart-option" data-click="move-to-chart" data-dest="${params.newChartIndex}" data-position="${params.position}">
         <span class="icon icon-plus"></span>New chart
       </a>
     `

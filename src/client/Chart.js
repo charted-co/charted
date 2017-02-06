@@ -1,5 +1,6 @@
 /* @flow */
 
+import Actions from "./Actions"
 import ChartData from "./ChartData"
 import ChartLegend from "./ChartLegend"
 import {stringToNumber, camelToHyphen, getNiceIntervals, getRoundedValue} from "../shared/utils"
@@ -10,24 +11,26 @@ import * as templates from "./templates"
 import dom from "./dom"
 
 export default class Chart {
+  actions: Actions;
   pageController: PageController;
   titleEditor: Editor;
   noteEditor: Editor;
 
-  $wrapper: Object;
-  $container: Object;
-  $plot: Object;
-  $xBeg: Object;
-  $xEnd: Object;
-  $selectionElem: Object;
-  $selectionXLabel: Object;
-  $selectionYLabel: Object;
-  $yAxis: Object;
-  $zeroLine: Object;
-  $selectionValue: Object;
-  $optionsElem: Object;
-  $pageSettings: Object;
-  $chartDescription: Object;
+  wrapper: Element;
+  container: Element;
+  plot: Element;
+  xBeg: Element;
+  xEnd: Element;
+  selectionElem: Element;
+  selectionXLabel: Element;
+  selectionYLabel: Element;
+  yAxis: Element;
+  zeroLine: Element;
+  selectionValue: Element;
+  optionsElem: Element;
+  pageSettings: Element;
+  chartDescription: Element;
+
   chartIndex: number;
   params: Object;
   data: ChartData;
@@ -62,32 +65,34 @@ export default class Chart {
   xBarWidth: Function;
   line: Function;
 
-  constructor(pageController: PageController, chartIndex: number, $wrapper: Object, params: Object, data: PageData) {
+  constructor(pageController: PageController, chartIndex: number, wrapper: Element, params: Object, data: PageData) {
     this.pageController = pageController
-    this.$wrapper = $wrapper
+    this.wrapper = wrapper
 
-    // create initial HTML
+    // Create initial HTML
     var chartHtmlParameters = {
       editable: pageController.getEditability()
     }
-    this.$wrapper.html(templates.chart(chartHtmlParameters))
 
-    // cache elements
-    this.$container = $wrapper.find('.chart').first()
-    this.$plot = this.$container.find('.chart-plot').first()
-    this.$xBeg = this.$container.find('.x-beginning')
-    this.$xEnd = this.$container.find('.x-end')
-    this.$selectionElem = this.$container.find('.selection')
-    this.$selectionXLabel = this.$container.find('.selection-xlabel')
-    this.$selectionYLabel = this.$container.find('.selection-ylabel')
-    this.$yAxis = this.$container.find('.y-axis')
-    this.$zeroLine = this.$container.find('.zero-line')
-    this.$selectionValue = this.$container.find('.selection-value')
-    this.$optionsElem = this.$container.find('.chart-options')
-    this.$pageSettings = $('.page-settings')
-    this.$chartDescription = this.$container.find('.chart-description')
+    this.wrapper.innerHTML = templates.chart(chartHtmlParameters)
+    this.container = dom.assert(dom.get('js-chart', this.wrapper))
 
-    this.titleEditor = new Editor(this.$container.find('.js-chartTitle').get(0))
+    // Cache elements
+    this.plot = dom.assert(dom.get('js-chartPlot', this.container))
+    this.xBeg = dom.assert(dom.get('js-xBeg', this.container))
+    this.xEnd = dom.assert(dom.get('js-xEnd', this.container))
+    this.selectionElem = dom.assert(dom.get('js-selection', this.container))
+    this.selectionXLabel = dom.assert(dom.get('js-selectionXLabel', this.container))
+    this.selectionYLabel = dom.assert(dom.get('js-selectionYLabel', this.container))
+    this.selectionValue = dom.assert(dom.get('js-selectionValue', this.container))
+    this.yAxis = dom.assert(dom.get('js-yAxis', this.container))
+    this.zeroLine = dom.assert(dom.get('js-zeroLine', this.container))
+    this.optionsElem = dom.assert(dom.get('js-chartOptions', this.container))
+    this.chartDescription = dom.assert(dom.get('js-chartDescription', this.container))
+    this.pageSettings = dom.assert(dom.get('js-settings'))
+
+    let chartTitle = dom.assert(dom.get('js-chartTitle', this.container))
+    this.titleEditor = new Editor(chartTitle)
     this.titleEditor.onChange((content) => {
       if (!content) {
         this.params.title = this.pageController.getDefaultTitle(this.chartIndex)
@@ -99,7 +104,8 @@ export default class Chart {
       this.pageController.updateURL()
     })
 
-    this.noteEditor = new Editor(this.$container.find('.js-chartNote').get(0))
+    let chartNote = dom.assert(dom.get('js-chartNote', this.container))
+    this.noteEditor = new Editor(chartNote)
     this.noteEditor.onChange((content) => {
       this.params.note = content
       this.pageController.updateURL()
@@ -107,7 +113,20 @@ export default class Chart {
 
     // refresh chart and bind interactions
     this.refresh(chartIndex, params, data)
+    this.actions = new Actions(this.container)
     this.bindInteractions()
+  }
+
+  activate() {
+    this.actions
+      .add('toggle-type', this.toggleType, this)
+      .add('toggle-rounding', this.toggleRounding, this)
+      .activate()
+  }
+
+  deactivate() {
+    this.actions.deactivate()
+    delete this.actions
   }
 
   refresh(chartIndex: number, params: Object, data: PageData): void {
@@ -128,14 +147,14 @@ export default class Chart {
 
   setupChart(): void {
     // Clear any existing plot
-    this.$plot.empty()
+    this.plot.innerHTML = ''
 
     // Update chart UI
     this.titleEditor.setContent(this.params.title)
     this.noteEditor.setContent(this.params.note)
 
-    this.$xBeg.html(this.data.getIndexExtent()[0])
-    this.$xEnd.html(this.data.getIndexExtent()[1])
+    this.xBeg.innerHTML = this.data.getIndexExtent()[0]
+    this.xEnd.innerHTML = this.data.getIndexExtent()[1]
 
     this.setScales()
     this.createChartElements()
@@ -173,7 +192,7 @@ export default class Chart {
   }
 
   createChartElements(): void {
-    this.svg = d3.select(this.$plot.get(0)).append('svg')
+    this.svg = d3.select(this.plot).append('svg')
     this.line = d3.svg.line()
       .interpolate('cardinal')
       .tension(0.96)
@@ -214,26 +233,25 @@ export default class Chart {
   }
 
   updateSizes(): void {
+    let plotRect = dom.rect(this.plot)
+    let xBegRect = dom.rect(this.xBeg)
+
     this.margin = {top: 4, right: 4, bottom: 0, left: 0}
-    this.width = this.$plot.width()
+    this.width = plotRect.width
     this.plotWidth = this.width - this.margin.right - this.margin.left
-    this.height = this.$plot.height()
+    this.height = plotRect.height
     this.svg.attr('width', this.width).attr('height', this.height)
     this.xScale.range([this.margin.left, (this.width - this.margin.right - this.margin.left)])
     this.yScale.range([this.height - this.margin.bottom, this.margin.top])
-    this.xEndEdge = this.$xEnd.offset().left - this.$plot.offset().left
-    this.xBegEdge = this.$xBeg.offset().left - this.$plot.offset().left + this.$xBeg.width()
+    this.xEndEdge = dom.rect(this.xEnd).left - plotRect.left
+    this.xBegEdge = xBegRect.left - plotRect.left + xBegRect.width
   }
 
   render(): void {
     this.updateSizes()
 
     // apply general rounding and background color
-    if (this.params.rounding === 'off') {
-      this.$container.addClass('rounding-off')
-    } else {
-      this.$container.removeClass('rounding-off')
-    }
+    dom.classlist.enable(this.container, 'rounding-off', this.params.rounding === 'off')
 
     // go to last point and refresh chart
     this.selectedX = this.data.getIndexCount() - 1
@@ -274,12 +292,11 @@ export default class Chart {
   }
 
   applyChartType() : void{
+    dom.classlist.enable(this.container, 'show-columns', this.params.type === 'column')
     if (this.params.type === 'column') {
-      this.$container.addClass('show-columns')
       this.yRange = this.yRangeStacked
       this.focusedSeriesIndex = this.data.getSeriesCount()
     } else {
-      this.$container.removeClass('show-columns')
       this.yRange = this.yRangeUnstacked
 
       // focus the series with the max value at the selected point
@@ -321,9 +338,9 @@ export default class Chart {
 
   updateYAxis(): void {
     // apply Y axis labels
-    var HTML = ''
-    var intervals = getNiceIntervals(this.yRange, this.height)
-    var maxTop = this.$yAxis.height() - this.$container.height() + 60 // must be 60px below the top
+    let HTML = ''
+    let intervals = getNiceIntervals(this.yRange, this.height)
+    let maxTop = dom.rect(this.yAxis).height - dom.rect(this.container).height + 60 // must be 60px below the top
     intervals.forEach((interval) => {
       interval.top = this.yScale(interval.value)
       if (interval.top >= maxTop) {
@@ -331,10 +348,16 @@ export default class Chart {
         HTML += templates.yAxisLabel(interval)
       }
     })
-    this.$yAxis.html(HTML)
+
+    this.yAxis.innerHTML = HTML
 
     // update zero line position
-    this.$zeroLine.removeClass('hidden').css('top', this.yScale(0))
+    dom.classlist.remove(this.zeroLine, 'hidden')
+
+    let zeroLine = this.zeroLine
+    if (zeroLine instanceof HTMLElement) {
+      zeroLine.style.top = `${this.yScale(0)}px`
+    }
   }
 
   updateSelectedX(index: ?number): void {
@@ -347,31 +370,25 @@ export default class Chart {
     var selectionLeft = thisXPosition + adjust
 
     // move selection
-    this.$selectionElem.css('left', selectionLeft)
+    let selectionElem = this.selectionElem
+    if (selectionElem instanceof HTMLElement) {
+      selectionElem.style.left = `${selectionLeft}px`
+    }
 
-    var beg = selectionLeft
-    var end = selectionLeft + this.$selectionXLabel.width()
+    let xLabelRect = dom.rect(this.selectionXLabel)
+    let beg = selectionLeft
+    let end = selectionLeft + xLabelRect.width
 
-    if (selectionLeft < (this.width / 2)) {
-      this.$selectionElem.addClass('on-right')
-    } else {
-      this.$selectionElem.removeClass('on-right')
-      beg = selectionLeft - this.$selectionXLabel.width()
+    let onRight = selectionLeft < (this.width / 2)
+    dom.classlist.enable(this.selectionElem, 'on-right', onRight)
+    if (!onRight) {
+      beg = selectionLeft - xLabelRect.width
       end = selectionLeft
     }
 
     // hide x-axis labels if necessary
-    if (beg <= this.xBegEdge) {
-      this.$xBeg.addClass('hidden')
-    } else {
-      this.$xBeg.removeClass('hidden')
-    }
-
-    if (end >= this.xEndEdge) {
-      this.$xEnd.addClass('hidden')
-    } else {
-      this.$xEnd.removeClass('hidden')
-    }
+    dom.classlist.enable(this.xBeg, 'hidden', beg <= this.xBegEdge)
+    dom.classlist.enable(this.xEnd, 'hidden', end >= this.xEndEdge)
 
     // move selected dots
     var _this = this
@@ -432,30 +449,42 @@ export default class Chart {
     var thisValueFormatted = this.params.rounding === 'on' ? getRoundedValue(thisValue, this.yRange) : thisValue
 
     // update selection
-    this.$selectionYLabel.text(thisYLabel).css('color', thisYColor)
-    this.$selectionXLabel.text(thisPoint.xLabel)
-    this.$selectionValue.text(thisValueFormatted).css('color', thisYColor)
+    this.selectionYLabel.innerHTML = thisYLabel
+    this.selectionXLabel.innerHTML = thisPoint.xLabel
+    this.selectionValue.innerHTML = String(thisValueFormatted)
+
+    let label = this.selectionYLabel
+    if (label instanceof HTMLElement) {
+      label.style.color = thisYColor
+    }
+
+    let value = this.selectionValue
+    if (value instanceof HTMLElement) {
+      value.style.color = thisYColor
+    }
   }
 
   bindInteractions(): void {
-    // chart option toggles
-    Object.keys(OPTIONS).forEach((option) => {
-      this.$container.find('.toggle-' + option).click((event) => {
-        event.preventDefault()
-        var options = OPTIONS[option]
-        this.params[option] = this.params[option] === options[0] ? options[1] : options[0]
-        this.render()
-        this.pageController.updateURL()
-      })
-    })
-
-    // handle mouseover
-    this.$container.mousemove((pixel) => this.handleMouseover(pixel))
+    this.container.addEventListener('mousemove', this.handleMousemove.bind(this))
   }
 
-  handleMouseover(pixel: Object): void {
-    // show the options
-    this.$container.addClass('active')
+  toggleType() {
+    let options = OPTIONS.type
+    this.params.type = this.params.type === options[0] ? options[1] : options[0]
+    this.render()
+    this.pageController.updateURL()
+  }
+
+  toggleRounding() {
+    let options = OPTIONS.rounding
+    this.params.rounding = this.params.rounding === options[0] ? options[1] : options[0]
+    this.render()
+    this.pageController.updateURL()
+  }
+
+  handleMousemove(ev: MouseEvent): void {
+    // Show the options
+    dom.classlist.add(this.container, 'active')
     dom.classlist.add(document.body, 'page-active')
 
     if (this.mouseTimer) {
@@ -464,6 +493,7 @@ export default class Chart {
     }
 
     this.mouseTimer = setTimeout(() => {
+      /** TK
       if (this.$optionsElem.length && this.$optionsElem.is(':hover')) {
         return
       }
@@ -475,17 +505,19 @@ export default class Chart {
       if (this.$pageSettings.length && this.$pageSettings.is(':hover')) {
         return
       }
+      */
 
-      this.$container.removeClass('active')
+      dom.classlist.remove(this.container, 'active')
       dom.classlist.remove(document.body, 'page-active')
-      this.$pageSettings.removeClass('open')
+      dom.classlist.remove(this.pageSettings, 'open')
     }, 1000)
 
     // don't change the selection if mouseover is below the plot
-    if (pixel.pageY - this.$plot.offset().top > this.$plot.height()) return
+    let plotRect = dom.rect(this.plot)
+    if (ev.clientY - plotRect.top > plotRect.height) return
 
     // update everything if the selextedX or focusedSeriesIndex is different
-    var closestPoint = this.getClosestPoint(pixel)
+    var closestPoint = this.getClosestPoint(ev)
     if (closestPoint.selectedX !== this.selectedX || closestPoint.focusedSeriesIndex !== this.focusedSeriesIndex) {
       this.selectedX = closestPoint.selectedX
       this.focusedSeriesIndex = closestPoint.focusedSeriesIndex
@@ -494,9 +526,10 @@ export default class Chart {
     }
   }
 
-  getClosestPoint(pixel: Object): {selectedX: number, focusedSeriesIndex: number} {
-    var pixelX = (pixel.pageX - this.$plot.offset().left) * this.data.getIndexCount() / (this.width - this.margin.right)
-    var pixelY = pixel.pageY - this.$plot.offset().top
+  getClosestPoint(ev: MouseEvent): {selectedX: number, focusedSeriesIndex: number} {
+    let plotRect = dom.rect(this.plot)
+    var pixelX = (ev.clientX - plotRect.left) * this.data.getIndexCount() / (this.width - this.margin.right)
+    var pixelY = ev.clientY - plotRect.top
     var currentX = Math.min(Math.floor(Math.max(pixelX, 0)), this.data.getIndexCount() - 1)
     var currentY = this.focusedSeriesIndex
 
@@ -528,7 +561,9 @@ export default class Chart {
 
   updatefocusedSeriesIndex(): void {
     if (this.params.type === 'line') {
-      this.$container.find('.line').attr('class', 'line')
+      let lines = dom.queryAll('.line', this.container)
+      lines.forEach((line) => line.className = 'line')
+
       var selectedLine = d3.select(this.data.getSeries(this.focusedSeriesIndex).lineEl)
       selectedLine.attr('class', 'line focused')
       d3.select(selectedLine.node().parentNode).each(function () {
@@ -539,10 +574,6 @@ export default class Chart {
 
   getChartIndex() {
     return this.chartIndex
-  }
-
-  getChartContainer(): Object {
-    return this.$container
   }
 
   getChartSeries(): Array<any> {
