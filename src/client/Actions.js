@@ -44,6 +44,12 @@ export default class Actions {
       return
     }
 
+    if (target instanceof HTMLElement) {
+      if (target.nodeName == 'BUTTON' && target.getAttribute('type') == 'submit') {
+        return
+      }
+    }
+
     let root = this.rootElement.parentNode
     while (target && target != root && target != document) {
       if (target instanceof HTMLElement) {
