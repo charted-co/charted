@@ -11,16 +11,13 @@
     <script src="//use.edgefonts.net/source-sans-pro:n2,n4,n9.js"></script>
 
     {{#if ENV.dev}}
-      <script src="/lib/jquery.js"></script>
       <script src="/lib/d3.js"></script>
-
-      <script async src="/lib/require.js" data-main="/scripts/charted"></script>
     {{else}}
       <script src="/lib.js"></script>
       <script src="/charted.js"></script>
       <script>
         requirejs(['scripts/PageController'], function (module) {
-          $(function () {
+          document.addEventListener('DOMContentLoaded', () => {
             var pageController = new module.PageController()
             pageController.activate()
           })
@@ -66,5 +63,7 @@
       {{!-- Render partial `footer` if it's registered or fail silently --}}
       {{#> footer }}{{/footer}}
     </footer>
+
+    <script src="/lib/require.js" data-main="/scripts/charted"></script>
   </body>
 </html>

@@ -22,6 +22,11 @@ class Classlist {
   }
 }
 
+function assert(el: ?Element): Element {
+  if (!el) throw 'Assertion error'
+  return el
+}
+
 function remove(el: ?Element) {
   if (!el || !el.parentNode) return
   el.parentNode.removeChild(el)
@@ -63,9 +68,21 @@ function getAll(selector: string, root: ?Element): Element[] {
   return []
 }
 
+function queryAll(selector: string, root: ?Element): Element[] {
+  root = root || document.body
+  return Array.prototype.slice.call(root.querySelectorAll(selector))
+}
+
+function rect(el: Element): ClientRect {
+  return el.getBoundingClientRect()
+}
+
 export default {
+  assert: assert,
   get: get,
   getAll: getAll,
+  queryAll: queryAll,
+  rect: rect,
   renderFragment: renderFragment,
   remove: remove,
   classlist: new Classlist()

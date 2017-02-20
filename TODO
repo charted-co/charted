@@ -4,6 +4,8 @@ A list of known issues in no particular order:
  - We re-compile templates on every request without caching
    results. Seems wasteful.
  - Handlebars plugins are registered for the homepage only.
+ - We seriously need to optimize how we use methods that
+   cause DOM reflows.
 
 Planned/ongoing projects:
 
@@ -14,3 +16,10 @@ Planned/ongoing projects:
    charts.
  - Replace templates.js with Handlebars
  - Introduce u-classes
+ - Use system fonts
+
+Blockers for this branch (jQuery removal):
+
+ - Popover fading logic is commented out in Chart.js
+ - When you click to edit a color popover disappears
+ - Whatever TKs are still in the code
