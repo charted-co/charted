@@ -15,14 +15,6 @@
     {{else}}
       <script src="/lib.js"></script>
       <script src="/charted.js"></script>
-      <script>
-        requirejs(['scripts/PageController'], function (module) {
-          document.addEventListener('DOMContentLoaded', () => {
-            var pageController = new module.PageController()
-            pageController.activate()
-          })
-        })
-      </script>
     {{/if}}
 
     {{!-- Render partial `head` if it's registered or fail silently --}}
@@ -64,6 +56,15 @@
       {{#> footer }}{{/footer}}
     </footer>
 
-    <script src="/lib/require.js" data-main="/scripts/charted"></script>
+    {{#if ENV.dev}}
+      <script src="/lib/require.js" data-main="/scripts/charted"></script>
+    {{else}}
+      <script>
+        requirejs(['scripts/PageController'], function (module) {
+          var pageController = new module.PageController()
+          pageController.activate()
+        })
+      </script>
+    {{/if}}
   </body>
 </html>
