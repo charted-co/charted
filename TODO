@@ -1,3 +1,5 @@
+A spreadsheet that tracks bundle size: https://goo.gl/R2yKvP
+
 A list of known issues in no particular order:
 
  - Code that compiles templates is duplicated in two places
@@ -9,16 +11,13 @@ A list of known issues in no particular order:
 
 Planned/ongoing projects:
 
- - Get rid of jQuery to reduce size and make Charted more
-   embeddable. We don't really use jQuery for anything that
-   cannot be easily replaced with DOM or D3 APIs.
  - Add support for dashboards where you can display multiple
    charts.
  - Replace templates.js with Handlebars
  - Introduce u-classes
  - Use system fonts
 
-Blockers for this branch (jQuery removal):
+Blockers for the next release (jQuery removal):
 
  - Popover fading logic is commented out in Chart.js
  - When you click to edit a color popover disappears
