@@ -78,6 +78,10 @@ export default class Actions {
       case 'INPUT':
       case 'TEXTAREA':
         return true
+      default:
+        if (el.getAttribute('contenteditable')) {
+          return true
+        }
     }
 
     return false
