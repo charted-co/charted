@@ -45,7 +45,6 @@ export default class Chart {
   yRangeUnstacked: Array<any>;
   yRange: Array<any>;
   selectedX: number;
-  mouseTimer: ?number;
   focusedSeriesIndex: number;
   margin: {top: number, right: number, bottom: number, left: number};
   width: number;
@@ -486,31 +485,6 @@ export default class Chart {
     // Show the options
     dom.classlist.add(this.container, 'active')
     dom.classlist.add(document.body, 'page-active')
-
-    if (this.mouseTimer) {
-      clearTimeout(this.mouseTimer)
-      this.mouseTimer = null
-    }
-
-    this.mouseTimer = setTimeout(() => {
-      /** TK
-      if (this.$optionsElem.length && this.$optionsElem.is(':hover')) {
-        return
-      }
-
-      if (this.$chartDescription.length && this.$chartDescription.is(':hover')) {
-        return
-      }
-
-      if (this.$pageSettings.length && this.$pageSettings.is(':hover')) {
-        return
-      }
-      */
-
-      dom.classlist.remove(this.container, 'active')
-      dom.classlist.remove(document.body, 'page-active')
-      dom.classlist.remove(this.pageSettings, 'open')
-    }, 1000)
 
     // don't change the selection if mouseover is below the plot
     let plotRect = dom.rect(this.plot)
