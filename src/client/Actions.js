@@ -54,6 +54,13 @@ export default class Actions {
     while (target && target != root && target != document) {
       if (target instanceof HTMLElement) {
         let name = target.getAttribute('data-click')
+
+        // If the element doesn't have a data-click property but is something
+        // you'd want to click on (like a text field), return without firing.
+        if (this.isClickable(target) && !name) {
+          return
+        }
+
         if (name) {
           this.fire(name, target, ev)
           return
@@ -62,6 +69,18 @@ export default class Actions {
 
       target = target.parentNode
     }
+  }
+
+  isClickable(el: HTMLElement) {
+    switch (el.nodeName) {
+      case 'BUTTON':
+      case 'LINK':
+      case 'INPUT':
+      case 'TEXTAREA':
+        return true
+    }
+
+    return false
   }
 
   fire(name: string, target: Element, ev: Event) {
