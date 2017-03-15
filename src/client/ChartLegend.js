@@ -111,27 +111,25 @@ export default class ChartLegend {
     el.appendChild(fragment)
 
     // TODO: Replace all this with Editor
-    this.data.getSeriesIndices().forEach((series) => {
-      let input = dom.assert(dom.get('js-colorEditor', el))
-      input.addEventListener('focusout', () => {
-        let seriesColors = this.controller.params.seriesColors
-        let newColorHex = ''
-        if (input.innerText) {
-          newColorHex = '#' + input.innerText.replace(/^#/, '').trim()
-        }
+    let input = dom.assert(dom.get('js-colorEditor', el))
+    input.addEventListener('focusout', () => {
+      let seriesColors = this.controller.params.seriesColors
+      let newColorHex = ''
+      if (input.innerText) {
+        newColorHex = '#' + input.innerText.replace(/^#/, '').trim()
+      }
 
-        let defaultColorHex = this.chart.getDefaulSeriesColor(series)
-        let isValidHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(newColorHex)
+      let defaultColorHex = this.chart.getDefaulSeriesColor(index)
+      let isValidHex = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(newColorHex)
 
-        if (newColorHex === defaultColorHex ||!isValidHex ) {
-          input.innerHTML = defaultColorHex
-          delete seriesColors[series]
-        } else {
-          seriesColors[series] = newColorHex
-        }
-        this.chart.render()
-        this.controller.updateURL()
-      })
+      if (newColorHex === defaultColorHex ||!isValidHex ) {
+        input.innerHTML = defaultColorHex
+        delete seriesColors[index]
+      } else {
+        seriesColors[index] = newColorHex
+      }
+      this.chart.render()
+      this.controller.updateURL()
     })
   }
 

@@ -16,7 +16,4 @@ Planned/ongoing projects:
  - Replace templates.js with Handlebars
  - Introduce u-classes
  - Use system fonts
-
-Blockers for the next release (jQuery removal):
-
- - When you click to edit a color popover disappears
+ - Maybe switch to Closure Compiler
