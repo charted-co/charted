@@ -194,7 +194,7 @@ function moveChart(params: {otherCharts: Array<any>, series: Array<any>, newChar
   var newChartButton = ''
   if (params.series.length > 1) {
     newChartButton = `
-      <a href= "#" class="move-chart-option" data-click="move-to-chart" data-dest="${params.newChartIndex}" data-position="${params.position}">
+      <a href= "#" class="move-chart-option u-paddingLeft30" data-click="move-to-chart" data-dest="${params.newChartIndex}" data-position="${params.position}">
         <span class="icon icon-plus"></span>New chart
       </a>
     `
