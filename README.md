@@ -30,33 +30,3 @@ data points along the x-axis.
 To try Charted out, simply download the repo and run `npm install`
 to install dependencies. After that you will be able to run
 `npm start`. This will start a server at localhost:3000.
-
-If you install [Watchman](https://facebook.github.io/watchman/), you can
-run bin/watch to automatically recompile whenever you change JavaScript
-or LESS files.
-
-### On Heroku
-
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/mikesall/charted)
-
-### With Docker
-
-You can also run Charted via _docker_ by running
-`docker build -t charted .` in the repo to build the container. You
-will then be able to run the container using
-`docker run -p 3000:3000 charted`. Server will be accessible at
-localhost:3000
-
-## Using the Node module
-
-Charted also comes as a Node module which can be included in an
-Express or Matador application. This lets you direct the user to
-Charted URLs within the app, which can fetch data from other routes.
-(Note that Charted adds an endpoint which can make GET requests to
-arbitrary URLs from your app.)
-
-Call `charted(app)` to set up Charted in your app. By default, the
-Charted home page and assets will be served from `/charted/`, which
-you can customize the path by providing another path as a second
-argument. For example, providing '/' will cause Charted to be served
-from the root of your app.
