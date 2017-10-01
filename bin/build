@@ -33,11 +33,6 @@ function main(args) {
       return false
     }
 
-    if (cmd.startsWith('--plugins=')) {
-      registerPlugins(cmd.replace('--plugins=', ''))
-      return false
-    }
-
     return true
   })
 
@@ -170,13 +165,6 @@ function template(file) {
   let code = cat(file)
   let res = handlebars.compile(code)({ENV: ENV})
   res.to(`out/client/${name}`)
-}
-
-function registerPlugins(dir) {
-  ls('-R', `${dir}/*.html`).forEach((file) => {
-    let name = path.basename(file, '.html')
-    handlebars.registerPartial(name, cat(file))
-  })
 }
 
 
