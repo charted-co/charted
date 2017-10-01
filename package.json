@@ -1,10 +1,9 @@
 {
   "name": "chartedjs",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "A charting library originally created by the Product Science team at Medium",
   "main": "out/server/charted.js",
   "scripts": {
-    "postinstall": "bin/build",
     "prestart": "bin/build",
     "start": "bin/watch && node out/server/index.js",
     "pretest": "bin/build",
