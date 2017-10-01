@@ -73,8 +73,8 @@ export default class Actions {
 
   isClickable(el: HTMLElement) {
     switch (el.nodeName) {
+      case 'A':
       case 'BUTTON':
-      case 'LINK':
       case 'INPUT':
       case 'TEXTAREA':
         return true
