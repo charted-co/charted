@@ -25,6 +25,7 @@ export default class ChartedServer {
       let app = express()
       let charted = new ChartedServer(db, staticRoot)
 
+      app.enable('trust proxy')
       app.use(bodyParser.json())
       app.use(express.static(staticRoot))
       app.get('/c/:id', charted.getChart.bind(charted))
