@@ -186,7 +186,9 @@ export class PageController {
 
     // Populate UI
     let fragment = dom.renderFragment(templates.pageSettings())
-    document.body.appendChild(fragment)
+    if (document.body) {
+      document.body.appendChild(fragment)
+    }
 
     let url = this.params.url
     let link = dom.get('js-downloadDataLink')
@@ -400,7 +402,9 @@ export class PageController {
     let chartId = utils.getChartId(params)
 
     let fragment = dom.renderFragment(templates.embedOverlay(chartId))
-    document.body.appendChild(fragment)
+    if (document.body) {
+      document.body.appendChild(fragment)
+    }
   }
 
   closeEmbed(): void {
@@ -455,7 +459,8 @@ export class PageController {
     var minWidthForHalfWidth = 1200
     var minWidthForFullHeight = 800
     var windowWidth = window.innerWidth
-    var windowHeight = 'innerHeight' in window ? window.innerHeight : document.documentElement.offsetHeight
+    var offsetHeight = document.documentElement ? document.documentElement.offsetHeight : 0
+    var windowHeight = 'innerHeight' in window ? window.innerHeight : offsetHeight
     var defaultHeight = windowWidth > minWidthForFullHeight ? windowHeight : 'auto'
     var chartCount = this.chartObjects ? this.chartObjects.length : 0
 
@@ -508,8 +513,9 @@ export class PageController {
 
     // scrollHeight is not great as the embed can never get shorter. This is a short term
     // fix to deal with this fact.
-    let height = document.body.scrollHeight
-    height = height > 600 && document.body.offsetWidth >= 800 ? 600 : height
+    let offsetWidth = document.body ? document.body.offsetWidth : 0
+    let height = document.body ? document.body.scrollHeight : 0
+    height = height > 600 && offsetWidth >= 800 ? 600 : height
 
     // Going to send a modified version of the standard resize context.
     var message = {

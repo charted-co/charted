@@ -8,7 +8,11 @@ export default class Actions {
   listeners: Listeners;
   boundListener: Function;
 
-  constructor(el: Element) {
+  constructor(el: ?Element) {
+    if (!el) {
+      throw new Error('root element is not initialized yet')
+    }
+
     this.rootElement = el
     this.listeners = {}
   }

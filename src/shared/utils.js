@@ -25,7 +25,7 @@ function parseChartId(url: string): ?string {
 }
 
 function log10Floor(val: number): number {
-  return Math.floor(Math.log(val) / Math.LN10, 0)
+  return Math.floor(Math.log(val) / Math.LN10)
 }
 
 function parseQueryString(qs: string): Object {

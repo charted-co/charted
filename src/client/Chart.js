@@ -163,12 +163,12 @@ export default class Chart {
     // set x- and y-axis scales and position functions
     this.xScale = d3.scale.linear().domain([0, this.data.getIndexCount()])
 
-    this.xPosition = (d) => Math.floor(this.xScale(d.x), 0)
+    this.xPosition = (d) => Math.floor(this.xScale(d.x))
     this.xBarWidth = (d) => {
       // have a pixel space when columns are at least 8px wide
       var space = this.plotWidth / this.data.getIndexCount() >= 8 ? 1 : 0
       var nextXScale = d.x + 1 < this.data.getIndexCount() ? this.xScale(d.x + 1) : this.plotWidth
-      return Math.floor(nextXScale, 0) - this.xPosition(d) - space
+      return Math.floor(nextXScale) - this.xPosition(d) - space
     }
 
     this.xPositionLine = (d) => {

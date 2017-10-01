@@ -51,7 +51,7 @@ function renderFragment(html: string): DocumentFragment {
 function get(selector: string, root: ?Element): ?Element {
   root = root || document.body
 
-  if (/^js\-/.test(selector)) {
+  if (root && /^js\-/.test(selector)) {
     return root.querySelector('.' + selector)
   }
 
@@ -61,7 +61,7 @@ function get(selector: string, root: ?Element): ?Element {
 function getAll(selector: string, root: ?Element): Element[] {
   root = root || document.body
 
-  if (/^js\-/.test(selector)) {
+  if (root && /^js\-/.test(selector)) {
     return Array.prototype.slice.call(root.querySelectorAll('.' + selector))
   }
 
@@ -70,7 +70,12 @@ function getAll(selector: string, root: ?Element): Element[] {
 
 function queryAll(selector: string, root: ?Element): Element[] {
   root = root || document.body
-  return Array.prototype.slice.call(root.querySelectorAll(selector))
+
+  if (root) {
+    return Array.prototype.slice.call(root.querySelectorAll(selector))
+  }
+
+  return []
 }
 
 function rect(el: Element): ClientRect {
