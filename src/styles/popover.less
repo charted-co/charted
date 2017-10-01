@@ -1,6 +1,6 @@
 .popover{
-  .border-radius(4px);
-  .box-shadow(0 1px 1px rgba(0,0,0,.05));
+  box-shadow: 0 1px 1px rgba(0,0,0,.05);
+  border-radius: 4px;
   background-color: white;
   border: 1px solid @gray-light;
   padding: 8px;
@@ -30,10 +30,10 @@
   left: 20px;
   margin: 0px 0 0 -7px;
 }
-.popover .arrow-bottom-right:after, 
+.popover .arrow-bottom-right:after,
 .popover .arrow-bottom-left:after {
-  .box-shadow(0 1px 1px rgba(0,0,0,.05));
-  .transform(rotate(45deg) translate(-6px, -6px));
+  transform: rotate(45deg) translate(-6px, -6px);
+  box-shadow: 0 1px 1px rgba(0,0,0,.05);
   border: 1px solid @gray-light;
   background-color: white;
   content: '';

@@ -30,8 +30,8 @@
   width: 90%;
 }
 .data-file-input{
-  .border-radius(4px 0 0 4px);
   .m-fontSans200();
+  border-radius: 4px 0 0 4px;
   background-color: transparent;
   border: 1px solid @gray;
   border-width: 1px 0 1px 1px;
@@ -50,7 +50,7 @@
 .data-file-input::-moz-placeholder{
   color: @gray-light;
 }
-.data-file-input:-ms-input-placeholder {  
+.data-file-input:-ms-input-placeholder {
   color: @gray-light;
 }
 .data-file-input::light {
@@ -74,7 +74,7 @@
 }
 .submit,
 .loading-spinner{
-  .border-radius(0 4px 4px 0);
+  border-radius: 0 4px 4px 0;
   height: 60px;
   position: absolute;
   right: 0;
@@ -82,7 +82,7 @@
   width: 62px;
 }
 .loading-spinner{
-  .transition(all 0.4s ease);
+  transition: all 0.4s ease;
   background-color: @gray-darkest;
   display: none;
 }

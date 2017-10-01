@@ -10,8 +10,8 @@
   text-align: center;
 }
 .info-input{
-  .border-radius(4px);
-  .transitionMultiple(background-color 0.3s ease, opacity 0.2s ease);
+  transition: background-color 0.3s ease, opacity 0.2s ease;
+  border-radius: 4px;
   overflow: hidden;
 }
 .info-input:hover,
@@ -107,7 +107,7 @@
 
 @media screen and (min-width: @width-netbook) and (max-width: @width-desktop){
   .chart-grid .chart-info{
-    width: @sidebar-width-small;    
+    width: @sidebar-width-small;
   }
   .chart-grid .chart-description{
     font-size: @fontSize-smaller;

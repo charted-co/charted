@@ -30,7 +30,7 @@
 }
 .page-option-item{
   .m-fontSans400();
-  .transition(all 0.2s ease);
+  transition: all 0.2s ease;
   color: @gray;
   display: block;
   font-size: @fontSize-small;
@@ -41,7 +41,7 @@
   color: @gray-dark;
 }
 .page-option-item .icon{
-  .transition(all 0.2s ease);
+  transition: all 0.2s ease;
   display: inline-block;
   height: 30px;
   margin: 0 2px -5px 0;
@@ -70,9 +70,9 @@
   position: relative;
 }
 .page-data-source-form input{
-  .border-radius(3px 0 0 3px);
   .m-fontSans400();
-  .transition(all 0.2s ease);
+  transition: all 0.2s ease;
+  border-radius: 3px 0 0 3px;
   border: 1px solid @gray-lighter;
   color: @gray-dark;
   display: block;
@@ -82,8 +82,8 @@
   width: 100%;
 }
 .page-data-source-form button{
-  .border-radius(0 3px 3px 0);
   .m-fontSans900();
+  border-radius: 0 3px 3px 0;
   background-color: white;
   border: 1px solid @gray-lighter;
   border-width: 1px 1px 1px 0;
@@ -117,11 +117,11 @@
 
 @media screen and (min-width: @width-tablet) {
   .page-settings{
-    .transition(all 1s ease);
+    transition: all 1s ease;
     opacity: 0;
   }
   .page-active .page-settings{
-    .transition(all 0.2s ease);
+    transition: all 0.2s ease;
     opacity: 1;
   }
 }
