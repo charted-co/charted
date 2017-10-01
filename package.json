@@ -1,6 +1,6 @@
 {
   "name": "chartedjs",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "A charting library originally created by the Product Science team at Medium",
   "main": "out/server/charted.js",
   "scripts": {
@@ -11,6 +11,7 @@
     "test": "nodeunit out/server/*_test.js",
     "build-prod": "bin/build --prod",
     "start-prod": "bin/build --prod && node out/server/index.js",
+    "prepublishOnly": "bin/build --prod",
     "flow": "flow"
   },
   "repository": {
@@ -20,12 +21,19 @@
   "keywords": [
     "charts"
   ],
-  "author": "Mike Sall <mike@medium.com>",
+  "author": "Anton Kovalyov <anton@kovalyov.net>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/mikesall/charted/issues"
   },
   "dependencies": {
+    "body-parser": "1.14.x",
+    "connect": "^3.3.5",
+    "express": "4.10.x",
+    "handlebars": "^4.0.5",
+    "request": "2.47.x"
+  },
+  "devDependencies": {
     "babel": "6.0.x",
     "babel-cli": "6.3.x",
     "babel-core": "6.3.x",
@@ -33,22 +41,15 @@
     "babel-plugin-transform-flow-strip-types": "6.3.x",
     "babel-preset-es2015": "6.3.x",
     "babel-preset-stage-0": "6.3.x",
-    "body-parser": "1.14.x",
-    "connect": "^3.3.5",
-    "express": "4.10.x",
-    "handlebars": "^4.0.5",
     "less": "1.7.x",
     "nodeunit": "0.9.x",
-    "request": "2.47.x",
     "requirejs": "^2.1.22",
     "shelljs": "0.5.x",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "flow-bin": "^0.37.4"
   },
   "engines": {
     "node": ">=4.1.1"
   },
-  "homepage": "http://www.charted.co/",
-  "devDependencies": {
-    "flow-bin": "^0.37.4"
-  }
+  "homepage": "http://www.charted.co/"
 }
