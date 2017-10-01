@@ -391,7 +391,7 @@ export class PageController {
     let chartCount = this.chartObjects ? this.chartObjects.length : 0
     let container = dom.get('js-gridOption')
     if (container && chartCount > 1) {
-      container.appendChild(dom.renderFragment(template()))
+      container.innerHTML = template()
     }
   }
 
