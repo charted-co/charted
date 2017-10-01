@@ -1,0 +1,21 @@
+{
+  "editor.tabSize": 2,
+  "eslint.autoFixOnSave": true,
+  "files.insertFinalNewline": true,
+  "javascript.validate.enable": false,
+  "typescript.validate.enable": false,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/out": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/out": true
+  }
+}
