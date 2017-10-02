@@ -45,6 +45,11 @@ export default class ChartedServer {
     return this
   }
 
+  withApp(path: string, app: express$Application): ChartedServer {
+    this.app.use(path, app)
+    return this
+  }
+
   withStore(store: FileDb): ChartedServer {
     this.store = store
     return this
