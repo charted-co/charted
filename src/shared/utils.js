@@ -19,7 +19,8 @@ function getChartId(params: any): string {
 }
 
 /* Returns the Chart ID from a given URL */
-function parseChartId(url: string): ?string {
+function parseChartId(url: string|Array<string>): ?string {
+  if (typeof url != 'string') url = url[0]
   const match = (/\/(?:c|embed)\/(\w+)(?:|\?.*)?/).exec(url)
   return match ? match[1] : null
 }

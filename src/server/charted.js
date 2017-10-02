@@ -45,6 +45,19 @@ export default class ChartedServer {
     return this
   }
 
+  withForceSSL(): ChartedServer {
+    this.app.all('*', (req: express$Request, res: express$Response, next: express$NextFunction) => {
+      if (req.hostname != 'localhost' && req.protocol == 'http') {
+        res.redirect(`https://${req.headers.host}${req.originalUrl}`);
+        return;
+      }
+
+      return next()
+    })
+
+    return this
+  }
+
   withApp(path: string, app: express$Application): ChartedServer {
     this.app.use(path, app)
     return this
@@ -97,7 +110,7 @@ export default class ChartedServer {
   }
 
   loadChart(req: express$Request, res: express$Response) {
-    if (req.query.url) {
+    if (req.query.url && typeof req.query.url == 'string') {
       let parsed = url.parse(req.query.url, /* parse query string */ true)
       let chartUrl = url.format(prepare(parsed))
       let params = {dataUrl: chartUrl}
@@ -108,11 +121,12 @@ export default class ChartedServer {
       return
     }
 
-    if (req.query.id) {
-      this.store.get(req.query.id)
+    if (req.query.id && typeof req.query.id == 'string') {
+      const id:string  = req.query.id
+      this.store.get(id)
         .then((params) => {
           if (!params) {
-            this.notFound(res, `chart ${req.query.id} was not found.`)
+            this.notFound(res, `chart ${id} was not found.`)
             return
           }
 
