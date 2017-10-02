@@ -16,35 +16,62 @@ import * as utils from "../shared/utils"
 
 export default class ChartedServer {
   address: any;
-  env: t_ENV;
   staticRoot: string;
   store: FileDb;
+  app: express$Application;
+
+  env = {dev: false};
+  port = Number(process.env.PORT) || 3000;
 
   static start(port: number, staticRoot: string, db: FileDb) {
+    return new ChartedServer()
+      .withPort(port)
+      .withStaticRoot(staticRoot)
+      .withStore(db)
+      .start()
+  }
+
+  constructor() {
+    this.app = express()
+  }
+
+  withPort(port: number): ChartedServer {
+    this.port = port
+    return this
+  }
+
+  withStaticRoot(path: string): ChartedServer {
+    this.staticRoot = path
+    return this
+  }
+
+  withStore(store: FileDb): ChartedServer {
+    this.store = store
+    return this
+  }
+
+  start() {
+    if (!this.staticRoot) throw new Error('You have to set static root')
+    if (!this.store) throw new Error('You have to specify a store')
+
     return new Promise((resolve) => {
-      let app = express()
-      let charted = new ChartedServer(db, staticRoot)
+      const app = this.app
 
       app.enable('trust proxy')
       app.use(bodyParser.json())
-      app.use(express.static(staticRoot))
-      app.get('/c/:id', charted.getChart.bind(charted))
-      app.get('/embed/:id', charted.getChart.bind(charted))
-      app.post('/c/:id', charted.saveChart.bind(charted))
-      app.get('/load', charted.loadChart.bind(charted))
-      app.get('/oembed', charted.getOembed.bind(charted))
+      app.use(express.static(this.staticRoot))
 
-      let server = app.listen(port, () => {
-        charted.address = server.address()
-        resolve(charted)
+      app.get('/c/:id', this.getChart.bind(this))
+      app.get('/embed/:id', this.getChart.bind(this))
+      app.post('/c/:id', this.saveChart.bind(this))
+      app.get('/load', this.loadChart.bind(this))
+      app.get('/oembed', this.getOembed.bind(this))
+
+      let server = app.listen(this.port, () => {
+        this.address = server.address()
+        resolve(this)
       })
     })
-  }
-
-  constructor(store: FileDb, staticRoot: string) {
-    this.store = store
-    this.staticRoot = staticRoot
-    this.env = {dev: false}
   }
 
   getChart(req: express$Request, res: express$Response) {
