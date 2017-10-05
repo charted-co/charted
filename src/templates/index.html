@@ -45,10 +45,9 @@
     <div class="charts js-charts"></div>
 
     <footer>
-      <a href="https://github.com/charted-co/charted">GitHub</a>
-      <a href="https://medium.com/p/2149df6bb0bd">How it works</a>
-      <a href='http://www.charted.co/c/46e0cd2'>Try an example</a>
-      <a href="https://medium.com/p/2ef03b3f429">Privacy</a>
+      {{#each links}}
+        <a href="{{this.href}}" target="_blank">{{this.text}}</a>
+      {{/each}}
     </footer>
 
     {{#if ENV.dev}}

@@ -16,6 +16,7 @@ import * as utils from "../shared/utils"
 
 type TemplateParams = {
   ENV?: Object,
+  links?: Array<Object>,
   dataUrl?: string
 }
 
@@ -27,6 +28,9 @@ export default class ChartedServer {
 
   env = {dev: false};
   port = Number(process.env.PORT) || 3000;
+  links = [
+    {text: 'GitHub', href: 'https://github.com/charted-co/charted'},
+  ];
 
   static start(port: number, staticRoot: string, db: FileDb) {
     return new ChartedServer()
@@ -60,6 +64,10 @@ export default class ChartedServer {
       return next()
     })
 
+    return this
+  }
+
+  withLinks(): ChartedServer {
     return this
   }
 
@@ -117,7 +125,7 @@ export default class ChartedServer {
   }
 
   getHome(req: express$Request, res: express$Response) {
-    this.render('index.html')
+    this.render('index.html', {links: this.links})
       .then((html) => {
         res.status(200).send(html)
       })
@@ -130,8 +138,7 @@ export default class ChartedServer {
         return
       }
 
-
-      this.render('index.html', {dataUrl: params.dataUrl})
+      this.render('index.html', {dataUrl: params.dataUrl,})
         .then((html) => {
           res.status(200).send(html)
         })
