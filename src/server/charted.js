@@ -6,13 +6,18 @@ import url from "url"
 import path from "path"
 import request from "request"
 import express from "express"
-import sh from "shelljs"
+import fs from 'fs'
 import handlebars from "handlebars"
 import bodyParser from "body-parser"
 import prepare from "./prepare"
 import FileDb from "./db.js"
 import sha1 from "../shared/sha1"
 import * as utils from "../shared/utils"
+
+type TemplateParams = {
+  ENV?: Object,
+  dataUrl?: string
+}
 
 export default class ChartedServer {
   address: any;
@@ -79,6 +84,7 @@ export default class ChartedServer {
       app.use(bodyParser.json())
       app.use(express.static(this.staticRoot))
 
+      app.get('/', this.getHome.bind(this))
       app.get('/c/:id', this.getChart.bind(this))
       app.get('/embed/:id', this.getChart.bind(this))
       app.post('/c/:id', this.saveChart.bind(this))
@@ -92,6 +98,31 @@ export default class ChartedServer {
     })
   }
 
+  render(name: string, options: ?TemplateParams): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const fp = path.join(__dirname, '..', 'templates', name)
+
+      fs.readFile(fp, 'utf8', (err, data) => {
+        if (err) {
+          reject(err)
+          return
+        }
+
+        options = options || {}
+        options.ENV = this.env
+        const html = handlebars.compile(data)(options)
+        resolve(html)
+      })
+    })
+  }
+
+  getHome(req: express$Request, res: express$Response) {
+    this.render('index.html')
+      .then((html) => {
+        res.status(200).send(html)
+      })
+  }
+
   getChart(req: express$Request, res: express$Response) {
     this.store.get(req.params.id).then((params) => {
       if (!params) {
@@ -99,13 +130,11 @@ export default class ChartedServer {
         return
       }
 
-      let code = sh.cat(path.join(__dirname, '..', 'templates', 'index.html'))
-      let html = handlebars.compile(code)({
-        ENV: this.env,
-        dataUrl: params.dataUrl
-      })
 
-      res.status(200).send(html)
+      this.render('index.html', {dataUrl: params.dataUrl})
+        .then((html) => {
+          res.status(200).send(html)
+        })
     })
   }
 
