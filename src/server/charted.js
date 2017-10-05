@@ -67,7 +67,8 @@ export default class ChartedServer {
     return this
   }
 
-  withLinks(): ChartedServer {
+  withLinks(links: Array<Object>): ChartedServer {
+    this.links = links
     return this
   }
 
