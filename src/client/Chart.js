@@ -27,9 +27,6 @@ export default class Chart {
   yAxis: Element;
   zeroLine: Element;
   selectionValue: Element;
-  optionsElem: Element;
-  pageSettings: Element;
-  chartDescription: Element;
 
   chartIndex: number;
   params: Object;
@@ -86,9 +83,6 @@ export default class Chart {
     this.selectionValue = dom.assert(dom.get('js-selectionValue', this.container))
     this.yAxis = dom.assert(dom.get('js-yAxis', this.container))
     this.zeroLine = dom.assert(dom.get('js-zeroLine', this.container))
-    this.optionsElem = dom.assert(dom.get('js-chartOptions', this.container))
-    this.chartDescription = dom.assert(dom.get('js-chartDescription', this.container))
-    this.pageSettings = dom.assert(dom.get('js-settings'))
 
     let chartTitle = dom.assert(dom.get('js-chartTitle', this.container))
     this.titleEditor = new Editor(chartTitle)
